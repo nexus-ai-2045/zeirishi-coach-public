@@ -64,3 +64,22 @@ def test_node_script_tests_run_from_npm_test():
         assert any(fnmatch.fnmatch(relative, pattern) for pattern in patterns), \
             f"{relative} が npm test の対象に入っていない"
     assert any("npm test" in command for command in web_job_commands())
+
+
+def test_supported_node_runtime_is_shared_by_ci_and_lifecycle():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    version = (root / ".nvmrc").read_text().strip()
+    package = json.loads((root / "web/package.json").read_text())
+    assert package["engines"]["node"] == version
+    assert "node-version-file: '.nvmrc'" in (root / ".github/workflows/ci.yml").read_text()
+    assert (root / "web/.npmrc").read_text().strip() == "engine-strict=true"
+    for name in ("dev", "start", "build", "test", "typecheck"):
+        assert package["scripts"]["pre" + name] == "node scripts/verify-node-runtime.mjs"
+
+
+def test_web_unit_concurrency_flag_precedes_test_files():
+    command = shlex.split(web_scripts()["test"])
+    limit = command.index("--test-concurrency=2")
+    assert all(limit < index for index, token in enumerate(command) if "*" in token)

@@ -11,6 +11,7 @@ preview_logs="$preview_web_dir/.local-data/preview"
 
 if [ "${1:-}" = '_run' ]; then
   cd "$preview_web_dir"
+  "$2" "$preview_script_dir/verify-node-runtime.mjs"
   exec /usr/bin/env -i HOME="${HOME:-}" PATH='/usr/bin:/bin:/usr/sbin:/sbin' NODE_ENV=production TZ=Asia/Tokyo \
     ZEIRISHI_FIXTURE_MODE=1 ZEIRISHI_BOOKKEEPING_MVP=1 ZEIRISHI_SUPABASE_ENABLED=0 \
     ZEIRISHI_DATABASE_ENABLED=0 ZEIRISHI_LOCAL_CLI_PROVIDER='' \
@@ -54,6 +55,7 @@ case "${1:-status}" in
       printf '3210番ポートは別の処理が使用中です。停止や上書きはしません。\n' >&2; exit 1
     fi
     preview_node=$(node -p 'process.execPath')
+    "$preview_node" "$preview_script_dir/verify-node-runtime.mjs"
     [ -f "$preview_web_dir/.next/BUILD_ID" ] || { printf '先にnpm run buildを実行してください。\n' >&2; exit 1; }
     mkdir -p "$preview_logs"
     launchctl submit -l "$preview_label" -o "$preview_logs/stdout.log" -e "$preview_logs/stderr.log" -- /bin/sh "$preview_script" _run "$preview_node"

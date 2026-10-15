@@ -1,7 +1,7 @@
 import { guardRequest } from '../../../http/guard';
 import { readLocalCookie } from '../../../http/local-session';
 import { getDevelopmentDatabase } from '../../../server/runtime-services';
-import { assertOwnerActive } from '../../../server/owner-access';
+import { assertOwnerActive, initializeOwnerAccess } from '../../../server/owner-access';
 import { BOOKKEEPING_TRIAL_QUESTION_MATERIALS } from '../../../server/bookkeeping-trial-questions';
 import { BOOKKEEPING_ALL_QUESTION_DRAFTS, publicBookkeepingQuestion } from '../../../server/bookkeeping-question-drafts';
 import { BOOKKEEPING_ALL_CONCEPTS } from '../../../server/bookkeeping-trial-supply';
@@ -18,7 +18,9 @@ export async function GET(request: Request) {
     if ([...params.keys()].some(key => key !== 'pool') || params.getAll('pool').length > 1) throw new StudyError('INVALID_INPUT');
     const pool = params.get('pool') ?? 'practice';
     if (!['practice','retention'].includes(pool)) throw new StudyError('MATERIAL_NOT_AVAILABLE', 503);
-    await (await getDevelopmentDatabase()).transaction(tx => assertOwnerActive(tx, owner));
+    const db = await getDevelopmentDatabase();
+    await initializeOwnerAccess(db);
+    await db.transaction(tx => assertOwnerActive(tx, owner));
     // Only the requested pool is projected; never expose scores, explanations, or other pools' questions.
     return Response.json({ items: BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item => item.intendedUse === pool).map(item => ({...publicBookkeepingQuestion(item),conceptLabel:BOOKKEEPING_ALL_CONCEPTS.find(concept=>concept.conceptId===item.question.conceptId)?.label,caseVersion:BOOKKEEPING_TRIAL_QUESTION_MATERIALS.find(material => material.prompt().caseId === item.question.id)!.caseVersion})), developmentOnly: true });
   } catch (error) { return Response.json({ error: error instanceof StudyError ? error.code : 'INTERNAL_ERROR' }, { status: error instanceof StudyError ? error.status : 500 }); }

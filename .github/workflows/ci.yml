@@ -50,7 +50,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
-          node-version: '24.20.0'
+          node-version-file: '.nvmrc'
           cache: npm
           cache-dependency-path: web/package-lock.json
 
@@ -73,7 +73,7 @@ jobs:
 
       - name: Run web unit tests (concurrency 2)
         working-directory: web
-        run: npm test -- --test-concurrency=2
+        run: npm test
 
       - name: Run local production E2E
         working-directory: web

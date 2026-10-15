@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -301,6 +302,10 @@ MOCK_CALIBRATION_WINDOW = 3
 
 
 def record_mock(st, subject, score, minutes, today, rank=None, of=None) -> dict:
+    if minutes is not None:
+        minutes = float(minutes)
+        if not math.isfinite(minutes) or minutes < 0:
+            raise ValueError("minutes must be finite and >= 0")
     if not MOCK_SCORE_MIN <= float(score) <= MOCK_SCORE_MAX:
         raise ValueError(f"score must be {MOCK_SCORE_MIN}-{MOCK_SCORE_MAX}, got {score}")
     if (rank is None) != (of is None):

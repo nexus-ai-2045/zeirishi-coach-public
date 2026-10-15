@@ -26,7 +26,7 @@
 
 「このブラウザーの学習データを管理」から、本人の学習記録を`JSON`で書き出し、確認後に削除できます。未開示の正誤や内部の再送記録は書き出しません。削除後は古いタブからの再保存を拒否し、そのために利用者識別子のハッシュと失効日時だけを保持します。正式証拠・訂正履歴・復習証拠・`AI`支援要約も対象です。月単位の個人情報を含まない費用集計は削除でリセットしません。ダウンロード済みファイルは削除されません。本番`API`も実装していますが、実クラウドでの削除・復旧、認証アカウント・バックアップの運用は未検収です。
 
-`Node.js` 24.20.0 を使用します。
+`Node.js` 22.23.3 LTS を使用します。
 
 ```bash
 cd web
@@ -156,3 +156,9 @@ python3 -m pytest -q && python3 scripts/coach.py lint
 - 自作コード・論点 `tree`・ドキュメント: `MIT` (`LICENSE`)。名義は `nexus_ai`。第三者依存はそれぞれのライセンスに従い、`MIT`で上書きしません。依存の版とライセンス情報は `web/package-lock.json`、実体の著作権表示は各`package`の`LICENSE/NOTICE`を確認します。今回のソース公開候補に`node_modules`や配備バイナリは含めません。配備物の再配布時には、実際に含まれる依存（`libvips`等を含む）の表示・ソース提供等の条件を別途確認します。
 - 学習設計の根拠: 間隔想起練習の `meta-analysis` (`Maye et al.` 2026, `The Clinical Teacher`)、`interleaving` の `RCT` (`Rohrer et al.` 2019, `J. Educational Psychology`)、`BKT` の `Elo` 個人化 (`Yudelson` 2021)
 - 税法・会計基準の条文番号は解説時に `e-Gov` 法令検索 (`https`://`laws.e-gov.go.jp`/) を参照する。改正事項は本番年度の法令で確認する
+
+### Node の版を揃える理由
+
+実行版はルートの `.nvmrc` を正本とし、CI と npm の起動前検査で照合します。Node 24 の V8 13.6 では、PGlite が使う Wasm のコード解放時にプロセスが異常終了しました。テストやメモリ保護を無効化せず、対象の V8 実装を含まない Node 22 LTS を採用します。
+
+根拠: [Node.js の同一 CHECK 失敗の報告](https://github.com/nodejs/node/issues/66366)、[Node.js 22.23.3 配布情報](https://nodejs.org/dist/v22.23.3/)。更新時は `.nvmrc` と package の engines を揃え、Web の全テストと E2E を再検証します。

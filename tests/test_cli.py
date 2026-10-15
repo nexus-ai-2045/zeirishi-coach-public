@@ -150,3 +150,23 @@ def test_rebuild_reproduces_state(capsys, coach_home, subjects_dir):
     assert rebuilt["calibration_offset"] == pytest.approx(before["calibration_offset"])
     code, out = run(capsys, "rebuild", "boki")
     assert code == 0 and (coach_home / "boki" / "state.json.bak").exists()
+
+
+def test_invalid_forced_init_preserves_saved_state_logs_and_timer(capsys, coach_home):
+    assert run(capsys, "init", "boki", "--exam-date", "2027-08-05", "--today", TODAY)[0] == 0
+    assert run(capsys, "record", "boki", "--topic", "boki.sales.shohin", "--correct", "yes", "--seconds", "60", "--error-class", "none", "--difficulty", "3", "--today", TODAY)[0] == 0
+    state.start_timer("boki", "boki.sales.shohin", "2026-09-04T10:00:00")
+    folder = coach_home / "boki"
+    before = {file.name: file.read_bytes() for file in folder.iterdir() if file.is_file()}
+    code, _ = run(capsys, "init", "boki", "--exam-date", "not-a-date", "--today", TODAY, "--force")
+    assert code != 0
+    assert {file.name: file.read_bytes() for file in folder.iterdir() if file.is_file()} == before
+
+
+def test_negative_mock_duration_does_not_persist(capsys, coach_home):
+    assert run(capsys, "init", "boki", "--exam-date", "2027-08-05", "--today", TODAY)[0] == 0
+    folder = coach_home / "boki"
+    before = {file.name: file.read_bytes() for file in folder.iterdir() if file.is_file()}
+    code, _ = run(capsys, "mock", "boki", "--score", "50", "--minutes", "-30", "--today", TODAY)
+    assert code != 0
+    assert {file.name: file.read_bytes() for file in folder.iterdir() if file.is_file()} == before

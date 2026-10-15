@@ -250,3 +250,14 @@ def test_log_and_history(st, boki, coach_home):
     assert rows[-1]["kind"] == "attempt" and rows[-1]["topic"] == "boki.sales.shohin" and rows[-1]["score"] == 1.0
     assert st["history"][-1]["minutes"] == pytest.approx(2.0)
     assert state.days_between("2026-09-04", "2026-09-06") == 2
+
+
+@pytest.mark.parametrize("minutes", [-1, float("nan"), float("inf"), float("-inf")])
+def test_mock_invalid_duration_rejected_before_state_or_log_mutation(st, boki, coach_home, minutes):
+    import copy
+    before = copy.deepcopy(st)
+    files = {str(file.relative_to(coach_home)): file.read_bytes() for file in coach_home.rglob("*") if file.is_file()}
+    with pytest.raises(ValueError):
+        state.record_mock(st, boki, 50, minutes, TODAY)
+    assert st == before
+    assert {str(file.relative_to(coach_home)): file.read_bytes() for file in coach_home.rglob("*") if file.is_file()} == files

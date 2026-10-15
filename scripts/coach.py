@@ -59,6 +59,8 @@ def cmd_init(a):
     if path.exists() and not a.force:
         print(f"state already exists: {path} (use --force to overwrite)")
         return 1
+    profile = {k: v for k, v in {"weekly_hours": a.weekly_hours, "school": a.school, "note": a.note}.items() if v is not None}
+    st = state.init_state(subject, exam_date=a.exam_date, level=a.level, mock_score=a.mock_score, today=a.today, profile=profile)
     if path.exists() and a.force:
         # attempts.jsonl は rebuild の正本 (docs/specs §3.2)。捨てたはずの旧セッションを
         # 残すと、再初期化後の記録と混ざって再生される (PR #1 レビュー指摘 coach.py:63)。
@@ -66,8 +68,6 @@ def cmd_init(a):
             p = state.state_dir(a.subject) / name
             if p.exists():
                 p.unlink()
-    profile = {k: v for k, v in {"weekly_hours": a.weekly_hours, "school": a.school, "note": a.note}.items() if v is not None}
-    st = state.init_state(subject, exam_date=a.exam_date, level=a.level, mock_score=a.mock_score, today=a.today, profile=profile)
     state.save_state(st)
     _out({"subject": st["subject"], "exam_date": st["exam_date"], "topics": len(st["topics"]),
           "pass_prob": st["history"][-1]["pass_prob"], "final_phase_start": st["plan"]["final_phase_start"], "state": str(path)})
