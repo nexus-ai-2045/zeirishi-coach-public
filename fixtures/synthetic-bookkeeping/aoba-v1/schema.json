@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/aoba-zakkaten-boki-practice/schema.json",
+  "title": "青葉雑貨店 複式簿記練習フィクスチャ（合成・未承認）",
+  "description": "ルートオブジェクトは problems.json の形。chart_document と assumptions_document は兄弟ファイルの形を $defs に示す。外部の JSON Schema 実装には依存しない。整合性は validator.py が標準ライブラリだけで検査する。example.invalid は実在の公開エンドポイントではない。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document",
+    "fixture_name",
+    "fixture_version",
+    "disclaimer",
+    "continuity_model",
+    "currency",
+    "problem_count",
+    "problems"
+  ],
+  "properties": {
+    "document": {"const": "problems"},
+    "fixture_name": {"const": "aoba-zakkaten-boki-practice"},
+    "fixture_version": {"const": "1.0.0"},
+    "disclaimer": {"$ref": "#/$defs/disclaimer"},
+    "continuity_model": {"const": "independent_problems_shared_setting"},
+    "continuity_ja": {"type": "string", "minLength": 20},
+    "currency": {"const": "JPY"},
+    "amount_rule": {"const": "integer_yen"},
+    "problem_count": {"const": 20},
+    "problems": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {"$ref": "#/$defs/problem"}
+    }
+  },
+  "$defs": {
+    "disclaimer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "synthetic",
+        "unapproved_teaching_material",
+        "expert_reviewed",
+        "official_exam_reprint",
+        "tax_or_legal_advice",
+        "statement_ja"
+      ],
+      "properties": {
+        "synthetic": {"const": true},
+        "unapproved_teaching_material": {"const": true},
+        "expert_reviewed": {"const": false},
+        "official_exam_reprint": {"const": false},
+        "tax_or_legal_advice": {"const": false},
+        "statement_ja": {"type": "string", "minLength": 40}
+      }
+    },
+    "side": {"enum": ["debit", "credit"]},
+    "account_code": {"type": "string", "pattern": "^[0-9]{3}$"},
+    "story_date": {"type": "string", "pattern": "^20X6-04-(0[1-9]|[12][0-9]|30)$"},
+    "positive_yen": {"type": "integer", "minimum": 1},
+    "nonnegative_yen": {"type": "integer", "minimum": 0},
+    "opening_balance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_code", "side", "amount"],
+      "properties": {
+        "account_code": {"$ref": "#/$defs/account_code"},
+        "side": {"$ref": "#/$defs/side"},
+        "amount": {"$ref": "#/$defs/positive_yen"}
+      }
+    },
+    "journal_line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_code", "side", "amount"],
+      "properties": {
+        "account_code": {"$ref": "#/$defs/account_code"},
+        "side": {"$ref": "#/$defs/side"},
+        "amount": {"$ref": "#/$defs/positive_yen"}
+      }
+    },
+    "journal_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_no", "date", "memo", "lines"],
+      "properties": {
+        "entry_no": {"type": "integer", "minimum": 1},
+        "date": {"$ref": "#/$defs/story_date"},
+        "memo": {"type": "string", "minLength": 1},
+        "lines": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/journal_line"}
+        }
+      }
+    },
+    "ledger_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "account_code",
+        "account_name",
+        "debit_total",
+        "credit_total",
+        "balance_side",
+        "balance"
+      ],
+      "properties": {
+        "account_code": {"$ref": "#/$defs/account_code"},
+        "account_name": {"type": "string", "minLength": 1},
+        "debit_total": {"$ref": "#/$defs/nonnegative_yen"},
+        "credit_total": {"$ref": "#/$defs/nonnegative_yen"},
+        "balance_side": {"enum": ["debit", "credit", "zero"]},
+        "balance": {"$ref": "#/$defs/nonnegative_yen"}
+      }
+    },
+    "trial_balance_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_code", "account_name", "debit", "credit"],
+      "properties": {
+        "account_code": {"$ref": "#/$defs/account_code"},
+        "account_name": {"type": "string", "minLength": 1},
+        "debit": {"$ref": "#/$defs/nonnegative_yen"},
+        "credit": {"$ref": "#/$defs/nonnegative_yen"}
+      }
+    },
+    "trial_balance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rows", "total_debit", "total_credit"],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/trial_balance_row"}
+        },
+        "total_debit": {"$ref": "#/$defs/nonnegative_yen"},
+        "total_credit": {"$ref": "#/$defs/nonnegative_yen"}
+      }
+    },
+    "problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "stage",
+        "title",
+        "tags",
+        "continuity",
+        "opening_note_ja",
+        "prompt_ja",
+        "opening_balances",
+        "expected_entries",
+        "explanation_ja",
+        "expected_ledger",
+        "expected_trial_balance"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^Q(0[1-9]|1[0-9]|20)$"},
+        "stage": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "tags": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "cash",
+              "capital",
+              "sales_on_credit",
+              "purchases",
+              "payment",
+              "collection",
+              "prepaid",
+              "accrual"
+            ]
+          }
+        },
+        "continuity": {"const": "independent"},
+        "opening_note_ja": {"type": "string", "minLength": 10},
+        "prompt_ja": {"type": "string", "minLength": 20},
+        "opening_balances": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/opening_balance"}
+        },
+        "expected_entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/journal_entry"}
+        },
+        "explanation_ja": {"type": "string", "minLength": 20},
+        "expected_ledger": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/ledger_row"}
+        },
+        "expected_trial_balance": {"$ref": "#/$defs/trial_balance"}
+      }
+    },
+    "chart_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "fixture_name", "disclaimer", "accounts"],
+      "properties": {
+        "document": {"const": "chart_of_accounts"},
+        "fixture_name": {"const": "aoba-zakkaten-boki-practice"},
+        "disclaimer": {"$ref": "#/$defs/disclaimer"},
+        "accounts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/account"}
+        }
+      }
+    },
+    "account": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "name", "statement", "element", "normal_side", "description_ja"],
+      "properties": {
+        "code": {"$ref": "#/$defs/account_code"},
+        "name": {"type": "string", "minLength": 1},
+        "statement": {"enum": ["balance_sheet", "income_statement"]},
+        "element": {"enum": ["asset", "liability", "equity", "revenue", "expense"]},
+        "normal_side": {"$ref": "#/$defs/side"},
+        "description_ja": {"type": "string", "minLength": 1}
+      }
+    },
+    "assumptions_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "fixture_name",
+        "disclaimer",
+        "entity",
+        "continuity",
+        "currency",
+        "bookkeeping",
+        "out_of_scope"
+      ],
+      "properties": {
+        "document": {"const": "assumptions"},
+        "fixture_name": {"const": "aoba-zakkaten-boki-practice"},
+        "disclaimer": {"$ref": "#/$defs/disclaimer"},
+        "entity": {"type": "object"},
+        "calendar": {"type": "object"},
+        "continuity": {"type": "object"},
+        "currency": {"type": "object"},
+        "bookkeeping": {"type": "object"},
+        "out_of_scope": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

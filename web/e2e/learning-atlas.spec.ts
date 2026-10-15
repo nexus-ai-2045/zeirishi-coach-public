@@ -1,0 +1,60 @@
+import { test, expect } from '@playwright/test';
+import { DEVELOPMENT_CATALOG } from '../src/server/development-catalog';
+
+const pack = DEVELOPMENT_CATALOG.find(item => item.subjectId === 'bookkeeping')!;
+const concept = pack.concepts.find(item => item.conceptId === 'prepaid-expenses')!;
+const mastery = (version: string, needsRecheck = false) => ({ subjectId: 'bookkeeping', conceptId: concept.conceptId, conceptVersion: version, criterionVersion: 'test-only', status: 'applicable', needsRecheck, reasons: [] });
+
+test('版が一致する評価だけを数え、再確認や地図閲覧で習熟を増やさない', async ({ page }) => {
+  let record = mastery('stale-version');
+  let writes = 0;
+  page.on('request', request => { if (request.method() === 'POST') writes++; });
+  await page.route('**/api/learning-evidence?**', route => route.fulfill({ json: { mastery: [record] } }));
+  await page.goto('/#map');
+  const atlas = page.getByRole('region', { name: '簿記のコア概念' });
+  const stats = atlas.locator('[aria-label="地図の範囲と学習状況"]');
+  await expect(stats).toContainText('0 / 3');
+  await expect(atlas.locator('[role="status"]')).toHaveText('');
+  await expect(atlas.getByRole('button', { name: '試験論点で見る' })).toHaveAttribute('aria-pressed', 'true');
+  const firstBranch = atlas.getByRole('region', { name: '試験論点の地図' }).getByRole('heading').first().getByRole('button');
+  await firstBranch.click();
+  await expect(firstBranch).toHaveAttribute('aria-expanded', 'false');
+  await firstBranch.click();
+  await expect(firstBranch).toHaveAttribute('aria-expanded', 'true');
+  await atlas.getByRole('button', { name: '考え方で見る' }).click();
+  expect(writes).toBe(0);
+  record = mastery(concept.conceptVersion);
+  await atlas.getByRole('button', { name: '保存済みの学習状況を確認' }).click();
+  await expect(stats).toContainText('1 / 3');
+  await expect(atlas.locator('[role="status"]')).toContainText('新たに1個');
+  await expect(atlas.locator('[role="status"]')).toHaveText('');
+  await atlas.getByRole('button', { name: '保存済みの学習状況を確認' }).click();
+  await expect(stats).toContainText('1 / 3');
+  await expect(atlas.locator('[role="status"]')).toHaveText('');
+  await expect(atlas.getByRole('region', { name: '選んだ概念の説明' })).toContainText('適用できる');
+  record = mastery(concept.conceptVersion, true);
+  await atlas.getByRole('button', { name: '保存済みの学習状況を確認' }).click();
+  await expect(stats).toContainText('0 / 3');
+  await expect(atlas.getByRole('region', { name: '選んだ概念の説明' })).toContainText('再確認が必要');
+  expect(writes).toBe(0);
+});
+
+test('取得失敗は未取得と示し、全体像との往復と再読込を保つ', async ({ page }) => {
+  await page.route('**/api/learning-evidence?**', route => route.fulfill({ status: 503, json: {} }));
+  await page.goto('/#map');
+  const atlas = page.getByRole('region', { name: '簿記のコア概念' });
+  await expect(atlas.getByRole('alert')).toContainText('取得できませんでした');
+  await expect(atlas.locator('[aria-label="地図の範囲と学習状況"]')).toContainText('— / 3');
+  await atlas.getByRole('button', { name: '簿記の全体像をつかむ →' }).click();
+  await expect(page).toHaveURL(/#overview$/);
+  await expect(page.getByRole('figure', { name: /商売の出来事から帳簿/ })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '簿記の全体像', level: 1 })).toBeVisible();
+  await page.getByRole('button', { name: '学習地図へ進む →' }).click();
+  await expect(page).toHaveURL(/#map$/);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: '/tmp/zeirishi-atlas-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: '/tmp/zeirishi-atlas-desktop.png', fullPage: true });
+});

@@ -1,0 +1,258 @@
+{
+  "_note": "改正事項は本番年度の法令で要確認",
+  "subject": "sozoku",
+  "name": "相続税法",
+  "exam": {
+    "minutes": 120,
+    "passing_line": 60,
+    "pass_percentile": 0.15,
+    "format": {
+      "calc": 50,
+      "theory": 50
+    }
+  },
+  "units": [
+    {
+      "id": "sozoku.theory-scope",
+      "name": "理論・課税財産"
+    },
+    {
+      "id": "sozoku.theory-special",
+      "name": "理論・特例と贈与"
+    },
+    {
+      "id": "sozoku.theory-proc",
+      "name": "理論・手続と評価"
+    },
+    {
+      "id": "sozoku.calc-tax",
+      "name": "計算・税額"
+    },
+    {
+      "id": "sozoku.calc-valuation",
+      "name": "計算・財産評価"
+    }
+  ],
+  "topics": [
+    {
+      "id": "sozoku.theory.taxpayer",
+      "name": "納税義務者・課税財産の範囲",
+      "unit": "sozoku.theory-scope",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "居住無制限と非居住無制限の区別"
+      ]
+    },
+    {
+      "id": "sozoku.theory.deemed",
+      "name": "みなし相続財産 (生命保険・退職金)",
+      "unit": "sozoku.theory-scope",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "非課税限度額の計算対象"
+      ]
+    },
+    {
+      "id": "sozoku.theory.non-taxable",
+      "name": "非課税財産・債務控除",
+      "unit": "sozoku.theory-scope",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "葬式費用の範囲 (香典返しは不可)"
+      ]
+    },
+    {
+      "id": "sozoku.theory.gift-add",
+      "name": "生前贈与加算・相続時精算課税",
+      "unit": "sozoku.theory-special",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "加算期間 (改正あり、要確認)"
+      ]
+    },
+    {
+      "id": "sozoku.theory.spouse",
+      "name": "配偶者の税額軽減・各種税額控除",
+      "unit": "sozoku.theory-special",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "未分割の場合の適用可否"
+      ]
+    },
+    {
+      "id": "sozoku.theory.small-land",
+      "name": "小規模宅地等の特例",
+      "unit": "sozoku.theory-special",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "家なき子要件"
+      ]
+    },
+    {
+      "id": "sozoku.theory.gift-tax",
+      "name": "贈与税の課税・配偶者控除・非課税",
+      "unit": "sozoku.theory-special",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "教育資金一括贈与の残額課税"
+      ]
+    },
+    {
+      "id": "sozoku.theory.business-succession",
+      "name": "事業承継税制・納税猶予",
+      "unit": "sozoku.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "特例措置の期限"
+      ]
+    },
+    {
+      "id": "sozoku.theory.procedure",
+      "name": "申告・納付・延納物納",
+      "unit": "sozoku.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "物納の順位"
+      ]
+    },
+    {
+      "id": "sozoku.theory.valuation-theory",
+      "name": "財産評価基本通達の考え方",
+      "unit": "sozoku.theory-proc",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "時価の意義"
+      ]
+    },
+    {
+      "id": "sozoku.calc.heirs",
+      "name": "法定相続人・相続分・基礎控除",
+      "unit": "sozoku.calc-tax",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "養子の数の制限"
+      ]
+    },
+    {
+      "id": "sozoku.calc.total-tax",
+      "name": "相続税の総額・各人の算出税額",
+      "unit": "sozoku.calc-tax",
+      "format": "calc",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [
+        "sozoku.calc.heirs"
+      ],
+      "pitfalls": [
+        "2 割加算の対象者"
+      ]
+    },
+    {
+      "id": "sozoku.calc.land",
+      "name": "宅地の評価 (路線価・倍率・画地調整)",
+      "unit": "sozoku.calc-valuation",
+      "format": "calc",
+      "weight": 9,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "奥行価格補正率の適用漏れ"
+      ]
+    },
+    {
+      "id": "sozoku.calc.small-land",
+      "name": "小規模宅地等の減額計算",
+      "unit": "sozoku.calc-valuation",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [
+        "sozoku.calc.land"
+      ],
+      "pitfalls": [
+        "限度面積の調整計算"
+      ]
+    },
+    {
+      "id": "sozoku.calc.stock",
+      "name": "取引相場のない株式の評価",
+      "unit": "sozoku.calc-valuation",
+      "format": "calc",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "会社規模の判定"
+      ]
+    },
+    {
+      "id": "sozoku.calc.other-assets",
+      "name": "預貯金・生命保険・上場株式・その他",
+      "unit": "sozoku.calc-valuation",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "上場株式の 4 つの価額の最低値"
+      ]
+    },
+    {
+      "id": "sozoku.calc.credits",
+      "name": "税額控除 (配偶者・未成年・障害者・相次相続)",
+      "unit": "sozoku.calc-tax",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "控除の順序"
+      ]
+    },
+    {
+      "id": "sozoku.calc.gift",
+      "name": "贈与税額の計算・精算課税",
+      "unit": "sozoku.calc-tax",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "特例税率と一般税率の按分"
+      ]
+    }
+  ]
+}

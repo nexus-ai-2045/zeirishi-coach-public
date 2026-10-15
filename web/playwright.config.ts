@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({ testDir: './e2e', testIgnore: ['online-entry.spec.ts','bookkeeping-mvp.spec.ts'], workers: 1, use: { baseURL: 'http://127.0.0.1:3210', viewport: { width: 1505, height: 1045 } }, webServer: { command: process.env.ZEIRISHI_E2E_PRODUCTION === '1' ? 'npm run start' : 'npm run dev', url: 'http://127.0.0.1:3210', reuseExistingServer: process.env.ZEIRISHI_E2E_REUSE_SERVER === '1', env: { ZEIRISHI_FIXTURE_MODE: '1' }, timeout: 120000 } });

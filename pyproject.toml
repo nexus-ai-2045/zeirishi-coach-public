@@ -1,0 +1,9 @@
+[project]
+name = "zeirishi-coach"
+version = "0.1.0"
+description = "税理士試験の合格ライン到達を支援するコーチ (旧Claude Code skill)"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

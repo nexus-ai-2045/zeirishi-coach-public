@@ -1,0 +1,126 @@
+{
+  "document": "chart_of_accounts",
+  "fixture_name": "aoba-zakkaten-boki-practice",
+  "disclaimer": {
+    "synthetic": true,
+    "unapproved_teaching_material": true,
+    "expert_reviewed": false,
+    "official_exam_reprint": false,
+    "tax_or_legal_advice": false,
+    "statement_ja": "合成・未承認の勘定科目表。専門家監修済みではない。標準的な科目名に似せて学習用に固定したものであり、特定の会計基準や税法への準拠を主張しない。公式試験問題でも法的助言でもない。"
+  },
+  "accounts": [
+    {
+      "code": "101",
+      "name": "現金",
+      "statement": "balance_sheet",
+      "element": "asset",
+      "normal_side": "debit",
+      "description_ja": "手元の紙幣・硬貨。普通預金とは分けて記録する。"
+    },
+    {
+      "code": "102",
+      "name": "普通預金",
+      "statement": "balance_sheet",
+      "element": "asset",
+      "normal_side": "debit",
+      "description_ja": "架空の事業用普通預金。実在の金融機関を指さない。"
+    },
+    {
+      "code": "111",
+      "name": "売掛金",
+      "statement": "balance_sheet",
+      "element": "asset",
+      "normal_side": "debit",
+      "description_ja": "掛売上の未回収代金。回収しても売上は増やさない。"
+    },
+    {
+      "code": "131",
+      "name": "前払費用",
+      "statement": "balance_sheet",
+      "element": "asset",
+      "normal_side": "debit",
+      "description_ja": "支払済みのうち、問題文が次期以降分と指定した金額。費用処理法で振り替える。"
+    },
+    {
+      "code": "201",
+      "name": "買掛金",
+      "statement": "balance_sheet",
+      "element": "liability",
+      "normal_side": "credit",
+      "description_ja": "掛仕入の未払代金。支払時に仕入を再度計上しない。"
+    },
+    {
+      "code": "211",
+      "name": "未払費用",
+      "statement": "balance_sheet",
+      "element": "liability",
+      "normal_side": "credit",
+      "description_ja": "当期費用として指定された未払額、または期首から残る未払。科目は費用の種類で分けない。"
+    },
+    {
+      "code": "301",
+      "name": "資本金",
+      "statement": "balance_sheet",
+      "element": "equity",
+      "normal_side": "credit",
+      "description_ja": "この架空設例での元入れの受入科目。引出・損益振替は範囲外。"
+    },
+    {
+      "code": "401",
+      "name": "売上",
+      "statement": "income_statement",
+      "element": "revenue",
+      "normal_side": "credit",
+      "description_ja": "商品販売の収益。三分法の売上高のみ記録し、原価は相殺しない。"
+    },
+    {
+      "code": "501",
+      "name": "仕入",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "三分法の仕入高。本セットでは売上原価へ振り替えない。"
+    },
+    {
+      "code": "511",
+      "name": "給料",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "当期の給料。未払計上と、既に未払費用となっている金額の支払とを区別する。"
+    },
+    {
+      "code": "521",
+      "name": "支払家賃",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "店舗家賃。前払分を振り替えた後の借方残高が当期分である。"
+    },
+    {
+      "code": "531",
+      "name": "水道光熱費",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "水道・光熱の費用。未払は未払費用にまとめる。"
+    },
+    {
+      "code": "541",
+      "name": "保険料",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "問題文が費用と指定した保険料。税務上の必要経費判定はしない。"
+    },
+    {
+      "code": "551",
+      "name": "消耗品費",
+      "statement": "income_statement",
+      "element": "expense",
+      "normal_side": "debit",
+      "description_ja": "購入時に費用とする消耗品。資産計上はしない。"
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "_note": "改正事項は本番年度の法令で要確認",
+  "subject": "shotoku",
+  "name": "所得税法",
+  "exam": {
+    "minutes": 120,
+    "passing_line": 60,
+    "pass_percentile": 0.15,
+    "format": {
+      "calc": 50,
+      "theory": 50
+    }
+  },
+  "units": [
+    {
+      "id": "shotoku.theory-scope",
+      "name": "理論・課税の範囲"
+    },
+    {
+      "id": "shotoku.theory-income",
+      "name": "理論・各種所得"
+    },
+    {
+      "id": "shotoku.theory-proc",
+      "name": "理論・控除と手続"
+    },
+    {
+      "id": "shotoku.calc-income",
+      "name": "計算・各種所得"
+    },
+    {
+      "id": "shotoku.calc-tax",
+      "name": "計算・課税標準と税額"
+    }
+  ],
+  "topics": [
+    {
+      "id": "shotoku.theory.taxpayer",
+      "name": "納税義務者・課税所得の範囲",
+      "unit": "shotoku.theory-scope",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "非永住者の課税範囲"
+      ]
+    },
+    {
+      "id": "shotoku.theory.income-types",
+      "name": "各種所得の区分の考え方",
+      "unit": "shotoku.theory-scope",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "事業所得と雑所得の区分基準"
+      ]
+    },
+    {
+      "id": "shotoku.theory.business",
+      "name": "事業所得・必要経費・家事関連費",
+      "unit": "shotoku.theory-income",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "家事関連費の必要経費算入要件"
+      ]
+    },
+    {
+      "id": "shotoku.theory.salary-retirement",
+      "name": "給与所得・退職所得",
+      "unit": "shotoku.theory-income",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "短期退職手当等の 2 分の 1 不適用"
+      ]
+    },
+    {
+      "id": "shotoku.theory.capital-gains",
+      "name": "譲渡所得・株式等の譲渡",
+      "unit": "shotoku.theory-income",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "総合課税と分離課税の区分"
+      ]
+    },
+    {
+      "id": "shotoku.theory.real-estate",
+      "name": "不動産所得・損益通算",
+      "unit": "shotoku.theory-income",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "土地取得の負債利子の通算制限"
+      ]
+    },
+    {
+      "id": "shotoku.theory.deductions",
+      "name": "所得控除の理論",
+      "unit": "shotoku.theory-proc",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "扶養親族の合計所得要件"
+      ]
+    },
+    {
+      "id": "shotoku.theory.tax-credits",
+      "name": "税額控除・住宅ローン控除",
+      "unit": "shotoku.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "配当控除の適用除外"
+      ]
+    },
+    {
+      "id": "shotoku.theory.withholding",
+      "name": "源泉徴収・年末調整",
+      "unit": "shotoku.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "年末調整の対象外となる人"
+      ]
+    },
+    {
+      "id": "shotoku.theory.blue-return",
+      "name": "青色申告・記帳・申告手続",
+      "unit": "shotoku.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "65 万円控除の電子申告要件"
+      ]
+    },
+    {
+      "id": "shotoku.theory.timing",
+      "name": "収入金額の計上時期",
+      "unit": "shotoku.theory-scope",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "給与の支給日と計算期間"
+      ]
+    },
+    {
+      "id": "shotoku.calc.business",
+      "name": "事業所得の計算 (減価償却・専従者)",
+      "unit": "shotoku.calc-income",
+      "format": "calc",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "専従者給与の要件 (6 か月超)"
+      ]
+    },
+    {
+      "id": "shotoku.calc.salary-retirement",
+      "name": "給与・退職所得の計算",
+      "unit": "shotoku.calc-income",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "給与所得控除の上限"
+      ]
+    },
+    {
+      "id": "shotoku.calc.capital-gains",
+      "name": "譲渡所得 (総合・分離・特例)",
+      "unit": "shotoku.calc-income",
+      "format": "calc",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "3,000 万円控除と軽減税率の併用"
+      ]
+    },
+    {
+      "id": "shotoku.calc.real-estate-interest",
+      "name": "不動産・利子・配当所得",
+      "unit": "shotoku.calc-income",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "配当所得の負債利子控除"
+      ]
+    },
+    {
+      "id": "shotoku.calc.misc-temporary",
+      "name": "雑所得・一時所得・山林所得",
+      "unit": "shotoku.calc-income",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "一時所得の 2 分の 1 は総所得で"
+      ]
+    },
+    {
+      "id": "shotoku.calc.aggregation",
+      "name": "損益通算・繰越控除・課税標準",
+      "unit": "shotoku.calc-tax",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [
+        "shotoku.calc.business",
+        "shotoku.calc.capital-gains"
+      ],
+      "pitfalls": [
+        "損益通算の順序"
+      ]
+    },
+    {
+      "id": "shotoku.calc.deductions",
+      "name": "所得控除の計算",
+      "unit": "shotoku.calc-tax",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "医療費控除の 10 万円と 5%"
+      ]
+    },
+    {
+      "id": "shotoku.calc.tax-amount",
+      "name": "税額計算・税額控除・申告納税額",
+      "unit": "shotoku.calc-tax",
+      "format": "calc",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [
+        "shotoku.calc.aggregation",
+        "shotoku.calc.deductions"
+      ],
+      "pitfalls": [
+        "復興特別所得税の計算漏れ"
+      ]
+    }
+  ]
+}
