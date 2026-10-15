@@ -17,7 +17,7 @@ def collect(needs, context):
         re.fullmatch(r"[0-9a-f]{40}", context.get("sha", "")) is not None
         and re.fullmatch(r"[1-9][0-9]*", context.get("run_id", "")) is not None
         and re.fullmatch(r"[1-9][0-9]*", context.get("attempt", "")) is not None
-        and context.get("repository") == "nexus-ai-2045/zeirishi-coach"
+        and context.get("repository") == "nexus-ai-2045/zeirishi-coach-public"
     )
     status = "unknown"
     if "failure" in jobs.values():

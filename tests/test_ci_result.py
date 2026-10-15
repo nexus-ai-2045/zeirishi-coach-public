@@ -6,7 +6,7 @@ from ci_result import collect, main
 
 
 CONTEXT = {"sha": "a" * 40, "run_id": "123", "attempt": "1",
-           "repository": "nexus-ai-2045/zeirishi-coach"}
+           "repository": "nexus-ai-2045/zeirishi-coach-public"}
 
 
 def needs(cli="success", web="success"):
@@ -50,3 +50,9 @@ def test_entry_writes_receipt_and_summary(tmp_path, monkeypatch, capsys, payload
     result = json.loads(capsys.readouterr().out)
     assert result["context"]["sha"] == CONTEXT["sha"]
     assert "実運用" in summary.read_text()
+
+
+def test_private_archive_cannot_supply_public_ci_acceptance():
+    result = collect(needs(), {**CONTEXT, "repository": "nexus-ai-2045/zeirishi-coach"})
+    assert result["status"] == "unknown"
+    assert result["context_verified"] is False
