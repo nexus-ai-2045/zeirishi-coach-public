@@ -1,11 +1,23 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { BOOKKEEPING_TRIAL_CASES } from '../src/server/bookkeeping-trial-supply';
 
 const origin = 'http://127.0.0.1:3210';
+
+async function openBookkeepingMap(page: Page) {
+  // 初回の本人cookieと画面初期化を確定してから、同じ本人として案件を準備する。
+  const ready = page.waitForResponse(response => new URL(response.url()).pathname === '/api/profile'
+    && response.request().method() === 'GET');
+  await page.goto('/#map');
+  const response = await ready;
+  expect(response.status()).toBe(200);
+  const profile = await response.json();
+  await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+  await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
+  return profile;
+}
 for (const material of BOOKKEEPING_TRIAL_CASES) test(`案件 ${material.prompt().caseId} を再開して最後まで保存できる`, async ({ page }) => {
   test.setTimeout(45000);
-  await page.goto('/#map');
-  const profile = await (await page.request.get('/api/profile?subjectId=bookkeeping')).json();
+  const profile = await openBookkeepingMap(page);
   expect(profile.concepts).toHaveLength(36); expect(profile.materialChoices).toHaveLength(35);
   await expect(page.getByRole('region',{name:'簿記のコア概念'})).toContainText('大きな枝');
     const prompt = material.prompt();
@@ -227,8 +239,13 @@ test('地図の接続線はPC・縦ツリー・拡大・枝の開閉で親子カ
 
 test('期限切れの別教材は地図へ戻り、保険料ケースへ無指定で開始しない', async ({page})=>{
   test.setTimeout(90000);
-  await page.goto('/#map');
-  const profile=await (await page.request.get('/api/profile?subjectId=bookkeeping')).json();
+  // 初回応答が遅い場合も、本人と画面の準備が終わるまで案件準備を待つ。
+  await page.route('**/api/profile?subjectId=bookkeeping', async route => {
+    const response = await route.fetch();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await route.fulfill({ response });
+  }, { times: 1 });
+  const profile = await openBookkeepingMap(page);
   const choice=profile.materialChoices.find((item:{materialId:string})=>item.materialId==='syllabus-case-fixed-aro');
   expect(choice).toBeTruthy();
   const created=await page.request.post('/api/cafe',{headers:{Origin:origin},data:{action:'start',requestId:crypto.randomUUID(),concept:{subjectId:choice.subjectId,conceptId:choice.conceptId,conceptVersion:choice.conceptVersion},materialId:choice.materialId,caseVersion:choice.caseVersion}});
