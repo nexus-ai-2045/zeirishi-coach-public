@@ -1,0 +1,113 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { PGlite } from '@electric-sql/pglite';
+import { createCafeService } from '../src/server/cafe-service';
+import { StudyError } from '../src/domain/types';
+
+const code = (expected: string) => (error: unknown) => error instanceof StudyError && error.code === expected;
+
+test('cafe state: durable confidence gate, immutable attempt and separate progress', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'cafe-service-'));
+  let db = new PGlite(directory);
+  let at = new Date('2026-09-07T00:00:00Z');
+  let service = await createCafeService(db, () => at);
+  try {
+    await t.test('start parallel replay and owner isolation', async () => {
+      const [a, b] = await Promise.all([service.start('alice', 'start'), service.start('alice', 'start')]);
+      assert.equal(a.id, b.id);
+      assert.equal(a.phase, 'consultation');
+      assert.equal(a.result, null);
+      const other = await service.start('bob', 'start');
+      assert.notEqual(other.id, a.id);
+      await assert.rejects(service.get('bob', a.id), code('NOT_FOUND'));
+      await assert.rejects(service.save('bob', a.id, { requestId: 'steal', revision: 0, optionId: 'h4r9', phase: 'decision' }), code('NOT_FOUND'));
+      await assert.rejects(service.submit('bob', a.id, { requestId: 'steal-submit', optionId: 'h4r9' }), code('NOT_FOUND'));
+      await assert.rejects(service.submit('alice', a.id, { requestId: 'start', optionId: 'h4r9' }), code('REQUEST_CONFLICT'));
+    });
+    await t.test('CAS and no correctness leak before confidence, including repeated submit and reopen', async () => {
+      const a = await service.start('alice', 'start');
+      const saved = await service.save('alice', a.id, { requestId: 'draft', revision: 0, optionId: 'h4r9', phase: 'decision' });
+      assert.equal(saved.revision, 1);
+      assert.deepEqual(await service.save('alice', a.id, { requestId: 'draft', revision: 0, optionId: 'h4r9', phase: 'decision' }), saved);
+      await assert.rejects(service.save('alice', a.id, { requestId: 'stale', revision: 0, optionId: 'c7m2', phase: 'decision' }), code('REVISION_CONFLICT'));
+      await assert.rejects(service.save('alice', a.id, { requestId: 'draft', revision: 0, optionId: 'c7m2', phase: 'decision' }), code('REQUEST_CONFLICT'));
+      const submitted = await service.submit('alice', a.id, { requestId: 'answer', optionId: 'h4r9' });
+      assert.equal(submitted.phase, 'confidence');
+      assert.ok(submitted.attemptId);
+      assert.equal(submitted.result, null);
+      assert.equal(submitted.confidenceFixed, false);
+      assert.equal(JSON.stringify(submitted).includes('misconceptionCandidate'), false);
+      assert.deepEqual(await service.submit('alice', a.id, { requestId: 'answer', optionId: 'h4r9' }), submitted);
+      await assert.rejects(service.submit('alice', a.id, { requestId: 'answer-new', optionId: 'c7m2' }), code('ANSWER_ALREADY_SUBMITTED'));
+      await assert.rejects(service.save('alice', a.id, { requestId: 'late-save', revision: 1, optionId: 'c7m2', phase: 'decision' }), code('ANSWER_ALREADY_SUBMITTED'));
+      await assert.rejects(service.saveProgress('alice', a.id, { requestId: 'bypass', revision: 0, phase: 'feedback', explanation: '' }), code('CONFIDENCE_REQUIRED'));
+      await db.close(); db = new PGlite(directory); service = await createCafeService(db, () => at);
+      assert.deepEqual(await service.get('alice', a.id), submitted);
+      assert.deepEqual(await service.start('alice', 'start'), submitted);
+    });
+    await t.test('confidence fixes once, progress persists independently, retries never reset it', async () => {
+      const a = await service.start('alice', 'start');
+      const revealed = await service.confidence('alice', a.id, { requestId: 'confidence', confidence: 'normal' });
+      assert.equal(revealed.phase, 'feedback');
+      assert.equal(revealed.result?.earned, 1);
+      assert.equal(revealed.confidenceFixed, true);
+      await assert.rejects(service.confidence('alice', a.id, { requestId: 'confidence', confidence: 'high' }), code('REQUEST_CONFLICT'));
+      await assert.rejects(service.confidence('alice', a.id, { requestId: 'confidence-edit', confidence: 'high' }), code('CONFIDENCE_ALREADY_FIXED'));
+      const taught = await service.saveProgress('alice', a.id, { requestId: 'teach', revision: revealed.progressRevision, phase: 'teach_back', explanation: '支払いと費用になる期間は別です。' });
+      assert.equal(taught.phase, 'teach_back');
+      assert.equal(taught.revision, a.revision);
+      await assert.rejects(service.saveProgress('alice', a.id, { requestId: 'teach-stale', revision: revealed.progressRevision, phase: 'teach_back', explanation: '別タブ' }), code('REVISION_CONFLICT'));
+      assert.deepEqual(await service.submit('alice', a.id, { requestId: 'answer', optionId: 'h4r9' }), taught);
+      assert.deepEqual(await service.confidence('alice', a.id, { requestId: 'confidence', confidence: 'normal' }), taught);
+      await db.close(); db = new PGlite(directory); service = await createCafeService(db, () => at);
+      assert.deepEqual(await service.get('alice', a.id), taught);
+      const reflected = await service.saveProgress('alice', a.id, { requestId: 'reflect', revision: taught.progressRevision, phase: 'reflection', explanation: taught.explanation });
+      const before = (await db.query('SELECT * FROM cafe_attempts WHERE instance_id=$1', [a.id])).rows;
+      assert.deepEqual(reflected.result, taught.result);
+      const completed = await service.complete('alice', a.id, { requestId: 'complete' });
+      assert.equal(completed.status, 'completed');
+      assert.equal(completed.explanation, '');
+      assert.equal(completed.result?.earned, 1);
+      assert.deepEqual(await service.complete('alice', a.id, { requestId: 'complete' }), completed);
+      assert.deepEqual((await db.query('SELECT * FROM cafe_attempts WHERE instance_id=$1', [a.id])).rows, before);
+      assert.equal((await db.query('SELECT * FROM cafe_progress WHERE instance_id=$1', [a.id])).rows.length, 0);
+      await assert.rejects(service.saveProgress('alice', a.id, { requestId: 'after-complete', revision: reflected.progressRevision, phase: 'reflection', explanation: 'no' }), code('SESSION_CLOSED'));
+    });
+    await t.test('skip is fixed before wrong-answer reveal and cannot be edited', async () => {
+      const a = await service.start('alice', 'wrong-start');
+      const before = await service.submit('alice', a.id, { requestId: 'wrong-submit', optionId: 'c7m2' });
+      assert.equal(before.result, null);
+      const after = await service.confidence('alice', a.id, { requestId: 'skip', confidence: null });
+      assert.equal(after.confidence, null);
+      assert.equal(after.confidenceFixed, true);
+      assert.equal(after.result?.earned, 0);
+      await assert.rejects(service.confidence('alice', a.id, { requestId: 'after-skip', confidence: 'low' }), code('CONFIDENCE_ALREADY_FIXED'));
+      await assert.rejects(service.complete('alice', a.id, { requestId: 'too-early' }), code('REFLECTION_REQUIRED'));
+      await assert.rejects(service.saveProgress('bob', a.id, { requestId: 'other-progress', revision: 1, phase: 'teach_back', explanation: 'no' }), code('NOT_FOUND'));
+    });
+    await t.test('expiry clears temporary data but keeps gated immutable result; no-op reads/saves do not extend', async () => {
+      const a = await service.start('alice', 'wrong-start');
+      const saved = await service.saveProgress('alice', a.id, { requestId: 'expires-teach', revision: a.progressRevision, phase: 'teach_back', explanation: '本人の説明' });
+      at = new Date('2026-09-13T00:00:00Z');
+      assert.equal((await service.get('alice', a.id)).status, 'active');
+      await service.saveProgress('alice', a.id, { requestId: 'unchanged', revision: saved.progressRevision, phase: 'teach_back', explanation: saved.explanation });
+      at = new Date('2026-09-14T00:00:00Z');
+      const expired = await service.get('alice', a.id);
+      assert.equal(expired.status, 'expired');
+      assert.equal(expired.explanation, '');
+      assert.equal(expired.result?.earned, 0);
+      assert.equal((await db.query('SELECT * FROM cafe_progress WHERE instance_id=$1', [a.id])).rows.length, 0);
+      assert.equal((await service.start('alice', 'wrong-start')).id, a.id);
+      await assert.rejects(service.saveProgress('alice', a.id, { requestId: 'expired-save', revision: 3, phase: 'reflection', explanation: 'no' }), code('SESSION_CLOSED'));
+      const waiting = await service.start('alice', 'expires-before-confidence');
+      await service.submit('alice', waiting.id, { requestId: 'waiting-submit', optionId: 'h4r9' });
+      at = new Date('2026-09-21T00:00:00Z');
+      assert.equal((await service.get('alice', waiting.id)).result, null);
+      await assert.rejects(service.confidence('alice', waiting.id, { requestId: 'too-late', confidence: null }), code('SESSION_CLOSED'));
+      await service.purgeExpired();
+    });
+  } finally { await db.close(); await rm(directory, { recursive: true, force: true }); }
+});

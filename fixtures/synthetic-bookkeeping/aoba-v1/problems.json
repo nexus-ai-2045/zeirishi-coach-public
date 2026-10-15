@@ -1,0 +1,2526 @@
+{
+  "document": "problems",
+  "fixture_name": "aoba-zakkaten-boki-practice",
+  "fixture_version": "1.0.0",
+  "disclaimer": {
+    "synthetic": true,
+    "unapproved_teaching_material": true,
+    "expert_reviewed": false,
+    "official_exam_reprint": false,
+    "tax_or_legal_advice": false,
+    "statement_ja": "これは合成された未承認の簿記練習問題20問である。専門家の監修を受けていない。現行税法、税率、法的助言、公式試験問題の転載ではない。架空の青葉雑貨店の数値例である。"
+  },
+  "continuity_model": "independent_problems_shared_setting",
+  "continuity_ja": "20問は同じ架空商店の設定と勘定科目を共有するが、各問は独立である。前問の元帳残高を次問の期首に引き継がない。期首が必要な問は opening_balances にその問だけで完結して書く。",
+  "currency": "JPY",
+  "amount_rule": "integer_yen",
+  "problem_count": 20,
+  "problems": [
+    {
+      "id": "Q01",
+      "stage": "cash_and_capital",
+      "title": "現金の元入れ",
+      "tags": [
+        "cash",
+        "capital"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。架空の店主・青葉あおばは 20X6-04-01 に事業用現金 600000 円を元入れした。期首残高はなく、全勘定ゼロから始める。元入れの仕訳を作り、転記後の元帳と残高試算表を答えなさい。",
+      "opening_balances": [],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-01",
+          "memo": "店主による現金の元入れ",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 600000
+            },
+            {
+              "account_code": "301",
+              "side": "credit",
+              "amount": 600000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "事業用の現金が増えるので現金を借方にする。店主からの元入れは負債でも売上でもなく資本の増加なので、資本金を貸方にする。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 600000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 600000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 600000,
+          "balance_side": "credit",
+          "balance": 600000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 600000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 600000
+          }
+        ],
+        "total_debit": 600000,
+        "total_credit": 600000
+      }
+    },
+    {
+      "id": "Q02",
+      "stage": "cash_and_capital",
+      "title": "消耗品の現金購入",
+      "tags": [
+        "cash",
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 600000 円（借方）と資本金 600000 円（貸方）だけである。20X6-04-02 に包装用の消耗品 15000 円を現金で買った。消耗品は消耗品費（費用）にする。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 600000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 600000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-02",
+          "memo": "消耗品の現金購入",
+          "lines": [
+            {
+              "account_code": "551",
+              "side": "debit",
+              "amount": 15000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 15000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "消耗品は購入時の費用なので消耗品費を借方にする。現金が減るので現金を貸方にする。資本金は元入れのまま動かない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 600000,
+          "credit_total": 15000,
+          "balance_side": "debit",
+          "balance": 585000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 600000,
+          "balance_side": "credit",
+          "balance": 600000
+        },
+        {
+          "account_code": "551",
+          "account_name": "消耗品費",
+          "debit_total": 15000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 15000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 585000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 600000
+          },
+          {
+            "account_code": "551",
+            "account_name": "消耗品費",
+            "debit": 15000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 600000,
+        "total_credit": 600000
+      }
+    },
+    {
+      "id": "Q03",
+      "stage": "cash_sales",
+      "title": "現金売上",
+      "tags": [
+        "cash"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 200000 円（借方）と資本金 200000 円（貸方）だけである。20X6-04-03 に雑貨を現金 48000 円で販売した。売上原価の算定はしない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 200000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 200000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-03",
+          "memo": "雑貨の現金売上",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 48000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 48000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "現金が増えるので借方にする。販売の収益は売上の貸方にする。このセットでは売上原価を仕入から振り替えないので、売れたからといって仕入を貸方にしない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 248000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 248000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 200000,
+          "balance_side": "credit",
+          "balance": 200000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 48000,
+          "balance_side": "credit",
+          "balance": 48000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 248000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 200000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 48000
+          }
+        ],
+        "total_debit": 248000,
+        "total_credit": 248000
+      }
+    },
+    {
+      "id": "Q04",
+      "stage": "cash_purchases",
+      "title": "現金による仕入",
+      "tags": [
+        "cash",
+        "purchases"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 300000 円（借方）と資本金 300000 円（貸方）だけである。20X6-04-04 に商品 70000 円を現金で仕入れた。三分法の仕入勘定で記録し、繰越商品への振替はしない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 300000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 300000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-04",
+          "memo": "商品の現金仕入",
+          "lines": [
+            {
+              "account_code": "501",
+              "side": "debit",
+              "amount": 70000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 70000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "三分法では、仕入れた商品の原価を仕入の借方に記録する。現金払いは現金の貸方である。まだ販売していなくても、期末棚卸や繰越商品への振替はしない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 300000,
+          "credit_total": 70000,
+          "balance_side": "debit",
+          "balance": 230000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 300000,
+          "balance_side": "credit",
+          "balance": 300000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 70000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 70000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 230000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 300000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 70000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 300000,
+        "total_credit": 300000
+      }
+    },
+    {
+      "id": "Q05",
+      "stage": "credit_sales",
+      "title": "掛売上",
+      "tags": [
+        "sales_on_credit"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 230000 円（借方）、仕入 20000 円（借方）、資本金 250000 円（貸方）である。20X6-04-05 に架空得意先Aへ雑貨 54000 円を掛けで販売した。代金はまだ受け取っていない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 230000
+        },
+        {
+          "account_code": "501",
+          "side": "debit",
+          "amount": 20000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 250000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-05",
+          "memo": "架空得意先Aへの掛売上",
+          "lines": [
+            {
+              "account_code": "111",
+              "side": "debit",
+              "amount": 54000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 54000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "代金未回収の販売では現金ではなく売掛金という資産が増える。借方は売掛金、貸方は売上である。期首からある現金と仕入は動かさない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 230000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 230000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 54000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 54000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 250000,
+          "balance_side": "credit",
+          "balance": 250000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 54000,
+          "balance_side": "credit",
+          "balance": 54000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 20000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 20000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 230000,
+            "credit": 0
+          },
+          {
+            "account_code": "111",
+            "account_name": "売掛金",
+            "debit": 54000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 250000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 54000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 20000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 304000,
+        "total_credit": 304000
+      }
+    },
+    {
+      "id": "Q06",
+      "stage": "credit_purchases",
+      "title": "掛仕入",
+      "tags": [
+        "purchases"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 180000 円（借方）と資本金 180000 円（貸方）だけである。20X6-04-06 に架空仕入先Bから商品 42000 円を掛けで仕入れた。代金はまだ支払っていない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 180000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 180000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-06",
+          "memo": "架空仕入先Bからの掛仕入",
+          "lines": [
+            {
+              "account_code": "501",
+              "side": "debit",
+              "amount": 42000
+            },
+            {
+              "account_code": "201",
+              "side": "credit",
+              "amount": 42000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "掛仕入は仕入の借方と買掛金の貸方である。現金は減らない。支払は後日の別仕訳であり、この場では仕入を現金の貸方と組まない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 180000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 180000
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 0,
+          "credit_total": 42000,
+          "balance_side": "credit",
+          "balance": 42000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 180000,
+          "balance_side": "credit",
+          "balance": 180000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 42000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 42000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 180000,
+            "credit": 0
+          },
+          {
+            "account_code": "201",
+            "account_name": "買掛金",
+            "debit": 0,
+            "credit": 42000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 180000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 42000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 222000,
+        "total_credit": 222000
+      }
+    },
+    {
+      "id": "Q07",
+      "stage": "mixed_sales",
+      "title": "現金売上と掛売上",
+      "tags": [
+        "cash",
+        "sales_on_credit"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 100000 円（借方）、売掛金 30000 円（借方）、資本金 130000 円（貸方）である。20X6-04-07 に次の2件があった。(1) 店頭での現金売上 25000 円。(2) 架空得意先Aへの掛売上 40000 円。仕訳は2つに分ける。転記後の元帳と残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 100000
+        },
+        {
+          "account_code": "111",
+          "side": "debit",
+          "amount": 30000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 130000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-07",
+          "memo": "店頭の現金売上",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 25000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 25000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-07",
+          "memo": "架空得意先Aへの掛売上",
+          "lines": [
+            {
+              "account_code": "111",
+              "side": "debit",
+              "amount": 40000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 40000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "同じ日でも相手科目が違うので仕訳は分ける。現金売上は現金／売上、掛売上は売掛金／売上である。売上の貸方残高は 25000 円と 40000 円を合わせた 65000 円になる。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 125000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 125000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 70000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 70000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 130000,
+          "balance_side": "credit",
+          "balance": 130000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 65000,
+          "balance_side": "credit",
+          "balance": 65000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 125000,
+            "credit": 0
+          },
+          {
+            "account_code": "111",
+            "account_name": "売掛金",
+            "debit": 70000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 130000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 65000
+          }
+        ],
+        "total_debit": 195000,
+        "total_credit": 195000
+      }
+    },
+    {
+      "id": "Q08",
+      "stage": "settlement",
+      "title": "買掛金の現金決済",
+      "tags": [
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 150000 円（借方）、仕入 60000 円（借方）、買掛金 60000 円（貸方）、資本金 150000 円（貸方）である。20X6-04-08 に、期首から残っている買掛金 60000 円を現金で全額支払った。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 150000
+        },
+        {
+          "account_code": "501",
+          "side": "debit",
+          "amount": 60000
+        },
+        {
+          "account_code": "201",
+          "side": "credit",
+          "amount": 60000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 150000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-08",
+          "memo": "買掛金の現金による全額支払",
+          "lines": [
+            {
+              "account_code": "201",
+              "side": "debit",
+              "amount": 60000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 60000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "すでに仕入計上済みの債務を支払うので、買掛金を借方、現金を貸方にする。仕入を再度借方にしない。支払後の買掛金は差引ゼロになり、残高試算表には出さない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 150000,
+          "credit_total": 60000,
+          "balance_side": "debit",
+          "balance": 90000
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 60000,
+          "credit_total": 60000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 150000,
+          "balance_side": "credit",
+          "balance": 150000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 60000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 60000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 90000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 150000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 60000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 150000,
+        "total_credit": 150000
+      }
+    },
+    {
+      "id": "Q09",
+      "stage": "settlement",
+      "title": "売掛金の現金回収",
+      "tags": [
+        "collection"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 80000 円（借方）、売掛金 45000 円（借方）、資本金 100000 円（貸方）、売上 25000 円（貸方）である。20X6-04-09 に売掛金 45000 円を現金で全額回収した。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 80000
+        },
+        {
+          "account_code": "111",
+          "side": "debit",
+          "amount": 45000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 100000
+        },
+        {
+          "account_code": "401",
+          "side": "credit",
+          "amount": 25000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-09",
+          "memo": "売掛金の現金による全額回収",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 45000
+            },
+            {
+              "account_code": "111",
+              "side": "credit",
+              "amount": 45000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "回収は現金の増加と売掛金の減少であり、売上の追加計上ではない。売掛金は差引ゼロになるので残高試算表には出さない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 125000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 125000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 45000,
+          "credit_total": 45000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 100000,
+          "balance_side": "credit",
+          "balance": 100000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 25000,
+          "balance_side": "credit",
+          "balance": 25000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 125000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 100000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 25000
+          }
+        ],
+        "total_debit": 125000,
+        "total_credit": 125000
+      }
+    },
+    {
+      "id": "Q10",
+      "stage": "settlement",
+      "title": "普通預金による買掛金の一部支払",
+      "tags": [
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は普通預金 200000 円（借方）、現金 50000 円（借方）、買掛金 80000 円（貸方）、資本金 170000 円（貸方）である。20X6-04-10 に買掛金のうち 30000 円だけを普通預金から支払った。残りは未払いのままである。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "102",
+          "side": "debit",
+          "amount": 200000
+        },
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 50000
+        },
+        {
+          "account_code": "201",
+          "side": "credit",
+          "amount": 80000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 170000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-10",
+          "memo": "買掛金の一部を普通預金から支払",
+          "lines": [
+            {
+              "account_code": "201",
+              "side": "debit",
+              "amount": 30000
+            },
+            {
+              "account_code": "102",
+              "side": "credit",
+              "amount": 30000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "預金からの支払は普通預金を貸方にする。現金勘定は使わない。買掛金は 80000 円から 30000 円を減らした 50000 円が貸方に残る。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 50000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 50000
+        },
+        {
+          "account_code": "102",
+          "account_name": "普通預金",
+          "debit_total": 200000,
+          "credit_total": 30000,
+          "balance_side": "debit",
+          "balance": 170000
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 30000,
+          "credit_total": 80000,
+          "balance_side": "credit",
+          "balance": 50000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 170000,
+          "balance_side": "credit",
+          "balance": 170000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 50000,
+            "credit": 0
+          },
+          {
+            "account_code": "102",
+            "account_name": "普通預金",
+            "debit": 170000,
+            "credit": 0
+          },
+          {
+            "account_code": "201",
+            "account_name": "買掛金",
+            "debit": 0,
+            "credit": 50000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 170000
+          }
+        ],
+        "total_debit": 220000,
+        "total_credit": 220000
+      }
+    },
+    {
+      "id": "Q11",
+      "stage": "combined_operating",
+      "title": "回収と支払",
+      "tags": [
+        "collection",
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 120000 円（借方）、売掛金 50000 円（借方）、買掛金 40000 円（貸方）、資本金 130000 円（貸方）である。(1) 20X6-04-11 に売掛金 20000 円を現金で回収した。(2) 20X6-04-12 に買掛金 40000 円を現金で支払った。2つの仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 120000
+        },
+        {
+          "account_code": "111",
+          "side": "debit",
+          "amount": 50000
+        },
+        {
+          "account_code": "201",
+          "side": "credit",
+          "amount": 40000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 130000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-11",
+          "memo": "売掛金の一部を現金で回収",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 20000
+            },
+            {
+              "account_code": "111",
+              "side": "credit",
+              "amount": 20000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-12",
+          "memo": "買掛金の現金による支払",
+          "lines": [
+            {
+              "account_code": "201",
+              "side": "debit",
+              "amount": 40000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 40000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "回収は現金／売掛金、支払は買掛金／現金である。どちらも収益と費用の新規計上ではない。現金は 120000 円に 20000 円を足し、40000 円を引いた 100000 円になる。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 140000,
+          "credit_total": 40000,
+          "balance_side": "debit",
+          "balance": 100000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 50000,
+          "credit_total": 20000,
+          "balance_side": "debit",
+          "balance": 30000
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 40000,
+          "credit_total": 40000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 130000,
+          "balance_side": "credit",
+          "balance": 130000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 100000,
+            "credit": 0
+          },
+          {
+            "account_code": "111",
+            "account_name": "売掛金",
+            "debit": 30000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 130000
+          }
+        ],
+        "total_debit": 130000,
+        "total_credit": 130000
+      }
+    },
+    {
+      "id": "Q12",
+      "stage": "combined_operating",
+      "title": "掛取引とその後の回収・支払",
+      "tags": [
+        "sales_on_credit",
+        "purchases",
+        "collection",
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 300000 円（借方）と資本金 300000 円（貸方）だけである。次の4件を日付順に仕訳しなさい。(1) 20X6-04-13 架空得意先Aへの掛売上 90000 円。(2) 20X6-04-14 架空仕入先Bからの掛仕入 50000 円。(3) 20X6-04-15 売掛金のうち 40000 円を現金で回収。(4) 20X6-04-16 買掛金のうち 20000 円を現金で支払。転記後の元帳と残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 300000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 300000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-13",
+          "memo": "架空得意先Aへの掛売上",
+          "lines": [
+            {
+              "account_code": "111",
+              "side": "debit",
+              "amount": 90000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 90000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-14",
+          "memo": "架空仕入先Bからの掛仕入",
+          "lines": [
+            {
+              "account_code": "501",
+              "side": "debit",
+              "amount": 50000
+            },
+            {
+              "account_code": "201",
+              "side": "credit",
+              "amount": 50000
+            }
+          ]
+        },
+        {
+          "entry_no": 3,
+          "date": "20X6-04-15",
+          "memo": "売掛金の一部を現金で回収",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 40000
+            },
+            {
+              "account_code": "111",
+              "side": "credit",
+              "amount": 40000
+            }
+          ]
+        },
+        {
+          "entry_no": 4,
+          "date": "20X6-04-16",
+          "memo": "買掛金の一部を現金で支払",
+          "lines": [
+            {
+              "account_code": "201",
+              "side": "debit",
+              "amount": 20000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 20000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "売上と仕入は発生した日に計上する。あとの回収と支払は債権・債務と現金の入出金なので、売上 90000 円と仕入 50000 円は変えない。売掛金は 50000 円、買掛金は 30000 円残る。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 340000,
+          "credit_total": 20000,
+          "balance_side": "debit",
+          "balance": 320000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 90000,
+          "credit_total": 40000,
+          "balance_side": "debit",
+          "balance": 50000
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 20000,
+          "credit_total": 50000,
+          "balance_side": "credit",
+          "balance": 30000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 300000,
+          "balance_side": "credit",
+          "balance": 300000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 90000,
+          "balance_side": "credit",
+          "balance": 90000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 50000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 50000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 320000,
+            "credit": 0
+          },
+          {
+            "account_code": "111",
+            "account_name": "売掛金",
+            "debit": 50000,
+            "credit": 0
+          },
+          {
+            "account_code": "201",
+            "account_name": "買掛金",
+            "debit": 0,
+            "credit": 30000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 300000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 90000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 50000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 420000,
+        "total_credit": 420000
+      }
+    },
+    {
+      "id": "Q13",
+      "stage": "prepaid",
+      "title": "当月分家賃の現金支払",
+      "tags": [
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 400000 円（借方）と資本金 400000 円（貸方）だけである。20X6-04-17 に当月分の店舗家賃 60000 円だけを現金で支払った。次期以降に対応する前払分はない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 400000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 400000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-17",
+          "memo": "当月分家賃の現金支払",
+          "lines": [
+            {
+              "account_code": "521",
+              "side": "debit",
+              "amount": 60000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 60000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "前払分がない当期の家賃は、支払家賃の借方と現金の貸方だけである。前払費用は使わない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 400000,
+          "credit_total": 60000,
+          "balance_side": "debit",
+          "balance": 340000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 400000,
+          "balance_side": "credit",
+          "balance": 400000
+        },
+        {
+          "account_code": "521",
+          "account_name": "支払家賃",
+          "debit_total": 60000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 60000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 340000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 400000
+          },
+          {
+            "account_code": "521",
+            "account_name": "支払家賃",
+            "debit": 60000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 400000,
+        "total_credit": 400000
+      }
+    },
+    {
+      "id": "Q14",
+      "stage": "prepaid",
+      "title": "家賃のうち前払分の振替",
+      "tags": [
+        "prepaid",
+        "payment"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 400000 円（借方）と資本金 400000 円（貸方）だけである。20X6-04-18 に家賃 90000 円を現金で支払った。与件として、うち 30000 円は当期分、60000 円は次期以降分とする。日数や月数での按分はしない。処理は費用処理法とし、(1) 支払時に全額を支払家賃にし、(2) 次期以降分 60000 円を前払費用へ振り替える。2つの仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 400000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 400000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-18",
+          "memo": "家賃の支払（全額をいったん費用）",
+          "lines": [
+            {
+              "account_code": "521",
+              "side": "debit",
+              "amount": 90000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 90000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-18",
+          "memo": "次期以降の家賃を前払費用へ振替",
+          "lines": [
+            {
+              "account_code": "131",
+              "side": "debit",
+              "amount": 60000
+            },
+            {
+              "account_code": "521",
+              "side": "credit",
+              "amount": 60000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "費用処理法では、支払時に全額を支払家賃／現金とする。問題が次期以降分と指定した 60000 円だけを前払費用／支払家賃へ振り替える。日数按分はしない。支払家賃の残高は当期分 30000 円になる。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 400000,
+          "credit_total": 90000,
+          "balance_side": "debit",
+          "balance": 310000
+        },
+        {
+          "account_code": "131",
+          "account_name": "前払費用",
+          "debit_total": 60000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 60000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 400000,
+          "balance_side": "credit",
+          "balance": 400000
+        },
+        {
+          "account_code": "521",
+          "account_name": "支払家賃",
+          "debit_total": 90000,
+          "credit_total": 60000,
+          "balance_side": "debit",
+          "balance": 30000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 310000,
+            "credit": 0
+          },
+          {
+            "account_code": "131",
+            "account_name": "前払費用",
+            "debit": 60000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 400000
+          },
+          {
+            "account_code": "521",
+            "account_name": "支払家賃",
+            "debit": 30000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 400000,
+        "total_credit": 400000
+      }
+    },
+    {
+      "id": "Q15",
+      "stage": "prepaid",
+      "title": "保険料のうち前払分の振替",
+      "tags": [
+        "prepaid"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 250000 円（借方）と資本金 250000 円（貸方）だけである。20X6-04-19 に保険料 120000 円を現金で支払った。与件として当期分は 30000 円、次期以降分は 90000 円とする。按分計算はしない。費用処理法で、(1) 全額をいったん保険料にし、(2) 次期以降分を前払費用へ振り替える。転記後の元帳と残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 250000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 250000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-19",
+          "memo": "保険料の現金支払",
+          "lines": [
+            {
+              "account_code": "541",
+              "side": "debit",
+              "amount": 120000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 120000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-19",
+          "memo": "次期以降の保険料を前払費用へ振替",
+          "lines": [
+            {
+              "account_code": "131",
+              "side": "debit",
+              "amount": 90000
+            },
+            {
+              "account_code": "541",
+              "side": "credit",
+              "amount": 90000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "保険料も費用処理法で、いったん保険料／現金とし、指定された次期以降分 90000 円を前払費用／保険料へ振り替える。保険料の残高は当期分 30000 円である。税務上の必要経費かどうかは判定しない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 250000,
+          "credit_total": 120000,
+          "balance_side": "debit",
+          "balance": 130000
+        },
+        {
+          "account_code": "131",
+          "account_name": "前払費用",
+          "debit_total": 90000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 90000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 250000,
+          "balance_side": "credit",
+          "balance": 250000
+        },
+        {
+          "account_code": "541",
+          "account_name": "保険料",
+          "debit_total": 120000,
+          "credit_total": 90000,
+          "balance_side": "debit",
+          "balance": 30000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 130000,
+            "credit": 0
+          },
+          {
+            "account_code": "131",
+            "account_name": "前払費用",
+            "debit": 90000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 250000
+          },
+          {
+            "account_code": "541",
+            "account_name": "保険料",
+            "debit": 30000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 250000,
+        "total_credit": 250000
+      }
+    },
+    {
+      "id": "Q16",
+      "stage": "prepaid",
+      "title": "期首前払費用の当期振替",
+      "tags": [
+        "prepaid"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 100000 円（借方）、前払費用 24000 円（借方）、資本金 124000 円（貸方）である。20X6-04-20、期首の前払費用 24000 円は与件として全額が当期の支払家賃に対応する。新たな現金支払はない。当期費用への振替仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 100000
+        },
+        {
+          "account_code": "131",
+          "side": "debit",
+          "amount": 24000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 124000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-20",
+          "memo": "期首前払費用の当期家賃への振替",
+          "lines": [
+            {
+              "account_code": "521",
+              "side": "debit",
+              "amount": 24000
+            },
+            {
+              "account_code": "131",
+              "side": "credit",
+              "amount": 24000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "期首に資産として残っている前払費用を、当期の支払家賃へ移す。現金の新規支払はない。振替後の前払費用はゼロになり、残高試算表からは除く。元帳の期待値には残高ゼロとして残す。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 100000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 100000
+        },
+        {
+          "account_code": "131",
+          "account_name": "前払費用",
+          "debit_total": 24000,
+          "credit_total": 24000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 124000,
+          "balance_side": "credit",
+          "balance": 124000
+        },
+        {
+          "account_code": "521",
+          "account_name": "支払家賃",
+          "debit_total": 24000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 24000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 100000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 124000
+          },
+          {
+            "account_code": "521",
+            "account_name": "支払家賃",
+            "debit": 24000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 124000,
+        "total_credit": 124000
+      }
+    },
+    {
+      "id": "Q17",
+      "stage": "accrual",
+      "title": "給料の未払計上",
+      "tags": [
+        "accrual"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 500000 円（借方）と資本金 500000 円（貸方）だけである。20X6-04-21、当期の給料のうちまだ支払っていない 70000 円を未払費用として計上する。現金の動きはない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 500000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 500000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-21",
+          "memo": "未払給料の計上",
+          "lines": [
+            {
+              "account_code": "511",
+              "side": "debit",
+              "amount": 70000
+            },
+            {
+              "account_code": "211",
+              "side": "credit",
+              "amount": 70000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "支払前でも、当期の給料として指定された金額を給料／未払費用で計上する。現金はまだ減らない。未払費用は負債なので貸方残高になる。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 500000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 500000
+        },
+        {
+          "account_code": "211",
+          "account_name": "未払費用",
+          "debit_total": 0,
+          "credit_total": 70000,
+          "balance_side": "credit",
+          "balance": 70000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 500000,
+          "balance_side": "credit",
+          "balance": 500000
+        },
+        {
+          "account_code": "511",
+          "account_name": "給料",
+          "debit_total": 70000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 70000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 500000,
+            "credit": 0
+          },
+          {
+            "account_code": "211",
+            "account_name": "未払費用",
+            "debit": 0,
+            "credit": 70000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 500000
+          },
+          {
+            "account_code": "511",
+            "account_name": "給料",
+            "debit": 70000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 570000,
+        "total_credit": 570000
+      }
+    },
+    {
+      "id": "Q18",
+      "stage": "accrual",
+      "title": "水道光熱費の未払計上",
+      "tags": [
+        "accrual"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 220000 円（借方）と資本金 220000 円（貸方）だけである。20X6-04-22、当期の水道光熱費 13000 円の請求を受けたが、支払はまだである。未払費用に計上する。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 220000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 220000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-22",
+          "memo": "未払の水道光熱費を計上",
+          "lines": [
+            {
+              "account_code": "531",
+              "side": "debit",
+              "amount": 13000
+            },
+            {
+              "account_code": "211",
+              "side": "credit",
+              "amount": 13000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "請求があっても未払いなら、水道光熱費／未払費用とする。この問では支払わない。支払の仕訳は、実際に支払う別の問題で扱う。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 220000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 220000
+        },
+        {
+          "account_code": "211",
+          "account_name": "未払費用",
+          "debit_total": 0,
+          "credit_total": 13000,
+          "balance_side": "credit",
+          "balance": 13000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 220000,
+          "balance_side": "credit",
+          "balance": 220000
+        },
+        {
+          "account_code": "531",
+          "account_name": "水道光熱費",
+          "debit_total": 13000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 13000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 220000,
+            "credit": 0
+          },
+          {
+            "account_code": "211",
+            "account_name": "未払費用",
+            "debit": 0,
+            "credit": 13000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 220000
+          },
+          {
+            "account_code": "531",
+            "account_name": "水道光熱費",
+            "debit": 13000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 233000,
+        "total_credit": 233000
+      }
+    },
+    {
+      "id": "Q19",
+      "stage": "accrual_settlement",
+      "title": "期首未払費用の現金決済",
+      "tags": [
+        "payment",
+        "accrual"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は現金 180000 円（借方）、未払費用 28000 円（貸方）、資本金 152000 円（貸方）である。未払費用 28000 円は前期までの給料であり、すでに費用計上済みという与件である。20X6-04-23 にその 28000 円を現金で支払った。当期の新しい給料は計上しない。仕訳と、転記後の元帳・残高試算表を答えなさい。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 180000
+        },
+        {
+          "account_code": "211",
+          "side": "credit",
+          "amount": 28000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 152000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-23",
+          "memo": "期首未払費用の現金決済",
+          "lines": [
+            {
+              "account_code": "211",
+              "side": "debit",
+              "amount": 28000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 28000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "期首から負債になっている金額の支払いなので、未払費用を借方、現金を貸方にする。給料を借方にすると当期費用の二重計上になる。支払後の未払費用はゼロである。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 180000,
+          "credit_total": 28000,
+          "balance_side": "debit",
+          "balance": 152000
+        },
+        {
+          "account_code": "211",
+          "account_name": "未払費用",
+          "debit_total": 28000,
+          "credit_total": 28000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 152000,
+          "balance_side": "credit",
+          "balance": 152000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 152000,
+            "credit": 0
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 152000
+          }
+        ],
+        "total_debit": 152000,
+        "total_credit": 152000
+      }
+    },
+    {
+      "id": "Q20",
+      "stage": "comprehensive",
+      "title": "現金・掛・前払・未払の総合",
+      "tags": [
+        "cash",
+        "capital",
+        "sales_on_credit",
+        "purchases",
+        "payment",
+        "collection",
+        "prepaid",
+        "accrual"
+      ],
+      "continuity": "independent",
+      "opening_note_ja": "期首残高は本問だけの与件である。他問の元帳や試算表からは引き継がない。空配列はその問の開始時点で全勘定がゼロであることを意味する。",
+      "prompt_ja": "本問は他問から独立している。舞台は架空の青葉雑貨店、日付は架空の20X6年4月である。期首は次のとおりである。現金 200000 円（借方）、普通預金 150000 円（借方）、売掛金 40000 円（借方）、前払費用 20000 円（借方）、買掛金 30000 円（貸方）、未払費用 10000 円（貸方）、資本金 370000 円（貸方）。前払費用 20000 円は当期の保険料に対応し、未払費用 10000 円はすでに前期までの給料として費用計上済み、という与件である。次を日付順に仕訳し、転記後の元帳と残高試算表を答えなさい。(1) 20X6-04-24 現金売上 55000 円。(2) 20X6-04-24 架空得意先Aへの掛売上 35000 円。(3) 20X6-04-25 架空仕入先Bからの掛仕入 45000 円。(4) 20X6-04-26 売掛金 25000 円を普通預金で回収。(5) 20X6-04-27 買掛金 30000 円を普通預金で支払。(6) 20X6-04-28 消耗品 6000 円を現金で購入し消耗品費にする。(7) 20X6-04-29 期首前払費用 20000 円を当期の保険料へ振り替える。現金は動かない。(8) 20X6-04-30 当期の未払給料 18000 円を計上する。現金は動かない。(9) 20X6-04-30 期首の未払費用 10000 円を現金で支払う。給料の再計上はしない。",
+      "opening_balances": [
+        {
+          "account_code": "101",
+          "side": "debit",
+          "amount": 200000
+        },
+        {
+          "account_code": "102",
+          "side": "debit",
+          "amount": 150000
+        },
+        {
+          "account_code": "111",
+          "side": "debit",
+          "amount": 40000
+        },
+        {
+          "account_code": "131",
+          "side": "debit",
+          "amount": 20000
+        },
+        {
+          "account_code": "201",
+          "side": "credit",
+          "amount": 30000
+        },
+        {
+          "account_code": "211",
+          "side": "credit",
+          "amount": 10000
+        },
+        {
+          "account_code": "301",
+          "side": "credit",
+          "amount": 370000
+        }
+      ],
+      "expected_entries": [
+        {
+          "entry_no": 1,
+          "date": "20X6-04-24",
+          "memo": "現金売上",
+          "lines": [
+            {
+              "account_code": "101",
+              "side": "debit",
+              "amount": 55000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 55000
+            }
+          ]
+        },
+        {
+          "entry_no": 2,
+          "date": "20X6-04-24",
+          "memo": "架空得意先Aへの掛売上",
+          "lines": [
+            {
+              "account_code": "111",
+              "side": "debit",
+              "amount": 35000
+            },
+            {
+              "account_code": "401",
+              "side": "credit",
+              "amount": 35000
+            }
+          ]
+        },
+        {
+          "entry_no": 3,
+          "date": "20X6-04-25",
+          "memo": "架空仕入先Bからの掛仕入",
+          "lines": [
+            {
+              "account_code": "501",
+              "side": "debit",
+              "amount": 45000
+            },
+            {
+              "account_code": "201",
+              "side": "credit",
+              "amount": 45000
+            }
+          ]
+        },
+        {
+          "entry_no": 4,
+          "date": "20X6-04-26",
+          "memo": "売掛金の一部を普通預金で回収",
+          "lines": [
+            {
+              "account_code": "102",
+              "side": "debit",
+              "amount": 25000
+            },
+            {
+              "account_code": "111",
+              "side": "credit",
+              "amount": 25000
+            }
+          ]
+        },
+        {
+          "entry_no": 5,
+          "date": "20X6-04-27",
+          "memo": "買掛金を普通預金で支払",
+          "lines": [
+            {
+              "account_code": "201",
+              "side": "debit",
+              "amount": 30000
+            },
+            {
+              "account_code": "102",
+              "side": "credit",
+              "amount": 30000
+            }
+          ]
+        },
+        {
+          "entry_no": 6,
+          "date": "20X6-04-28",
+          "memo": "消耗品の現金購入",
+          "lines": [
+            {
+              "account_code": "551",
+              "side": "debit",
+              "amount": 6000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 6000
+            }
+          ]
+        },
+        {
+          "entry_no": 7,
+          "date": "20X6-04-29",
+          "memo": "期首前払費用を当期の保険料へ振替",
+          "lines": [
+            {
+              "account_code": "541",
+              "side": "debit",
+              "amount": 20000
+            },
+            {
+              "account_code": "131",
+              "side": "credit",
+              "amount": 20000
+            }
+          ]
+        },
+        {
+          "entry_no": 8,
+          "date": "20X6-04-30",
+          "memo": "未払給料の計上",
+          "lines": [
+            {
+              "account_code": "511",
+              "side": "debit",
+              "amount": 18000
+            },
+            {
+              "account_code": "211",
+              "side": "credit",
+              "amount": 18000
+            }
+          ]
+        },
+        {
+          "entry_no": 9,
+          "date": "20X6-04-30",
+          "memo": "期首未払費用の現金決済",
+          "lines": [
+            {
+              "account_code": "211",
+              "side": "debit",
+              "amount": 10000
+            },
+            {
+              "account_code": "101",
+              "side": "credit",
+              "amount": 10000
+            }
+          ]
+        }
+      ],
+      "explanation_ja": "掛売上は売掛金／売上、掛仕入は仕入／買掛金である。普通預金での回収と支払に現金勘定は使わない。期首の前払費用は保険料／前払費用で当期へ振り替え、現金は動かない。新しい未払給料は給料／未払費用。期首未払の支払は未払費用／現金であり、給料を重ねて借方にしない。差引ゼロの前払費用は元帳に残し、残高試算表には載せない。",
+      "expected_ledger": [
+        {
+          "account_code": "101",
+          "account_name": "現金",
+          "debit_total": 255000,
+          "credit_total": 16000,
+          "balance_side": "debit",
+          "balance": 239000
+        },
+        {
+          "account_code": "102",
+          "account_name": "普通預金",
+          "debit_total": 175000,
+          "credit_total": 30000,
+          "balance_side": "debit",
+          "balance": 145000
+        },
+        {
+          "account_code": "111",
+          "account_name": "売掛金",
+          "debit_total": 75000,
+          "credit_total": 25000,
+          "balance_side": "debit",
+          "balance": 50000
+        },
+        {
+          "account_code": "131",
+          "account_name": "前払費用",
+          "debit_total": 20000,
+          "credit_total": 20000,
+          "balance_side": "zero",
+          "balance": 0
+        },
+        {
+          "account_code": "201",
+          "account_name": "買掛金",
+          "debit_total": 30000,
+          "credit_total": 75000,
+          "balance_side": "credit",
+          "balance": 45000
+        },
+        {
+          "account_code": "211",
+          "account_name": "未払費用",
+          "debit_total": 10000,
+          "credit_total": 28000,
+          "balance_side": "credit",
+          "balance": 18000
+        },
+        {
+          "account_code": "301",
+          "account_name": "資本金",
+          "debit_total": 0,
+          "credit_total": 370000,
+          "balance_side": "credit",
+          "balance": 370000
+        },
+        {
+          "account_code": "401",
+          "account_name": "売上",
+          "debit_total": 0,
+          "credit_total": 90000,
+          "balance_side": "credit",
+          "balance": 90000
+        },
+        {
+          "account_code": "501",
+          "account_name": "仕入",
+          "debit_total": 45000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 45000
+        },
+        {
+          "account_code": "511",
+          "account_name": "給料",
+          "debit_total": 18000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 18000
+        },
+        {
+          "account_code": "541",
+          "account_name": "保険料",
+          "debit_total": 20000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 20000
+        },
+        {
+          "account_code": "551",
+          "account_name": "消耗品費",
+          "debit_total": 6000,
+          "credit_total": 0,
+          "balance_side": "debit",
+          "balance": 6000
+        }
+      ],
+      "expected_trial_balance": {
+        "rows": [
+          {
+            "account_code": "101",
+            "account_name": "現金",
+            "debit": 239000,
+            "credit": 0
+          },
+          {
+            "account_code": "102",
+            "account_name": "普通預金",
+            "debit": 145000,
+            "credit": 0
+          },
+          {
+            "account_code": "111",
+            "account_name": "売掛金",
+            "debit": 50000,
+            "credit": 0
+          },
+          {
+            "account_code": "201",
+            "account_name": "買掛金",
+            "debit": 0,
+            "credit": 45000
+          },
+          {
+            "account_code": "211",
+            "account_name": "未払費用",
+            "debit": 0,
+            "credit": 18000
+          },
+          {
+            "account_code": "301",
+            "account_name": "資本金",
+            "debit": 0,
+            "credit": 370000
+          },
+          {
+            "account_code": "401",
+            "account_name": "売上",
+            "debit": 0,
+            "credit": 90000
+          },
+          {
+            "account_code": "501",
+            "account_name": "仕入",
+            "debit": 45000,
+            "credit": 0
+          },
+          {
+            "account_code": "511",
+            "account_name": "給料",
+            "debit": 18000,
+            "credit": 0
+          },
+          {
+            "account_code": "541",
+            "account_name": "保険料",
+            "debit": 20000,
+            "credit": 0
+          },
+          {
+            "account_code": "551",
+            "account_name": "消耗品費",
+            "debit": 6000,
+            "credit": 0
+          }
+        ],
+        "total_debit": 523000,
+        "total_credit": 523000
+      }
+    }
+  ]
+}

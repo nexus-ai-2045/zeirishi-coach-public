@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 */zeirishi-coach/scripts/coach.py *)",
+      "Bash(python3 ~/.claude/skills/zeirishi-coach/scripts/coach.py *)"
+    ]
+  }
+}
