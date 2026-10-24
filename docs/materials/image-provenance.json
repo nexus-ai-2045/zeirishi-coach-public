@@ -1,0 +1,41 @@
+{
+  "scope": "学習画面の架空店舗の挿絵",
+  "notice": "生成依頼と保存物の対応を記録する。第三者権利不侵害や専門審査の保証ではない。",
+  "assets": [
+    {
+      "path": "web/public/images/bookkeeping-depreciation.png",
+      "sha256": "481b3b7a7c2ce4a7885200e81a2775846f017cf29d344a2ffbcf1b6a20af97c0",
+      "origin": "OpenAI image generation",
+      "generation_date": "2026-10-05",
+      "input": "架空の店舗、人物・ロゴ・正答を指定しない独自プロンプト"
+    },
+    {
+      "path": "web/public/images/bookkeeping-equipment.png",
+      "sha256": "2bdd28c81811ea48c3248653190e2128fdda59bfa2e7fefcbf77a5ae9e6f77ba",
+      "origin": "OpenAI image generation",
+      "generation_date": "2026-10-05",
+      "input": "架空の店舗、人物・ロゴ・正答を指定しない独自プロンプト"
+    },
+    {
+      "path": "web/public/images/bookkeeping-inventory.png",
+      "sha256": "a49a6ed8228b61c46cbbb278c6b8052b66e26edb46aff6ee468c22cb02211328",
+      "origin": "OpenAI image generation",
+      "generation_date": "2026-10-05",
+      "input": "架空の店舗、人物・ロゴ・正答を指定しない独自プロンプト"
+    },
+    {
+      "path": "web/public/images/bookkeeping-provisions.png",
+      "sha256": "c59cc12cb4cadf614f63a056908e89dc44b352997be2993e26e0512709471de5",
+      "origin": "OpenAI image generation",
+      "generation_date": "2026-10-05",
+      "input": "架空の店舗、人物・ロゴ・正答を指定しない独自プロンプト"
+    },
+    {
+      "path": "web/public/images/cafe-consultation.png",
+      "sha256": "42271a297f8f5c30eb120b2d72c815b4020542d0c49ceb8825015efef501d16c",
+      "origin": "OpenAI image generation",
+      "generation_date": "2026-10-16",
+      "input": "架空の店舗、人物・ロゴ・正答を指定しない独自プロンプト"
+    }
+  ]
+}

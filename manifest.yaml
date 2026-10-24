@@ -1,0 +1,31 @@
+name: zeirishi-coach
+version: 0.2.0
+description: 税理士試験の合格ライン到達を支援するコーチ (旧Claude Code skill)
+runtime:
+  claude-code:
+    install_path: ~/.claude/skills/zeirishi-coach
+    entry: SKILL.md
+    requires:
+      - python3 (3.11+)
+files:
+  - SKILL.md
+  - README.md
+  - docs/plans/development-reference.md
+  - references/question-rubric.md
+  - references/explanation-style.md
+  - references/subjects/boki.json
+  - references/subjects/zaihyo.json
+  - references/subjects/hojin.json
+  - references/subjects/shohi.json
+  - references/subjects/sozoku.json
+  - references/subjects/shotoku.json
+  - runtime/claude/settings-snippet.json
+  - scripts/coach.py
+  - scripts/coach_lib/__init__.py
+  - scripts/coach_lib/subjects.py
+  - scripts/coach_lib/model.py
+  - scripts/coach_lib/state.py
+  - scripts/coach_lib/scheduler.py
+  - scripts/coach_lib/report.py
+  - scripts/coach_lib/dashboard.py
+state_dir: ~/.zeirishi-coach

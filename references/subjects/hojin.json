@@ -1,0 +1,306 @@
+{
+  "_note": "改正事項は本番年度の法令で要確認",
+  "subject": "hojin",
+  "name": "法人税法",
+  "exam": {
+    "minutes": 120,
+    "passing_line": 60,
+    "pass_percentile": 0.15,
+    "format": {
+      "calc": 50,
+      "theory": 50
+    }
+  },
+  "units": [
+    {
+      "id": "hojin.theory-income",
+      "name": "理論・所得計算"
+    },
+    {
+      "id": "hojin.theory-items",
+      "name": "理論・各論"
+    },
+    {
+      "id": "hojin.theory-system",
+      "name": "理論・制度と手続"
+    },
+    {
+      "id": "hojin.calc-adjust",
+      "name": "計算・申告調整"
+    },
+    {
+      "id": "hojin.calc-tax",
+      "name": "計算・税額"
+    }
+  ],
+  "topics": [
+    {
+      "id": "hojin.theory.income-concept",
+      "name": "所得金額の計算通則・別段の定め",
+      "unit": "hojin.theory-income",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "公正処理基準と別段の定めの優先関係"
+      ]
+    },
+    {
+      "id": "hojin.theory.revenue-timing",
+      "name": "益金の額・収益計上時期",
+      "unit": "hojin.theory-income",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "引渡基準と検収基準の混同"
+      ]
+    },
+    {
+      "id": "hojin.theory.expense-timing",
+      "name": "損金の額・債務確定主義",
+      "unit": "hojin.theory-income",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "債務確定の 3 要件の書き漏れ"
+      ]
+    },
+    {
+      "id": "hojin.theory.depreciation",
+      "name": "減価償却・繰延資産の理論",
+      "unit": "hojin.theory-items",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "損金経理要件の書き漏れ"
+      ]
+    },
+    {
+      "id": "hojin.theory.entertainment",
+      "name": "交際費等・寄附金",
+      "unit": "hojin.theory-items",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "飲食費の除外基準額 (改正あり、要確認)"
+      ]
+    },
+    {
+      "id": "hojin.theory.bad-debt",
+      "name": "貸倒損失・貸倒引当金",
+      "unit": "hojin.theory-items",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "法律上の貸倒と事実上の貸倒の区別"
+      ]
+    },
+    {
+      "id": "hojin.theory.compensation",
+      "name": "役員給与",
+      "unit": "hojin.theory-items",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "定期同額給与の改定時期"
+      ]
+    },
+    {
+      "id": "hojin.theory.group",
+      "name": "グループ法人税制・組織再編",
+      "unit": "hojin.theory-system",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "完全支配関係の判定"
+      ]
+    },
+    {
+      "id": "hojin.theory.foreign",
+      "name": "外国税額控除・国際課税",
+      "unit": "hojin.theory-system",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "low",
+      "prereq": [],
+      "pitfalls": [
+        "控除限度額の計算式"
+      ]
+    },
+    {
+      "id": "hojin.theory.loss",
+      "name": "欠損金の繰越・繰戻",
+      "unit": "hojin.theory-system",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "中小法人の控除限度"
+      ]
+    },
+    {
+      "id": "hojin.theory.procedure",
+      "name": "申告・納付・更正",
+      "unit": "hojin.theory-system",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "確定申告期限の延長要件"
+      ]
+    },
+    {
+      "id": "hojin.theory.tax-credit",
+      "name": "税額控除の理論",
+      "unit": "hojin.theory-system",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "所得税額控除と外国税額控除の順序"
+      ]
+    },
+    {
+      "id": "hojin.calc.depreciation",
+      "name": "減価償却の限度額計算",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 7,
+      "frequency": "high",
+      "prereq": [
+        "hojin.theory.depreciation"
+      ],
+      "pitfalls": [
+        "償却超過額の翌期認容"
+      ]
+    },
+    {
+      "id": "hojin.calc.entertainment",
+      "name": "交際費・寄附金の限度額",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [
+        "hojin.theory.entertainment"
+      ],
+      "pitfalls": [
+        "寄附金の損金算入限度額の計算式"
+      ]
+    },
+    {
+      "id": "hojin.calc.compensation",
+      "name": "役員給与・退職給与の計算",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "使用人兼務役員の判定"
+      ]
+    },
+    {
+      "id": "hojin.calc.bad-debt",
+      "name": "貸倒引当金の繰入限度額",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "実質的に債権とみられない金額"
+      ]
+    },
+    {
+      "id": "hojin.calc.dividends",
+      "name": "受取配当等の益金不算入",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "株式区分ごとの不算入割合"
+      ]
+    },
+    {
+      "id": "hojin.calc.securities",
+      "name": "有価証券・評価損益",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "売買目的有価証券の洗替"
+      ]
+    },
+    {
+      "id": "hojin.calc.tax-expense",
+      "name": "租税公課・納税充当金",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "事業税の損金算入時期"
+      ]
+    },
+    {
+      "id": "hojin.calc.deferred",
+      "name": "繰延資産・前払費用",
+      "unit": "hojin.calc-adjust",
+      "format": "calc",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "短期前払費用の特例要件"
+      ]
+    },
+    {
+      "id": "hojin.calc.loss",
+      "name": "欠損金・所得金額の計算",
+      "unit": "hojin.calc-tax",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "控除順序 (古い年度から)"
+      ]
+    },
+    {
+      "id": "hojin.calc.tax-amount",
+      "name": "税額計算・税額控除・留保金課税",
+      "unit": "hojin.calc-tax",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "軽減税率の適用範囲 (800 万円)"
+      ]
+    }
+  ]
+}

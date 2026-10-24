@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+# 学習者データは repo 外 (~/.zeirishi-coach) に置く。誤って入れた時のための保険
+state.json
+attempts.jsonl
+timer.json
+dashboard.html
+node_modules/
+.next/
+.local-data/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.env*
+
+.local-public-preparation/
+docs/materials/sources/
+
+.worktrees/

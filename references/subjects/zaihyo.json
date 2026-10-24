@@ -1,0 +1,316 @@
+{
+  "_note": "改正事項は本番年度の法令で要確認",
+  "subject": "zaihyo",
+  "name": "財務諸表論",
+  "exam": {
+    "minutes": 120,
+    "passing_line": 60,
+    "pass_percentile": 0.15,
+    "format": {
+      "calc": 50,
+      "theory": 50
+    }
+  },
+  "units": [
+    {
+      "id": "zaihyo.theory-basis",
+      "name": "理論・基礎概念"
+    },
+    {
+      "id": "zaihyo.theory-assets",
+      "name": "理論・資産負債"
+    },
+    {
+      "id": "zaihyo.theory-pl",
+      "name": "理論・損益と表示"
+    },
+    {
+      "id": "zaihyo.calc-close",
+      "name": "計算・決算整理"
+    },
+    {
+      "id": "zaihyo.calc-present",
+      "name": "計算・表示"
+    }
+  ],
+  "topics": [
+    {
+      "id": "zaihyo.theory.framework",
+      "name": "概念フレームワーク・会計公準",
+      "unit": "zaihyo.theory-basis",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "資産の定義を「財産」と書く"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.principles",
+      "name": "企業会計原則・一般原則",
+      "unit": "zaihyo.theory-basis",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "保守主義と過度の保守主義の区別"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.revenue",
+      "name": "収益認識基準 (5 ステップ)",
+      "unit": "zaihyo.theory-pl",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "履行義務の充足時点を引渡しと決めつける"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.inventory",
+      "name": "棚卸資産の評価",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "正味売却価額と再調達原価の使い分け"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.fixed-assets",
+      "name": "固定資産・減価償却・減損の理論",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "減損の兆候と認識の区別"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.lease",
+      "name": "リース会計の理論",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "ファイナンス・リースの判定基準"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.securities",
+      "name": "金融商品会計",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "その他有価証券の評価差額を損益にする"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.retirement",
+      "name": "退職給付会計の理論",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "未認識項目の扱い (個別と連結)"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.tax-effect",
+      "name": "税効果会計の理論",
+      "unit": "zaihyo.theory-pl",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "資産負債法と繰延法の混同"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.equity",
+      "name": "純資産・自己株式",
+      "unit": "zaihyo.theory-pl",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "自己株式を資産計上する"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.forex",
+      "name": "外貨換算会計",
+      "unit": "zaihyo.theory-assets",
+      "format": "theory",
+      "weight": 2,
+      "frequency": "low",
+      "prereq": [],
+      "pitfalls": [
+        "換算差額の処理先"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.consolidation",
+      "name": "連結財務諸表・企業結合",
+      "unit": "zaihyo.theory-pl",
+      "format": "theory",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "のれんの非償却と書く"
+      ]
+    },
+    {
+      "id": "zaihyo.theory.cashflow",
+      "name": "キャッシュ・フロー計算書",
+      "unit": "zaihyo.theory-pl",
+      "format": "theory",
+      "weight": 2,
+      "frequency": "low",
+      "prereq": [],
+      "pitfalls": [
+        "利息の表示区分"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.inventory",
+      "name": "商品・棚卸資産の期末評価",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "評価損の戻入"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.receivables",
+      "name": "債権・貸倒引当金",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "破産更生債権の担保控除"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.securities",
+      "name": "有価証券の評価と表示",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "1 年基準による流動固定分類"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.fixed",
+      "name": "固定資産・減損・リースの計算",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 7,
+      "frequency": "high",
+      "prereq": [
+        "zaihyo.theory.fixed-assets"
+      ],
+      "pitfalls": [
+        "減損損失の配分"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.provisions",
+      "name": "引当金・退職給付・社債",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "社債発行費の償却"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.tax",
+      "name": "法人税等・税効果の計算",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "法人税等調整額の符号"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.equity",
+      "name": "純資産・株主資本等変動計算書",
+      "unit": "zaihyo.calc-present",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "配当に伴う準備金積立"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.presentation",
+      "name": "表示区分・注記・1 年基準",
+      "unit": "zaihyo.calc-present",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "長期前払費用の区分"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.forex",
+      "name": "外貨建取引の計算",
+      "unit": "zaihyo.calc-close",
+      "format": "calc",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "決算時レートの適用範囲"
+      ]
+    },
+    {
+      "id": "zaihyo.calc.misc",
+      "name": "収益認識の計算・その他",
+      "unit": "zaihyo.calc-present",
+      "format": "calc",
+      "weight": 3,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "変動対価の見積り"
+      ]
+    }
+  ]
+}

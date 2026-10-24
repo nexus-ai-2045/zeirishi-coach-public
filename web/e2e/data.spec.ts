@@ -1,0 +1,56 @@
+import { test, expect } from '@playwright/test';
+
+test('本人データを書き出し、明示確認後だけ削除し旧利用者からの再書込みを拒否する', async ({ page, context }) => {
+  const nav = page.getByRole('navigation', { name: '学習ナビゲーション' });
+  await page.goto('/#map');
+  await page.getByRole('button', { name: '少し怪しい', exact: true }).click();
+  await expect(page.getByRole('button', { name: '少し怪しい', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  const oldCookie = (await context.cookies()).find(cookie => cookie.name === 'zc-user')!;
+  expect(oldCookie).toBeTruthy();
+  await nav.getByRole('button', { name: '学習記録' }).click();
+  await page.getByText('このブラウザーの学習データを管理', { exact: true }).click();
+  const downloaded = page.waitForEvent('download');
+  await page.getByRole('button', { name: '学習データを書き出す', exact: true }).click();
+  const download = await downloaded;
+  expect(download.suggestedFilename()).toBe('zeirishi-learning-data.json');
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream!) chunks.push(Buffer.from(chunk));
+  const data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  expect(data.formatVersion).toBe('zeirishi-local-data-v1');
+  expect(data.profile.reports[0].selfConfidence).toBe('uncertain');
+  await page.getByRole('button', { name: '学習データの削除を確認する' }).click();
+  const confirmation = page.getByRole('region', { name: '学習データ削除の最終確認' });
+  await expect(confirmation.getByRole('button', { name: '確認した学習データを削除する' })).toBeDisabled();
+  await confirmation.getByRole('checkbox').check();
+  const deleted = page.waitForResponse(r => r.url().endsWith('/api/data') && r.request().method() === 'POST');
+  await confirmation.getByRole('button', { name: '確認した学習データを削除する' }).click();
+  expect((await deleted).status()).toBe(200);
+  await expect(page.getByText('まだ提出済みの練習はありません。', { exact: true })).toBeVisible();
+  await nav.getByRole('button', { name: '学習地図' }).click();
+  await expect(page.getByRole('button', { name: '少し怪しい', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  const denied = await page.request.get('/api/profile', { headers: { cookie: `zc-user=${oldCookie.value}` } });
+  expect(denied.status()).toBe(401);
+  expect((await denied.json()).error).toBe('OWNER_REVOKED');
+});
+
+test('削除通信の失敗を成功と見せず、未確認のまま画面や記録を消さない', async ({ page }) => {
+  const nav = page.getByRole('navigation', { name: '学習ナビゲーション' });
+  await page.goto('/#map');
+  await page.getByRole('button', { name: '説明できる', exact: true }).click();
+  await expect(page.getByRole('button', { name: '説明できる', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await nav.getByRole('button', { name: '学習記録' }).click();
+  await page.getByText('このブラウザーの学習データを管理', { exact: true }).click();
+  await page.getByRole('button', { name: '学習データの削除を確認する' }).click();
+  const confirmation = page.getByRole('region', { name: '学習データ削除の最終確認' });
+  await confirmation.getByRole('checkbox').check();
+  await page.route('**/api/data', route => route.abort('failed'));
+  await confirmation.getByRole('button', { name: '確認した学習データを削除する' }).click();
+  await expect(page.getByText('削除の完了を確認できませんでした。', { exact: false })).toBeVisible();
+  await page.unroute('**/api/data');
+  await confirmation.getByRole('button', { name: '削除をやめる' }).click();
+  await nav.getByRole('button', { name: '学習地図' }).click();
+  await expect(page.getByRole('button', { name: '説明できる', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.getByRole('button', { name: '説明できる', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});

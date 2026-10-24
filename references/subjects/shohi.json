@@ -1,0 +1,247 @@
+{
+  "_note": "改正事項は本番年度の法令で要確認",
+  "subject": "shohi",
+  "name": "消費税法",
+  "exam": {
+    "minutes": 120,
+    "passing_line": 60,
+    "pass_percentile": 0.15,
+    "format": {
+      "calc": 50,
+      "theory": 50
+    }
+  },
+  "units": [
+    {
+      "id": "shohi.theory-scope",
+      "name": "理論・課税の対象"
+    },
+    {
+      "id": "shohi.theory-credit",
+      "name": "理論・仕入税額控除と制度"
+    },
+    {
+      "id": "shohi.theory-proc",
+      "name": "理論・手続"
+    },
+    {
+      "id": "shohi.calc-class",
+      "name": "計算・取引分類"
+    },
+    {
+      "id": "shohi.calc-credit",
+      "name": "計算・仕入税額控除と納付"
+    }
+  ],
+  "topics": [
+    {
+      "id": "shohi.theory.scope",
+      "name": "課税の対象・国内取引の判定",
+      "unit": "shohi.theory-scope",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "内外判定の基準 (資産の所在地・役務提供地)"
+      ]
+    },
+    {
+      "id": "shohi.theory.exempt",
+      "name": "非課税・免税・不課税の区分",
+      "unit": "shohi.theory-scope",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "非課税と免税を同じ扱いにする"
+      ]
+    },
+    {
+      "id": "shohi.theory.timing",
+      "name": "資産の譲渡等の時期",
+      "unit": "shohi.theory-scope",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "割賦販売の特例"
+      ]
+    },
+    {
+      "id": "shohi.theory.tax-base",
+      "name": "課税標準・軽減税率",
+      "unit": "shohi.theory-scope",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "一体資産の判定"
+      ]
+    },
+    {
+      "id": "shohi.theory.input-credit",
+      "name": "仕入税額控除の要件・インボイス",
+      "unit": "shohi.theory-credit",
+      "format": "theory",
+      "weight": 8,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "帳簿と請求書の保存要件の書き漏れ"
+      ]
+    },
+    {
+      "id": "shohi.theory.small-business",
+      "name": "納税義務の免除・特定期間・新設法人",
+      "unit": "shohi.theory-credit",
+      "format": "theory",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "特定期間の判定 (課税売上高と給与)"
+      ]
+    },
+    {
+      "id": "shohi.theory.simplified",
+      "name": "簡易課税制度",
+      "unit": "shohi.theory-credit",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "届出の効力発生時期"
+      ]
+    },
+    {
+      "id": "shohi.theory.adjustment",
+      "name": "調整対象固定資産・棚卸資産の調整",
+      "unit": "shohi.theory-credit",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "3 年縛りの要件"
+      ]
+    },
+    {
+      "id": "shohi.theory.procedure",
+      "name": "申告・納付・届出",
+      "unit": "shohi.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "中間申告の回数判定"
+      ]
+    },
+    {
+      "id": "shohi.theory.cross-border",
+      "name": "輸出免税・国境を越える役務提供",
+      "unit": "shohi.theory-proc",
+      "format": "theory",
+      "weight": 4,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "リバースチャージの対象"
+      ]
+    },
+    {
+      "id": "shohi.calc.classification",
+      "name": "取引分類 (課税・非課税・免税・不課税)",
+      "unit": "shohi.calc-class",
+      "format": "calc",
+      "weight": 10,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "土地の貸付の期間判定"
+      ]
+    },
+    {
+      "id": "shohi.calc.tax-base",
+      "name": "課税標準額・売上対価の返還",
+      "unit": "shohi.calc-class",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "税込金額の割戻し (110 分の 100)"
+      ]
+    },
+    {
+      "id": "shohi.calc.ratio",
+      "name": "課税売上割合の計算",
+      "unit": "shohi.calc-class",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "high",
+      "prereq": [
+        "shohi.calc.classification"
+      ],
+      "pitfalls": [
+        "有価証券の譲渡は 5%"
+      ]
+    },
+    {
+      "id": "shohi.calc.individual",
+      "name": "個別対応方式・一括比例配分方式",
+      "unit": "shohi.calc-credit",
+      "format": "calc",
+      "weight": 10,
+      "frequency": "high",
+      "prereq": [
+        "shohi.calc.ratio",
+        "shohi.calc.classification"
+      ],
+      "pitfalls": [
+        "共通対応の按分漏れ"
+      ]
+    },
+    {
+      "id": "shohi.calc.adjustment",
+      "name": "仕入税額控除の調整 (棚卸資産・固定資産)",
+      "unit": "shohi.calc-credit",
+      "format": "calc",
+      "weight": 6,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "課税売上割合の著しい変動の判定"
+      ]
+    },
+    {
+      "id": "shohi.calc.simplified",
+      "name": "簡易課税のみなし仕入率",
+      "unit": "shohi.calc-credit",
+      "format": "calc",
+      "weight": 5,
+      "frequency": "mid",
+      "prereq": [],
+      "pitfalls": [
+        "75% ルールの適用"
+      ]
+    },
+    {
+      "id": "shohi.calc.final",
+      "name": "納付税額・中間申告・地方消費税",
+      "unit": "shohi.calc-credit",
+      "format": "calc",
+      "weight": 7,
+      "frequency": "high",
+      "prereq": [],
+      "pitfalls": [
+        "地方消費税を 22/78 で計算"
+      ]
+    }
+  ]
+}

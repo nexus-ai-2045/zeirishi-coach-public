@@ -1,0 +1,61 @@
+{
+  "document": "assumptions",
+  "fixture_name": "aoba-zakkaten-boki-practice",
+  "disclaimer": {
+    "synthetic": true,
+    "unapproved_teaching_material": true,
+    "expert_reviewed": false,
+    "official_exam_reprint": false,
+    "tax_or_legal_advice": false,
+    "statement_ja": "これは合成された未承認の簿記練習フィクスチャである。専門家の監修を受けていない。現行税法、税率、申告、法的助言、公式試験問題の転載ではない。架空の数値例であり、実在の事業者・個人の記録ではない。"
+  },
+  "entity": {
+    "trade_name": "青葉雑貨店",
+    "entity_type": "fictional_sole_proprietorship",
+    "owner_name": "青葉あおば",
+    "customers_and_vendors": ["架空得意先A", "架空仕入先B"],
+    "real_world_counterpart": false,
+    "location": "架空"
+  },
+  "calendar": {
+    "story_dates": "20X6-04-01 から 20X6-04-30 までのラベル",
+    "meaning_ja": "20X6年4月は物語上の架空日付であり、実在の会計年度、事業年度、適用法令を指さない。"
+  },
+  "continuity": {
+    "model": "independent_problems_shared_setting",
+    "shared": "架空商店の名称、勘定科目、会計仮定だけを全問で共有する。",
+    "not_shared": "元帳残高、試算表、仕訳の結果は次の問題へ引き継がない。",
+    "opening_balances_ja": "各問の opening_balances がその問の期首である。空配列は、その問の開始時点で全勘定の残高がゼロであることを意味する。前問の期待残高を期首に加算してはならない。"
+  },
+  "currency": {
+    "code": "JPY",
+    "scale": "integer_yen",
+    "rule_ja": "金額は正の整数円のみ。小数、外貨、端数処理、税額の切り捨ては出題しない。"
+  },
+  "bookkeeping": {
+    "system": "double_entry",
+    "journal_form": "simple_one_debit_one_credit",
+    "journal_form_ja": "本セットの仕訳はすべて単純仕訳（借方1行、貸方1行）である。複合仕訳は範囲外。",
+    "merchandise_method": "sanbunho_purchases_and_sales_only",
+    "merchandise_method_ja": "商品売買は三分法のうち、仕入を仕入勘定、売上を売上勘定に記録する部分だけを使う。繰越商品、期末棚卸、売上原価の算定、仕入の売上原価への振替は範囲外であり、それらの仕訳は正解に含めない。",
+    "capital_ja": "個人商店の元入れは、現金の借方と資本金の貸方で記録する。引出金、利益処分、損益振替、元入金への振替は範囲外。",
+    "credit_sales_ja": "掛売上は売掛金（借方）と売上（貸方）。現金は動かない。",
+    "credit_purchases_ja": "掛仕入は仕入（借方）と買掛金（貸方）。現金・預金は動かない。",
+    "collection_ja": "売掛金の回収は、現金または普通預金の借方と売掛金の貸方。売上の追加計上でも取消でもない。",
+    "payment_ja": "買掛金・未払費用の支払は、当該負債の借方と現金または普通預金の貸方。仕入や費用の再計上ではない。",
+    "prepaid_method": "expense_method_explicit_amount",
+    "prepaid_method_ja": "前払は費用処理法。支払時にいったん全額を当該費用の借方、現金の貸方とする。問題文が次期以降分として金額を直接指定した部分だけを、前払費用の借方、当該費用の貸方へ振り替える。日数・月数による按分は行わない。期首前払費用のうち当期分と指定された金額は、当該費用の借方、前払費用の貸方へ振り替える。",
+    "accrual_method": "explicit_amount_no_estimation",
+    "accrual_method_ja": "未払の新規計上は、問題文が指定した当期費用の借方と未払費用の貸方。支払を伴わない。期首から残る未払費用の決済は、未払費用の借方と現金または普通預金の貸方であり、同じ費用を再度計上しない。",
+    "consumption_tax_ja": "消費税その他の税は、税抜・税込の区別を含め一切区分しない。金額を税額計算に使ってはならない。",
+    "normal_balance_invariant_ja": "本セットでは、残高が残る勘定はその正常残高側（資産・費用は借方、負債・資本・収益は貸方）にだけ残る。貸倒、当座借越、費用の貸方残高などの反対残高は作らない。差引ゼロの勘定は元帳の期待値に残し、残高試算表からは除く。",
+    "trial_balance_ja": "期待する試算表は残高試算表である。各勘定は差引残高を借方列または貸方列の一方にだけ置く。合計試算表（借方合計と貸方合計を両建てで示す形式）ではない。"
+  },
+  "out_of_scope": [
+    "現行税法、税率、所得計算、申告、帳簿保存の法的要件",
+    "公式試験問題の転載とそれを思わせる選択肢形式の模写",
+    "減価償却、貸倒引当金、売上原価、決算振替、法人税、消費税",
+    "複合仕訳、訂正仕訳、反対仕訳の練習",
+    "実在の事業者、個人、口座、私的リポジトリの仕様"
+  ]
+}
