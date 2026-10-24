@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 
@@ -6,6 +7,28 @@ from conftest import COACH_ROOT
 
 def _read(rel):
     return (COACH_ROOT / rel).read_text(encoding="utf-8")
+
+
+REVIEW_PACKET_DIR = "docs/materials/bookkeeping-review-packet"
+
+
+def _read_review_packet():
+    """断片を manifest.json の順につなぎ、各断片と全体の SHA-256 を確かめてから JSON として読む。"""
+    folder = COACH_ROOT / REVIEW_PACKET_DIR
+    manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["formatVersion"] == "split-text-v1"
+    names = [part["path"] for part in manifest["parts"]]
+    assert sorted(p.name for p in folder.glob("part-*.txt")) == sorted(names)
+    chunks = []
+    for part in manifest["parts"]:
+        data = (folder / part["path"]).read_bytes()
+        assert len(data) == part["bytes"] and hashlib.sha256(data).hexdigest() == part["sha256"], part["path"]
+        assert len(data.decode("utf-8")) < 4_000_000, part["path"]
+        chunks.append(data)
+    joined = b"".join(chunks)
+    assert len(joined) == manifest["bytes"]
+    assert hashlib.sha256(joined).hexdigest() == manifest["sha256"]
+    return json.loads(joined.decode("utf-8"))
 
 
 def test_skill_frontmatter_and_commands():
@@ -41,7 +64,7 @@ def test_settings_snippet_allows_coach():
 
 
 def test_review_packet_external_sources_are_url_references():
-    packet = json.loads(_read("docs/materials/bookkeeping-review-packet.json"))
+    packet = _read_review_packet()
     external = [source for source in packet["sources"] if source["url"].startswith("https://")]
     assert len(external) == 11
     for source in external:

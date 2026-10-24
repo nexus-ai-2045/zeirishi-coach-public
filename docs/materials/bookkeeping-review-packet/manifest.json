@@ -1,0 +1,33 @@
+{
+  "formatVersion": "split-text-v1",
+  "joinedName": "bookkeeping-review-packet.json",
+  "bytes": 4554775,
+  "sha256": "8b5b9989210eec7c07000f9d4c72b981d7681184cc2e39143d4b2c0279bca74a",
+  "parts": [
+    {
+      "path": "part-01.txt",
+      "bytes": 999930,
+      "sha256": "8c250ab544848a3479c622aa1c638e7aafdffc1f74786d0938592434a4904bfe"
+    },
+    {
+      "path": "part-02.txt",
+      "bytes": 999991,
+      "sha256": "c7cf57d3a1b215da5263cb1ceecbac14ed5bfe9d6380c10721982b227cc25e33"
+    },
+    {
+      "path": "part-03.txt",
+      "bytes": 999772,
+      "sha256": "b33aa9c65d5a770ae7d365381fbf474ff3e8127e393b1fe1af4278c2e5a3d25c"
+    },
+    {
+      "path": "part-04.txt",
+      "bytes": 1000000,
+      "sha256": "d703bca4df20bc90d31eacc5c899384c501724f2360e8fb26272c0ad1d74e235"
+    },
+    {
+      "path": "part-05.txt",
+      "bytes": 555082,
+      "sha256": "6d88f6e1bef6217bd3f324e3c1859e8ac98655ed2e9b19024734e3df6ead6df3"
+    }
+  ]
+}

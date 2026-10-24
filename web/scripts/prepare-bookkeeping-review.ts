@@ -1,4 +1,4 @@
-import { access, readFile, writeFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { MATERIAL_RECORDS } from '../src/server/approved-catalog';
@@ -7,6 +7,7 @@ import { BOOKKEEPING_ALL_QUESTION_DRAFTS } from '../src/server/bookkeeping-quest
 import { materialReviewSha256 } from '../src/server/material-registry';
 import { BOOKKEEPING_SYLLABUS_LESSONS } from '../src/server/bookkeeping-syllabus';
 import { strictCanonicalJson } from '../src/server/strict-canonical-json';
+import { readReviewPacketText, writeReviewPacketText } from './review-packet-parts';
 
 const retained = async (path:string) => createHash('sha256').update(await readFile(resolve(process.cwd(),'..',path))).digest('hex');
 const sourceDefinitions = [
@@ -25,7 +26,7 @@ const sourceDefinitions = [
 ];
 const sourcePolicy = process.argv.find(argument => argument.startsWith('--source-policy='))?.split('=')[1] ?? 'public-url-only';
 if (!['retained', 'public-url-only'].includes(sourcePolicy)) throw new Error('INVALID_SOURCE_POLICY');
-const previousPacket = JSON.parse(await readFile(resolve(process.cwd(), '../docs/materials/bookkeeping-review-packet.json'), 'utf8')) as { sources: { id: string; url: string; status: string; observationSha256?: string; retention: { sha256?: string } }[] };
+const previousPacket = JSON.parse(await readReviewPacketText(resolve(process.cwd(), '..'))) as { sources: { id: string; url: string; status: string; observationSha256?: string; retention: { sha256?: string } }[] };
 const researchSources = await Promise.all(sourceDefinitions.map(async source => {
   const localPath = resolve(process.cwd(), '..', source.path);
   let exists = true;
@@ -74,5 +75,5 @@ const packet = {
     intendedUse: BOOKKEEPING_ALL_QUESTION_DRAFTS.find(item => item.question.id === record.materialId)?.intendedUse ?? 'case',
     reviewSha256: materialReviewSha256(record) })),
 };
-await writeFile(resolve(process.cwd(), '../docs/materials/bookkeeping-review-packet.json'), JSON.stringify(packet, null, 2) + '\n');
+await writeReviewPacketText(resolve(process.cwd(), '..'), JSON.stringify(packet, null, 2) + '\n');
 process.stdout.write(JSON.stringify({ status: packet.status, concepts: packet.map.concepts.length, materials: packet.materials.length }) + '\n');
