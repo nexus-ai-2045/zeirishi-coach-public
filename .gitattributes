@@ -1,0 +1,2 @@
+# 専門レビュー用パケットの断片。つないだ結果を SHA-256 で照合するので、改行を変換しない
+docs/materials/bookkeeping-review-packet/*.txt -text
