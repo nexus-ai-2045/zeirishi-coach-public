@@ -1,7 +1,7 @@
 {
   "formatVersion": "bookkeeping-review-draft-v1",
   "sourcePolicy": "public-url-only",
-  "preparedAt": "2026-10-15T19:51:08.470Z",
+  "preparedAt": "2026-10-25T22:27:58.907Z",
   "status": "unreviewed",
   "notice": "専門審査・利用条件・適用年度・出荷承認は未確定。正答を含む開発・レビュー用ソースであり、学習者APIの回答前投影には含めない。",
   "map": {
@@ -2916,6 +2916,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-sales-shohin",
+        "sourceVersion": "synthetic-syllabus-concept-1e8454caad15",
+        "targetId": "bk-practice-syllabus-sales-shohin-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-sales-henpin",
         "sourceVersion": "synthetic-syllabus-concept-b3c260e63ca1",
         "targetId": "bk-practice-syllabus-sales-henpin-1",
@@ -2970,6 +2980,16 @@
         "sourceVersion": "synthetic-syllabus-concept-b3c260e63ca1",
         "targetId": "bk-practice-syllabus-sales-henpin-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-6-5c18ca41c751",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-sales-henpin",
+        "sourceVersion": "synthetic-syllabus-concept-b3c260e63ca1",
+        "targetId": "bk-practice-syllabus-sales-henpin-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -3036,6 +3056,26 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-sales-tokushu",
+        "sourceVersion": "synthetic-syllabus-concept-caed4142e01e",
+        "targetId": "bk-practice-syllabus-sales-tokushu-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-sales-tokushu",
+        "sourceVersion": "synthetic-syllabus-concept-caed4142e01e",
+        "targetId": "bk-practice-syllabus-sales-tokushu-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-cash-genkin",
         "sourceVersion": "synthetic-syllabus-concept-2d06fb99839f",
         "targetId": "bk-practice-syllabus-cash-genkin-1",
@@ -3096,6 +3136,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-cash-genkin",
+        "sourceVersion": "synthetic-syllabus-concept-2d06fb99839f",
+        "targetId": "bk-practice-syllabus-cash-genkin-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-cash-saiken",
         "sourceVersion": "synthetic-syllabus-concept-a4c8e533c346",
         "targetId": "bk-practice-syllabus-cash-saiken-1",
@@ -3150,6 +3200,16 @@
         "sourceVersion": "synthetic-syllabus-concept-a4c8e533c346",
         "targetId": "bk-practice-syllabus-cash-saiken-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-6-e1eb966facae",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-cash-saiken",
+        "sourceVersion": "synthetic-syllabus-concept-a4c8e533c346",
+        "targetId": "bk-practice-syllabus-cash-saiken-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -3270,6 +3330,36 @@
         "sourceVersion": "synthetic-syllabus-concept-686c47150306",
         "targetId": "bk-practice-syllabus-fixed-acquisition-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-6-c8e65bc87c54",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-fixed-acquisition",
+        "sourceVersion": "synthetic-syllabus-concept-686c47150306",
+        "targetId": "bk-practice-syllabus-fixed-acquisition-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-fixed-acquisition",
+        "sourceVersion": "synthetic-syllabus-concept-686c47150306",
+        "targetId": "bk-practice-syllabus-fixed-acquisition-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-fixed-acquisition",
+        "sourceVersion": "synthetic-syllabus-concept-686c47150306",
+        "targetId": "bk-practice-syllabus-fixed-acquisition-15",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -3756,6 +3846,26 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-securities-classification",
+        "sourceVersion": "synthetic-syllabus-concept-86c4bf8e5624",
+        "targetId": "bk-practice-syllabus-securities-classification-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-securities-classification-13-7585d4e4f79b",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-securities-classification",
+        "sourceVersion": "synthetic-syllabus-concept-86c4bf8e5624",
+        "targetId": "bk-practice-syllabus-securities-classification-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-securities-classification-14-67cfef4e259c",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-securities-bonds",
         "sourceVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
         "targetId": "bk-practice-syllabus-securities-bonds-1",
@@ -3996,6 +4106,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-liab-bonds-payable",
+        "sourceVersion": "synthetic-syllabus-concept-1ba81d4e76c2",
+        "targetId": "bk-practice-syllabus-liab-bonds-payable-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-liab-bonds-payable-13-a0a053624508",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-liab-retirement",
         "sourceVersion": "synthetic-syllabus-concept-4379e2bc3c78",
         "targetId": "bk-practice-syllabus-liab-retirement-1",
@@ -4056,6 +4176,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-liab-retirement",
+        "sourceVersion": "synthetic-syllabus-concept-4379e2bc3c78",
+        "targetId": "bk-practice-syllabus-liab-retirement-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-liab-retirement-13-746058a488da",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-equity-stock",
         "sourceVersion": "synthetic-syllabus-concept-2d30a01635bc",
         "targetId": "bk-practice-syllabus-equity-stock-1",
@@ -4110,6 +4240,36 @@
         "sourceVersion": "synthetic-syllabus-concept-2d30a01635bc",
         "targetId": "bk-practice-syllabus-equity-stock-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-equity-stock-6-20a598c9fa60",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-equity-stock",
+        "sourceVersion": "synthetic-syllabus-concept-2d30a01635bc",
+        "targetId": "bk-practice-syllabus-equity-stock-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-equity-stock-13-4bd3fe82f59d",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-equity-stock",
+        "sourceVersion": "synthetic-syllabus-concept-2d30a01635bc",
+        "targetId": "bk-practice-syllabus-equity-stock-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-equity-stock-14-cd3660ad03b1",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-equity-stock",
+        "sourceVersion": "synthetic-syllabus-concept-2d30a01635bc",
+        "targetId": "bk-practice-syllabus-equity-stock-15",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-equity-stock-15-47227ad75d11",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -4296,6 +4456,26 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-other-forex",
+        "sourceVersion": "synthetic-syllabus-concept-930a7f3df6c2",
+        "targetId": "bk-practice-syllabus-other-forex-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-other-forex-13-4e49a2042a6a",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-other-forex",
+        "sourceVersion": "synthetic-syllabus-concept-930a7f3df6c2",
+        "targetId": "bk-practice-syllabus-other-forex-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-other-forex-14-53fa15ca1a1e",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-other-consolidation",
         "sourceVersion": "synthetic-syllabus-concept-5d324b2dc818",
         "targetId": "bk-practice-syllabus-other-consolidation-1",
@@ -4350,6 +4530,26 @@
         "sourceVersion": "synthetic-syllabus-concept-5d324b2dc818",
         "targetId": "bk-practice-syllabus-other-consolidation-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-other-consolidation-6-e928efed91d1",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-other-consolidation",
+        "sourceVersion": "synthetic-syllabus-concept-5d324b2dc818",
+        "targetId": "bk-practice-syllabus-other-consolidation-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-other-consolidation-13-72d8458b63d2",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-other-consolidation",
+        "sourceVersion": "synthetic-syllabus-concept-5d324b2dc818",
+        "targetId": "bk-practice-syllabus-other-consolidation-14",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-other-consolidation-14-1f644541c1c9",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -4416,6 +4616,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-ledger-branch",
+        "sourceVersion": "synthetic-syllabus-concept-70a69ca0e935",
+        "targetId": "bk-practice-syllabus-ledger-branch-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-branch-13-5a7b79ea3562",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-ledger-cost",
         "sourceVersion": "synthetic-syllabus-concept-d7bc4f6fe176",
         "targetId": "bk-practice-syllabus-ledger-cost-1",
@@ -4476,6 +4686,16 @@
       },
       {
         "kind": "uses-case",
+        "sourceId": "syllabus-ledger-cost",
+        "sourceVersion": "synthetic-syllabus-concept-d7bc4f6fe176",
+        "targetId": "bk-practice-syllabus-ledger-cost-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-cost-13-28662c0eaeac",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
         "sourceId": "syllabus-ledger-errors",
         "sourceVersion": "synthetic-syllabus-concept-85a0de172679",
         "targetId": "bk-practice-syllabus-ledger-errors-1",
@@ -4530,6 +4750,16 @@
         "sourceVersion": "synthetic-syllabus-concept-85a0de172679",
         "targetId": "bk-practice-syllabus-ledger-errors-6",
         "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-errors-6-e416c200f417",
+        "role": "primary",
+        "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
+        "status": "draft"
+      },
+      {
+        "kind": "uses-case",
+        "sourceId": "syllabus-ledger-errors",
+        "sourceVersion": "synthetic-syllabus-concept-85a0de172679",
+        "targetId": "bk-practice-syllabus-ledger-errors-13",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-errors-13-7dfb75257c2d",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -6127,7 +6357,7 @@
   ],
   "publication": "disabled",
   "retention_check": "required",
-  "mapSha256": "3400a9cfcdea115a07aa0b3fd6ab33cf67be60c7d602e3a51697b4e1a14f950c",
+  "mapSha256": "0b2e081d17c2d6a3970802393a362e48233d75f7d24ce65e3987a8d711779b40",
   "materials": [
     {
       "materialId": "cafe-prepaid",
@@ -19735,225 +19965,3 @@
             "developmentOnly": true,
             "evidenceQualification": "practice_only",
             "misconceptionCandidate": "原価より高い正味売却価額へ通常は評価益を計上しません。",
-            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "原価より高い正味売却価額へ通常は評価益を計上しません。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-8-59a02971b212",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "原価より高い正味売却価額へ通常は評価益を計上しません。",
-            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "原価より高い正味売却価額へ通常は評価益を計上しません。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-8-59a02971b212",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "原価より高い正味売却価額へ通常は評価益を計上しません。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "期首商品＋当期純仕入－期末商品から売上原価を求め、売上総利益を計算する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "a05256019f56d8bfdbd0bc4426addab1623e7238f931527fd8b34e19eb501e07"
-    },
-    {
-      "materialId": "bk-practice-inventory-cost-9",
-      "version": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "inventory-cost",
-        "conceptVersion": "synthetic-bookkeeping-core-v1",
-        "label": "売れた商品の分を原価にする",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "asbj-principles",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards_system/details.html?topics_id=81",
-          "checkedAt": "2026-10-05",
-          "attribution": "企業会計原則・同注解",
-          "permissionNote": "参考資料本文を確認。教材の専門審査と利用条件の照合は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-inventory",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards_system/details.html?topics_id=24",
-          "checkedAt": "2026-10-05",
-          "attribution": "棚卸資産の評価基準",
-          "permissionNote": "参考資料本文を確認。教材の専門審査と利用条件の照合は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-inventory-cost-9",
-          "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-          "conceptId": "inventory-cost",
-          "familyId": "bk-practice-inventory-cost-purchase-scope",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？（架空の原稿試用。専門審査前。単位指定がない数値は万円。税務特例・消費税・端数処理は扱わない。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？（架空の原稿試用。専門審査前。単位指定がない数値は万円。税務特例・消費税・端数処理は扱わない。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "10万円"
-            },
-            {
-              "id": "o2",
-              "label": "9万円"
-            },
-            {
-              "id": "o3",
-              "label": "1万円"
-            },
-            {
-              "id": "o4",
-              "label": "11万円"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "購入に直接要した付随費用を取得原価へ含める条件です。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "購入に直接要した付随費用を取得原価へ含める条件です。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "購入に直接要した付随費用を取得原価へ含める条件です。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "購入に直接要した付随費用を取得原価へ含める条件です。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
