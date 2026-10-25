@@ -33,5 +33,5 @@ test('リポの断片をつなぐと manifest の SHA-256 と一致し、各断�
   const manifest = JSON.parse(readFileSync(join(root, 'docs/materials/bookkeeping-review-packet/manifest.json'), 'utf8'));
   assert.equal(createHash('sha256').update(text).digest('hex'), manifest.sha256);
   assert.ok(manifest.parts.every(part => part.bytes <= PART_MAX_BYTES));
-  assert.equal(JSON.parse(text).materials.length, 526);
+  assert.equal(JSON.parse(text).materials.length, 572);
 });

@@ -1,33 +1,38 @@
 {
   "formatVersion": "split-text-v1",
   "joinedName": "bookkeeping-review-packet.json",
-  "bytes": 4787797,
-  "sha256": "60ac3d7110f3378ac2ca741b48efb867202d597ef5246b404d7d8400fc343e5b",
+  "bytes": 5251243,
+  "sha256": "57c17cced030cec46b7d5e10881b669ac09864cc47c690661da9e303423c27b6",
   "parts": [
     {
       "path": "part-01.txt",
-      "bytes": 999952,
-      "sha256": "c0c1484ed7502bfaccc2a01c795c2d6755a4374fada67524b4adaef8f6110629"
+      "bytes": 999973,
+      "sha256": "cd33a844cb04a7e6b17f0cc6cecf0ecaa7b63668afd85e9d064f9334338c4ac9"
     },
     {
       "path": "part-02.txt",
-      "bytes": 999860,
-      "sha256": "86a4d813979f51f08aa9c9a73ffc0756c8beccb672873d1bc4bc8552b7e42dd5"
+      "bytes": 999984,
+      "sha256": "99a952079bfc876977a034c30a1e06d7e7fd39c825159137d9bfad2f6a3e7841"
     },
     {
       "path": "part-03.txt",
-      "bytes": 999978,
-      "sha256": "0218243b386c3f7c0b99c097fdf0784098e0ede6aa83c24bad9554849c784ec6"
+      "bytes": 999982,
+      "sha256": "52f4e96ea860154b9f160e83680e22da193a7d5d19b6804c1e0381396823c87d"
     },
     {
       "path": "part-04.txt",
-      "bytes": 999987,
-      "sha256": "9a5e69984f9bb64045ba07110e6ba3a63fac45303ddc61132416ca8aeea5097b"
+      "bytes": 1000000,
+      "sha256": "c07ba46f4ef16250575f7384b48a08a4660bcd8e43f66f97c0ab054a5ba96588"
     },
     {
       "path": "part-05.txt",
-      "bytes": 788020,
-      "sha256": "3736093909204ecb1765d23fdda24739094a1254a793c05ae4c21a82b5b07989"
+      "bytes": 1000000,
+      "sha256": "0d4261c278a85ae5d4afe9f3d45579408fc379168452f4ed3685906712df9a94"
+    },
+    {
+      "path": "part-06.txt",
+      "bytes": 251304,
+      "sha256": "5275810ec4ba4050ec4ae0543cb1ba64c5616c978eb22060ed463ef25dfb897f"
     }
   ]
 }
