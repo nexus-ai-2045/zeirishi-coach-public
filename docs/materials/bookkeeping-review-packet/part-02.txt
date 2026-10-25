@@ -1,3 +1,225 @@
+            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "原価より高い正味売却価額へ通常は評価益を計上しません。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-8-59a02971b212",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "原価より高い正味売却価額へ通常は評価益を計上しません。",
+            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "原価より高い正味売却価額へ通常は評価益を計上しません。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-8-59a02971b212",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "原価より高い正味売却価額へ通常は評価益を計上しません。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "原価より高い正味売却価額へ通常は評価益を計上しません。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "期首商品＋当期純仕入－期末商品から売上原価を求め、売上総利益を計算する。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "a05256019f56d8bfdbd0bc4426addab1623e7238f931527fd8b34e19eb501e07"
+    },
+    {
+      "materialId": "bk-practice-inventory-cost-9",
+      "version": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "inventory-cost",
+        "conceptVersion": "synthetic-bookkeeping-core-v1",
+        "label": "売れた商品の分を原価にする",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "asbj-principles",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards_system/details.html?topics_id=81",
+          "checkedAt": "2026-10-05",
+          "attribution": "企業会計原則・同注解",
+          "permissionNote": "参考資料本文を確認。教材の専門審査と利用条件の照合は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-inventory",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards_system/details.html?topics_id=24",
+          "checkedAt": "2026-10-05",
+          "attribution": "棚卸資産の評価基準",
+          "permissionNote": "参考資料本文を確認。教材の専門審査と利用条件の照合は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-inventory-cost-9",
+          "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+          "conceptId": "inventory-cost",
+          "familyId": "bk-practice-inventory-cost-purchase-scope",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？（架空の原稿試用。専門審査前。単位指定がない数値は万円。税務特例・消費税・端数処理は扱わない。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "商品代10万円、購入運賃1万円。取得原価に含める前提なら合計は？（架空の原稿試用。専門審査前。単位指定がない数値は万円。税務特例・消費税・端数処理は扱わない。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "10万円"
+            },
+            {
+              "id": "o2",
+              "label": "9万円"
+            },
+            {
+              "id": "o3",
+              "label": "1万円"
+            },
+            {
+              "id": "o4",
+              "label": "11万円"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "購入に直接要した付随費用を取得原価へ含める条件です。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "購入に直接要した付随費用を取得原価へ含める条件です。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "購入に直接要した付随費用を取得原価へ含める条件です。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-inventory-cost-9-55e17e2c9270",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "購入に直接要した付随費用を取得原価へ含める条件です。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "購入に直接要した付随費用を取得原価へ含める条件です。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
         "examTranslation": "期首商品＋当期純仕入－期末商品から売上原価を求め、売上総利益を計算する。"
       },
       "applicableYear": null,
@@ -4499,6 +4721,178 @@
       "reviewSha256": "754a343df90daf861d5a17d1b199d6ffb88ee974f205862e0f59dd4a347a7a80"
     },
     {
+      "materialId": "bk-practice-syllabus-sales-shohin-13",
+      "version": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-sales-shohin",
+        "conceptVersion": "synthetic-syllabus-concept-1e8454caad15",
+        "label": "商品売買を記録し、売上原価を確定する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-sales-shohin-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+          "conceptId": "syllabus-sales-shohin",
+          "familyId": "bk-practice-syllabus-sales-shohin-consumption-tax",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "消費税は税抜方式で記帳。期中の仮払消費税3,000、仮受消費税5,000、中間納付なし。決算で計上する未払消費税は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "消費税は税抜方式で記帳。期中の仮払消費税3,000、仮受消費税5,000、中間納付なし。決算で計上する未払消費税は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "消費税は税抜方式で記帳。期中の仮払消費税3,000、仮受消費税5,000、中間納付なし。決算で計上する未払消費税は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "8,000"
+            },
+            {
+              "id": "o2",
+              "label": "2,000"
+            },
+            {
+              "id": "o3",
+              "label": "3,000"
+            },
+            {
+              "id": "o4",
+              "label": "5,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "仮受と仮払を足している。支払った税は納付額から差し引く。",
+            "explanation": "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "仮払消費税をそのまま使っている。納付額は差額で決まる。",
+            "explanation": "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-shohin-13-cffbc40b5d17",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "仮受消費税をそのまま使っている。仕入で支払った3,000を差し引いていない。",
+            "explanation": "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：税抜方式では、受け取った税と支払った税を決算で相殺する。→ 計算：仮受5,000−仮払3,000＝2,000。→ 結論：未払消費税2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "商品勘定の振替、純仕入、原価率、期末在庫から売上原価を求める。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "a168fbfbf2986f9c100a5c5568b0ed6d1cca702e8398aa97c4484cf77aae1e32"
+    },
+    {
       "materialId": "bk-practice-syllabus-sales-henpin-1",
       "version": "synthetic-question-bk-practice-syllabus-sales-henpin-1-eccf008de7e8",
       "subjectId": "bookkeeping",
@@ -5529,6 +5923,178 @@
       "applicableYear": null,
       "intendedUse": "practice",
       "reviewSha256": "6eefaad76b94ae16a49b2b575687b3a04bf3e40c0088d4a344c7e7c739ca434d"
+    },
+    {
+      "materialId": "bk-practice-syllabus-sales-henpin-13",
+      "version": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-sales-henpin",
+        "conceptVersion": "synthetic-syllabus-concept-b3c260e63ca1",
+        "label": "返品・値引・割戻を売上と仕入に反映する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-sales-henpin-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+          "conceptId": "syllabus-sales-henpin",
+          "familyId": "bk-practice-syllabus-sales-henpin-variable-consideration",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "商品100個を単価1,000で掛販売。返品権付きで、5個が返品されると見積もった。返品見込分は売上から除き返金負債とする指定。計上する売上は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "商品100個を単価1,000で掛販売。返品権付きで、5個が返品されると見積もった。返品見込分は売上から除き返金負債とする指定。計上する売上は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "商品100個を単価1,000で掛販売。返品権付きで、5個が返品されると見積もった。返品見込分は売上から除き返金負債とする指定。計上する売上は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "100,000"
+            },
+            {
+              "id": "o2",
+              "label": "95,000"
+            },
+            {
+              "id": "o3",
+              "label": "5,000"
+            },
+            {
+              "id": "o4",
+              "label": "0"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "返品見込の5個分まで売上に含めている。",
+            "explanation": "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "返金負債の額を売上と取り違えている。",
+            "explanation": "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-henpin-13-125f3bcc5158",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "返品権があっても、返品されない見込分は売上になる。",
+            "explanation": "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：返品されると見込む分は、受け取る権利がまだ確定していない。→ 計算：（100−5）個×1,000＝95,000。返品見込の5,000は返金負債。→ 結論：売上95,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "純売上と純仕入、債権債務減額、返品原価の戻入を別々に計算する。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "84b181538864c6bd4f078ca8ff89b72a4cffff01626f5c3e4a52a53730b48d21"
     },
     {
       "materialId": "bk-practice-syllabus-sales-tokushu-1",
@@ -6563,6 +7129,350 @@
       "reviewSha256": "b403d8ecc721c04e83ab8014abe17507053e89548e8b6b7593fb1f08d863a978"
     },
     {
+      "materialId": "bk-practice-syllabus-sales-tokushu-13",
+      "version": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-sales-tokushu",
+        "conceptVersion": "synthetic-syllabus-concept-caed4142e01e",
+        "label": "委託・輸送中・分割回収の取引を読み分ける",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-sales-tokushu-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+          "conceptId": "syllabus-sales-tokushu",
+          "familyId": "bk-practice-syllabus-sales-tokushu-principal-judgment",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "顧客へ渡す前の商品の在庫リスクを自社が負い、販売価格も自社が決める。自社は本人か代理人か、収益はどう表示する？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "顧客へ渡す前の商品の在庫リスクを自社が負い、販売価格も自社が決める。自社は本人か代理人か、収益はどう表示する？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "顧客へ渡す前の商品の在庫リスクを自社が負い、販売価格も自社が決める。自社は本人か代理人か、収益はどう表示する？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "本人。総額で収益を計上する"
+            },
+            {
+              "id": "o2",
+              "label": "代理人。手数料の純額で計上する"
+            },
+            {
+              "id": "o3",
+              "label": "本人。手数料の純額で計上する"
+            },
+            {
+              "id": "o4",
+              "label": "代理人。総額で計上する"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "在庫リスクと価格決定権を持つのは本人の特徴。代理人ではない。",
+            "explanation": "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "本人なら総額で計上する。純額は代理人の表示。",
+            "explanation": "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-13-04a485bf7669",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "代理人なら手数料の純額で計上する。組合せが逆。",
+            "explanation": "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：顧客に渡す前の商品を支配しているか（在庫リスク・価格決定）。→ 判断：どちらも自社が持つので本人。→ 結論：本人として対価の総額を収益にする。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "積送品・未着品の在庫所属と、指定認識時点の売上を計算する。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "c5ba3e7e6c1a6b4594bfc7e7ede8e45f9b37416c54b6151d4d9334cafa1c1e74"
+    },
+    {
+      "materialId": "bk-practice-syllabus-sales-tokushu-14",
+      "version": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-sales-tokushu",
+        "conceptVersion": "synthetic-syllabus-concept-caed4142e01e",
+        "label": "委託・輸送中・分割回収の取引を読み分ける",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-sales-tokushu-14",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+          "conceptId": "syllabus-sales-tokushu",
+          "familyId": "bk-practice-syllabus-sales-tokushu-financing-component",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "商品を引き渡し、代金は2年後に一括11,025受け取る。現金で売った場合の価格は10,000で、差額は年5%の金利と指定。引渡時の売上は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "商品を引き渡し、代金は2年後に一括11,025受け取る。現金で売った場合の価格は10,000で、差額は年5%の金利と指定。引渡時の売上は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "商品を引き渡し、代金は2年後に一括11,025受け取る。現金で売った場合の価格は10,000で、差額は年5%の金利と指定。引渡時の売上は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "11,025"
+            },
+            {
+              "id": "o2",
+              "label": "1,025"
+            },
+            {
+              "id": "o3",
+              "label": "10,500"
+            },
+            {
+              "id": "o4",
+              "label": "10,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "金利分1,025まで売上に含めている。",
+            "explanation": "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "金利部分だけを売上にしている。",
+            "explanation": "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "1年目の利息500を売上に足している。利息は時の経過で受取利息にする。",
+            "explanation": "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-sales-tokushu-14-c413cce583a4",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：代金の後払いには金利が含まれている（重要な金融要素）。→ 計算：売上は現金販売価格10,000。差額1,025は2年間の受取利息。→ 結論：引渡時の売上10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "積送品・未着品の在庫所属と、指定認識時点の売上を計算する。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "fe55afc1c0545f81d6436e4f933a8f1746cc8b1d3a717f3ef675f22858b68e1a"
+    },
+    {
       "materialId": "bk-practice-syllabus-cash-genkin-1",
       "version": "synthetic-question-bk-practice-syllabus-cash-genkin-1-b3bf14ce1a79",
       "subjectId": "bookkeeping",
@@ -7595,6 +8505,178 @@
       "reviewSha256": "32f4368dfb52cbf47482589c76f94185b1fe2ae39ed444671517db8af6095c29"
     },
     {
+      "materialId": "bk-practice-syllabus-cash-genkin-13",
+      "version": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-cash-genkin",
+        "conceptVersion": "synthetic-syllabus-concept-2d06fb99839f",
+        "label": "現金実査と銀行残高の差を調整する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-cash-genkin-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+          "conceptId": "syllabus-cash-genkin",
+          "familyId": "bk-practice-syllabus-cash-genkin-overdraft-display",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "期末の当座預金勘定が貸方残高2,000。当座借越契約があり、他の預金はない。貸借対照表での表示は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "期末の当座預金勘定が貸方残高2,000。当座借越契約があり、他の預金はない。貸借対照表での表示は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "期末の当座預金勘定が貸方残高2,000。当座借越契約があり、他の預金はない。貸借対照表での表示は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "資産に当座預金−2,000"
+            },
+            {
+              "id": "o2",
+              "label": "表示しない"
+            },
+            {
+              "id": "o3",
+              "label": "現金預金から2,000を引いて注記だけする"
+            },
+            {
+              "id": "o4",
+              "label": "負債に短期借入金（当座借越）2,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "資産をマイナスで表示しない。借りている額は負債。",
+            "explanation": "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "銀行への返済義務があるので表示が必要。",
+            "explanation": "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "借入れを資産の減額で隠すと、負債が見えなくなる。",
+            "explanation": "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-genkin-13-f522a785c56f",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：貸方残高は、銀行から一時的に借りている状態。→ 判断：資産のマイナスではなく借入れ。→ 結論：負債に短期借入金（当座借越）2,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "企業側要修正事項と銀行側調整事項を分けて調整後残高を求める。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "3f4fad856851df10b0572902278a14ff4ed33834768b067312ab8ba499ae69c3"
+    },
+    {
       "materialId": "bk-practice-syllabus-cash-saiken-1",
       "version": "synthetic-question-bk-practice-syllabus-cash-saiken-1-392d425bdb98",
       "subjectId": "bookkeeping",
@@ -8625,6 +9707,178 @@
       "applicableYear": null,
       "intendedUse": "practice",
       "reviewSha256": "a9df13947c23e06f7e18569693393bd158f712af105963e62ad265f6b804c6ae"
+    },
+    {
+      "materialId": "bk-practice-syllabus-cash-saiken-13",
+      "version": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-cash-saiken",
+        "conceptVersion": "synthetic-syllabus-concept-a4c8e533c346",
+        "label": "債権の回収可能性と貸倒引当金を見積もる",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-cash-saiken-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+          "conceptId": "syllabus-cash-saiken",
+          "familyId": "bk-practice-syllabus-cash-saiken-cashflow-multi-period",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "貸倒懸念債権の帳簿価額20,000、当初の約定利子率は年10%。条件緩和後の回収見込は2年後に一括12,100だけ。CF見積法での貸倒引当金は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "貸倒懸念債権の帳簿価額20,000、当初の約定利子率は年10%。条件緩和後の回収見込は2年後に一括12,100だけ。CF見積法での貸倒引当金は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "貸倒懸念債権の帳簿価額20,000、当初の約定利子率は年10%。条件緩和後の回収見込は2年後に一括12,100だけ。CF見積法での貸倒引当金は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "10,000"
+            },
+            {
+              "id": "o2",
+              "label": "7,900"
+            },
+            {
+              "id": "o3",
+              "label": "0"
+            },
+            {
+              "id": "o4",
+              "label": "12,100"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "割り引かずに回収額12,100を使っている。2年分の時間の価値を落としている。",
+            "explanation": "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "回収見込が帳簿価額を下回るので、引当金は必要。",
+            "explanation": "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-cash-saiken-13-2fb89131bb3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "回収見込額そのものを引当額にしている。",
+            "explanation": "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：将来の回収額を当初の約定利子率で今の価値に直す。→ 計算：12,100÷1.1÷1.1＝10,000。帳簿20,000−10,000＝10,000。→ 結論：引当金10,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "分類別必要額を合計し、差額補充と洗替の指示を読み分ける。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "7a0933879c1dfe482c51a7570946be720dd8b152a3dbe765c8b01083cea6965d"
     },
     {
       "materialId": "bk-practice-syllabus-cash-tegata-1",
@@ -10689,6 +11943,522 @@
       "applicableYear": null,
       "intendedUse": "practice",
       "reviewSha256": "670ba8e5f1fbb14caeb723cf5c83929438d8db5fe3d4c8c48b0a8c3bcb6966ff"
+    },
+    {
+      "materialId": "bk-practice-syllabus-fixed-acquisition-13",
+      "version": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-fixed-acquisition",
+        "conceptVersion": "synthetic-syllabus-concept-686c47150306",
+        "label": "固定資産の取得原価と修繕を区別する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-fixed-acquisition-13",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+          "conceptId": "syllabus-fixed-acquisition",
+          "familyId": "bk-practice-syllabus-fixed-acquisition-compression",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "国庫補助金30,000を受け取り、機械100,000を取得した。直接減額方式で圧縮記帳する指定。圧縮後の機械の帳簿価額は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "国庫補助金30,000を受け取り、機械100,000を取得した。直接減額方式で圧縮記帳する指定。圧縮後の機械の帳簿価額は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "国庫補助金30,000を受け取り、機械100,000を取得した。直接減額方式で圧縮記帳する指定。圧縮後の機械の帳簿価額は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "100,000"
+            },
+            {
+              "id": "o2",
+              "label": "70,000"
+            },
+            {
+              "id": "o3",
+              "label": "130,000"
+            },
+            {
+              "id": "o4",
+              "label": "30,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "圧縮記帳をしていない額。",
+            "explanation": "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "補助金を取得原価に足している。逆方向。",
+            "explanation": "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-13-f20936c67f8a",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "圧縮した額（補助金）を帳簿価額と取り違えている。",
+            "explanation": "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：直接減額方式は、補助金の額だけ取得原価を減らす。→ 計算：100,000−30,000＝70,000。→ 結論：70,000（償却もこの額から行う）。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "資産原価へ算入する支出を選び、除外費用と仕訳を分ける。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "114ac26966682d57ec1a30a314a06af6bfde08a2dd1c1a2c9cbe8bd3317a646c"
+    },
+    {
+      "materialId": "bk-practice-syllabus-fixed-acquisition-14",
+      "version": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-fixed-acquisition",
+        "conceptVersion": "synthetic-syllabus-concept-686c47150306",
+        "label": "固定資産の取得原価と修繕を区別する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-fixed-acquisition-14",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+          "conceptId": "syllabus-fixed-acquisition",
+          "familyId": "bk-practice-syllabus-fixed-acquisition-exchange",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "自社の土地",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "自社の土地（帳簿価額40,000）を同種の土地と交換。交換差金なし。相手の土地の時価は55,000。譲渡した資産の帳簿価額を取得原価とする指定。受け入れた土地の取得原価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "自社の土地（帳簿価額40,000）を同種の土地と交換。交換差金なし。相手の土地の時価は55,000。譲渡した資産の帳簿価額を取得原価とする指定。受け入れた土地の取得原価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "55,000"
+            },
+            {
+              "id": "o2",
+              "label": "15,000"
+            },
+            {
+              "id": "o3",
+              "label": "40,000"
+            },
+            {
+              "id": "o4",
+              "label": "95,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "時価で受け入れると、交換益15,000が出てしまう。この指定では使わない。",
+            "explanation": "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "時価と帳簿価額の差を取得原価にしている。",
+            "explanation": "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-14-c6c53f4c4e3c",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "2つの土地の額を足している。",
+            "explanation": "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：同種資産の交換は、投資が続いているとみて損益を出さない。→ 計算：取得原価は譲渡資産の帳簿価額40,000。→ 結論：40,000（交換益は出さない）。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "資産原価へ算入する支出を選び、除外費用と仕訳を分ける。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "ee4dadd0f9bcd37bb37d85766440545a9dcb1ed69f0cfc84cd4ff42a1a80c9e8"
+    },
+    {
+      "materialId": "bk-practice-syllabus-fixed-acquisition-15",
+      "version": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+      "subjectId": "bookkeeping",
+      "authorId": "codex-draft",
+      "status": "draft",
+      "concept": {
+        "subjectId": "bookkeeping",
+        "conceptId": "syllabus-fixed-acquisition",
+        "conceptVersion": "synthetic-syllabus-concept-686c47150306",
+        "label": "固定資産の取得原価と修繕を区別する",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
+          "sourceId": "asbj-standards-index-2026",
+          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
+          "checkedAt": "2026-10-07",
+          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
+          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        }
+      ],
+      "document": {
+        "prompt": {
+          "caseId": "bk-practice-syllabus-fixed-acquisition-15",
+          "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+          "conceptId": "syllabus-fixed-acquisition",
+          "familyId": "bk-practice-syllabus-fixed-acquisition-construction-interest",
+          "developmentOnly": true,
+          "title": "簿記の短い演習",
+          "consultationTitle": "自家建設の工場。建設資金の借入金利息のうち、稼働前の期間分6,000は取得原価に算入できるという指定。稼働後の期間分は2,000。取得原価に算入する利息は？",
+          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
+          "consultation": "自家建設の工場。建設資金の借入金利息のうち、稼働前の期間分6,000は取得原価に算入できるという指定。稼働後の期間分は2,000。取得原価に算入する利息は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
+          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
+          "facts": [
+            {
+              "label": "演習の条件",
+              "value": "自家建設の工場。建設資金の借入金利息のうち、稼働前の期間分6,000は取得原価に算入できるという指定。稼働後の期間分は2,000。取得原価に算入する利息は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
+            }
+          ],
+          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
+          "options": [
+            {
+              "id": "o1",
+              "label": "8,000"
+            },
+            {
+              "id": "o2",
+              "label": "2,000"
+            },
+            {
+              "id": "o3",
+              "label": "0"
+            },
+            {
+              "id": "o4",
+              "label": "6,000"
+            }
+          ]
+        },
+        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+        "results": {
+          "o1": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o1",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "稼働後の利息2,000まで含めている。",
+            "explanation": "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o2": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o2",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "稼働後の分だけを算入している。期間が逆。",
+            "explanation": "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o3": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o3",
+            "correct": false,
+            "earned": 0,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": "この問題では稼働前の利息を算入できると指定されている。",
+            "explanation": "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          },
+          "o4": {
+            "caseVersion": "synthetic-question-bk-practice-syllabus-fixed-acquisition-15-0ed239eea575",
+            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
+            "optionId": "o4",
+            "correct": true,
+            "earned": 1,
+            "max": 1,
+            "developmentOnly": true,
+            "evidenceQualification": "practice_only",
+            "misconceptionCandidate": null,
+            "explanation": "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+            "periods": [],
+            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
+            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
+            "checkpoints": [
+              "見る所：算入できるのは、建設期間（稼働前）の利息だけ。→ 計算：稼働前6,000。稼働後2,000は支払利息。→ 結論：6,000。",
+              "条件が変わる場合も確かめる"
+            ]
+          }
+        },
+        "exceptions": [],
+        "aiGrounding": [],
+        "examTranslation": "資産原価へ算入する支出を選び、除外費用と仕訳を分ける。"
+      },
+      "applicableYear": null,
+      "intendedUse": "practice",
+      "reviewSha256": "144a04aa7ae23a89f46c80802cd2aa5b48dbe9d216f3b89ae2a42ae628d72f4b"
     },
     {
       "materialId": "bk-practice-syllabus-fixed-depreciation-1",
@@ -18659,2094 +20429,3 @@
           "title": "簿記の短い演習",
           "consultationTitle": "売買目的株式の売却直前簿価150、売却額168、手数料3は売却損益から控除。利益は？",
           "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "売買目的株式の売却直前簿価150、売却額168、手数料3は売却損益から控除。利益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "売買目的株式の売却直前簿価150、売却額168、手数料3は売却損益から控除。利益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "18"
-            },
-            {
-              "id": "o2",
-              "label": "21"
-            },
-            {
-              "id": "o3",
-              "label": "168"
-            },
-            {
-              "id": "o4",
-              "label": "15"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-5-03512f11cbf4",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "168−150−3＝15。",
-            "explanation": "168−150−3＝15。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "168−150−3＝15。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-5-03512f11cbf4",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "168−150−3＝15。",
-            "explanation": "168−150−3＝15。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "168−150−3＝15。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-5-03512f11cbf4",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "168−150−3＝15。",
-            "explanation": "168−150−3＝15。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "168−150−3＝15。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-5-03512f11cbf4",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "168−150−3＝15。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "168−150−3＝15。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "分類→評価額→差額→損益・純資産→税効果の順で解く。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "1c68bab94a479f11cfc07c6091e6e1373af524235795bfde2466ffdb3ec2d945"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-classification-6",
-      "version": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-classification",
-        "conceptVersion": "synthetic-syllabus-concept-86c4bf8e5624",
-        "label": "保有目的から有価証券の評価を決める",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-classification-6",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-          "conceptId": "syllabus-securities-classification",
-          "familyId": "bk-practice-syllabus-securities-classification-wash",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "その他有価証券の期首簿価110、前期評価差額10、取得原価100。洗替法・税効果なしの期首処理は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "その他有価証券の期首簿価110、前期評価差額10、取得原価100。洗替法・税効果なしの期首処理は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "その他有価証券の期首簿価110、前期評価差額10、取得原価100。洗替法・税効果なしの期首処理は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "証券を10増やす"
-            },
-            {
-              "id": "o2",
-              "label": "当期売却益10"
-            },
-            {
-              "id": "o3",
-              "label": "処理なし"
-            },
-            {
-              "id": "o4",
-              "label": "証券を10減らし評価差額を10取り消す"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "洗替で取得原価100に戻す。",
-            "explanation": "洗替で取得原価100に戻す。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "洗替で取得原価100に戻す。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "洗替で取得原価100に戻す。",
-            "explanation": "洗替で取得原価100に戻す。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "洗替で取得原価100に戻す。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "洗替で取得原価100に戻す。",
-            "explanation": "洗替で取得原価100に戻す。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "洗替で取得原価100に戻す。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-classification-6-3106887cc5f6",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "洗替で取得原価100に戻す。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "洗替で取得原価100に戻す。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "分類→評価額→差額→損益・純資産→税効果の順で解く。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "820be92cd8bdacd34fb69e2db11118fd7d2ed133ec62ce596448f3f919fc0025"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-1",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-1",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-straight",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "額面1000、取得960、金利調整差額、残存4年。定額法で一年の簿価増加は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "額面1000、取得960、金利調整差額、残存4年。定額法で一年の簿価増加は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "額面1000、取得960、金利調整差額、残存4年。定額法で一年の簿価増加は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "40"
-            },
-            {
-              "id": "o2",
-              "label": "10"
-            },
-            {
-              "id": "o3",
-              "label": "250"
-            },
-            {
-              "id": "o4",
-              "label": "0"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "差額40÷4年＝10。",
-            "explanation": "差額40÷4年＝10。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "差額40÷4年＝10。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "差額40÷4年＝10。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "差額40÷4年＝10。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "差額40÷4年＝10。",
-            "explanation": "差額40÷4年＝10。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "差額40÷4年＝10。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-1-d638c36416a8",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "差額40÷4年＝10。",
-            "explanation": "差額40÷4年＝10。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "差額40÷4年＝10。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "e1b1b7fa7e2a383bb54817799517b2f573fb3a3610933c0bae81edc73cfb0731"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-2",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-2",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-effective",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "期首簿価950、実効利率4%、額面1000、年クーポン3%。利息法の利息収益は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "期首簿価950、実効利率4%、額面1000、年クーポン3%。利息法の利息収益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "期首簿価950、実効利率4%、額面1000、年クーポン3%。利息法の利息収益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "30"
-            },
-            {
-              "id": "o2",
-              "label": "8"
-            },
-            {
-              "id": "o3",
-              "label": "40"
-            },
-            {
-              "id": "o4",
-              "label": "38"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "950×4%＝38。",
-            "explanation": "950×4%＝38。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "950×4%＝38。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "950×4%＝38。",
-            "explanation": "950×4%＝38。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "950×4%＝38。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "950×4%＝38。",
-            "explanation": "950×4%＝38。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "950×4%＝38。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-2-e293857d6537",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "950×4%＝38。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "950×4%＝38。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "6d452910f47795882bf7e555691b2436e1371769802bfddb149e6853c855717b"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-3",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-3",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-bridge",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "期首簿価980、利息収益49、現金利息40。利息法の期末簿価は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "期首簿価980、利息収益49、現金利息40。利息法の期末簿価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "期首簿価980、利息収益49、現金利息40。利息法の期末簿価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "989"
-            },
-            {
-              "id": "o2",
-              "label": "1029"
-            },
-            {
-              "id": "o3",
-              "label": "971"
-            },
-            {
-              "id": "o4",
-              "label": "980"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "980＋49−40＝989。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "980＋49−40＝989。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "980＋49−40＝989。",
-            "explanation": "980＋49−40＝989。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "980＋49−40＝989。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "980＋49−40＝989。",
-            "explanation": "980＋49−40＝989。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "980＋49−40＝989。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-3-e0aba9328bf7",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "980＋49−40＝989。",
-            "explanation": "980＋49−40＝989。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "980＋49−40＝989。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "ccb5104c31463ca41ad6b09e107db88adbff352fa436a27f50984775e59dbd9c"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-4",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-4",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-premium",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "額面1000、取得1040、金利調整差額、残存4年。定額法の一年後簿価は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "額面1000、取得1040、金利調整差額、残存4年。定額法の一年後簿価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "額面1000、取得1040、金利調整差額、残存4年。定額法の一年後簿価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "1050"
-            },
-            {
-              "id": "o2",
-              "label": "1000"
-            },
-            {
-              "id": "o3",
-              "label": "1030"
-            },
-            {
-              "id": "o4",
-              "label": "1040"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "打歩40を4年で減らす。",
-            "explanation": "打歩40を4年で減らす。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "打歩40を4年で減らす。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "打歩40を4年で減らす。",
-            "explanation": "打歩40を4年で減らす。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "打歩40を4年で減らす。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "打歩40を4年で減らす。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "打歩40を4年で減らす。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-4-7bccd6e4f5f9",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "打歩40を4年で減らす。",
-            "explanation": "打歩40を4年で減らす。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "打歩40を4年で減らす。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "9b079f26c65267336faf6e1c1abb065bf2e0b0d76d17cc08eff7010a5ee5938d"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-5",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-5",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-accrued",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "購入時支払額505のうち端数利息5。手数料なし、債券本体の価格500。債券の取得原価は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "購入時支払額505のうち端数利息5。手数料なし、債券本体の価格500。債券の取得原価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "購入時支払額505のうち端数利息5。手数料なし、債券本体の価格500。債券の取得原価は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "505"
-            },
-            {
-              "id": "o2",
-              "label": "500"
-            },
-            {
-              "id": "o3",
-              "label": "495"
-            },
-            {
-              "id": "o4",
-              "label": "5"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "端数利息5を利息項目として区別する。",
-            "explanation": "端数利息5を利息項目として区別する。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "端数利息5を利息項目として区別する。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "端数利息5を利息項目として区別する。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "端数利息5を利息項目として区別する。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "端数利息5を利息項目として区別する。",
-            "explanation": "端数利息5を利息項目として区別する。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "端数利息5を利息項目として区別する。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-5-aa97088954f5",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "端数利息5を利息項目として区別する。",
-            "explanation": "端数利息5を利息項目として区別する。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "端数利息5を利息項目として区別する。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "f02c53ddbcd77d59d72b6681919f5af5f13c82b96ead87b5e5e17ab8f00c85ba"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-bonds-6",
-      "version": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-bonds",
-        "conceptVersion": "synthetic-syllabus-concept-2ca8d5a3a3d3",
-        "label": "債券の利息と償却原価をつなぐ",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-bonds-6",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-          "conceptId": "syllabus-securities-bonds",
-          "familyId": "bk-practice-syllabus-securities-bonds-month",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "額面1200、取得1140、金利調整差額、残存5年。定額法を月割し取得後3か月の償却額は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "額面1200、取得1140、金利調整差額、残存5年。定額法を月割し取得後3か月の償却額は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "額面1200、取得1140、金利調整差額、残存5年。定額法を月割し取得後3か月の償却額は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "12"
-            },
-            {
-              "id": "o2",
-              "label": "15"
-            },
-            {
-              "id": "o3",
-              "label": "60"
-            },
-            {
-              "id": "o4",
-              "label": "3"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "60÷5×3/12＝3。",
-            "explanation": "60÷5×3/12＝3。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "60÷5×3/12＝3。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "60÷5×3/12＝3。",
-            "explanation": "60÷5×3/12＝3。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "60÷5×3/12＝3。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "60÷5×3/12＝3。",
-            "explanation": "60÷5×3/12＝3。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "60÷5×3/12＝3。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-bonds-6-6ba3041f8570",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "60÷5×3/12＝3。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "60÷5×3/12＝3。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "現金利息と償却額の計算表を作り、期首→期末簿価を接続する。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "4f633381d9dfd8f55b8fafe64c9304bcd25f0124ddcb53142955d6726a5136b4"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-derivatives-1",
-      "version": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-derivatives",
-        "conceptVersion": "synthetic-syllabus-concept-d51192bf9b47",
-        "label": "デリバティブ評価とヘッジの条件を読む",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-derivatives-1",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-          "conceptId": "syllabus-securities-derivatives",
-          "familyId": "bk-practice-syllabus-securities-derivatives-mark",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "通常処理の先物。期首評価資産0、期末評価資産12。未決済、税効果なし。評価益は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "通常処理の先物。期首評価資産0、期末評価資産12。未決済、税効果なし。評価益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "通常処理の先物。期首評価資産0、期末評価資産12。未決済、税効果なし。評価益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "0"
-            },
-            {
-              "id": "o2",
-              "label": "12"
-            },
-            {
-              "id": "o3",
-              "label": "24"
-            },
-            {
-              "id": "o4",
-              "label": "負債12"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "資産の増加12を損益へ。",
-            "explanation": "資産の増加12を損益へ。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "資産の増加12を損益へ。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "資産の増加12を損益へ。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "資産の増加12を損益へ。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "資産の増加12を損益へ。",
-            "explanation": "資産の増加12を損益へ。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "資産の増加12を損益へ。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-1-fbe89dac8277",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "資産の増加12を損益へ。",
-            "explanation": "資産の増加12を損益へ。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "資産の増加12を損益へ。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "時価差額と損益の行先を分け、特例は条件を確認してから使う。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "7fbd6f43a9f9528e5e8a4b255857d3d610bc2b2ffc235cff4cd4c5b839015450"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-derivatives-2",
-      "version": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-derivatives",
-        "conceptVersion": "synthetic-syllabus-concept-d51192bf9b47",
-        "label": "デリバティブ評価とヘッジの条件を読む",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-derivatives-2",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-          "conceptId": "syllabus-securities-derivatives",
-          "familyId": "bk-practice-syllabus-securities-derivatives-defer",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "繰延ヘッジの全要件を満たすと指定。デリバティブ評価損20、対象損益は翌期、税効果なし。当期の行先は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "繰延ヘッジの全要件を満たすと指定。デリバティブ評価損20、対象損益は翌期、税効果なし。当期の行先は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "繰延ヘッジの全要件を満たすと指定。デリバティブ評価損20、対象損益は翌期、税効果なし。当期の行先は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "当期売上に損失20"
-            },
-            {
-              "id": "o2",
-              "label": "資本金に損失20"
-            },
-            {
-              "id": "o3",
-              "label": "繰延ヘッジ損益に損失20"
-            },
-            {
-              "id": "o4",
-              "label": "処理しない"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "指定された繰延処理で純資産項目へ置く。",
-            "explanation": "指定された繰延処理で純資産項目へ置く。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "指定された繰延処理で純資産項目へ置く。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "指定された繰延処理で純資産項目へ置く。",
-            "explanation": "指定された繰延処理で純資産項目へ置く。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "指定された繰延処理で純資産項目へ置く。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "指定された繰延処理で純資産項目へ置く。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "指定された繰延処理で純資産項目へ置く。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-2-7a17cf005e8c",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "指定された繰延処理で純資産項目へ置く。",
-            "explanation": "指定された繰延処理で純資産項目へ置く。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "指定された繰延処理で純資産項目へ置く。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "時価差額と損益の行先を分け、特例は条件を確認してから使う。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "4801585cd9d743ed1ce4487524ca40553bf1a9a772e23e67ee8d5fc1c4ee4a9d"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-derivatives-3",
-      "version": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-derivatives",
-        "conceptVersion": "synthetic-syllabus-concept-d51192bf9b47",
-        "label": "デリバティブ評価とヘッジの条件を読む",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-derivatives-3",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-          "conceptId": "syllabus-securities-derivatives",
-          "familyId": "bk-practice-syllabus-securities-derivatives-tax",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "繰延ヘッジ損失40、問題上の税率30%、繰延税金資産の認識可。税引後の純資産減少は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "繰延ヘッジ損失40、問題上の税率30%、繰延税金資産の認識可。税引後の純資産減少は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "繰延ヘッジ損失40、問題上の税率30%、繰延税金資産の認識可。税引後の純資産減少は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "40"
-            },
-            {
-              "id": "o2",
-              "label": "12"
-            },
-            {
-              "id": "o3",
-              "label": "52"
-            },
-            {
-              "id": "o4",
-              "label": "28"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "税効果12を差し引いた28。",
-            "explanation": "税効果12を差し引いた28。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "税効果12を差し引いた28。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "税効果12を差し引いた28。",
-            "explanation": "税効果12を差し引いた28。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "税効果12を差し引いた28。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "税効果12を差し引いた28。",
-            "explanation": "税効果12を差し引いた28。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "税効果12を差し引いた28。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-3-93ef940d1407",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "税効果12を差し引いた28。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "税効果12を差し引いた28。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "時価差額と損益の行先を分け、特例は条件を確認してから使う。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "836cca7418b305cf5f2e8080e51102af60f27d0684bb5ddbdebe41c42ee95073"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-derivatives-4",
-      "version": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-derivatives",
-        "conceptVersion": "synthetic-syllabus-concept-d51192bf9b47",
-        "label": "デリバティブ評価とヘッジの条件を読む",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-derivatives-4",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-          "conceptId": "syllabus-securities-derivatives",
-          "familyId": "bk-practice-syllabus-securities-derivatives-fair-hedge",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "時価ヘッジを指定し、ヘッジ手段の利益15、対象のヘッジリスクに係る損失14。税効果なし、純損益は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "時価ヘッジを指定し、ヘッジ手段の利益15、対象のヘッジリスクに係る損失14。税効果なし、純損益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "時価ヘッジを指定し、ヘッジ手段の利益15、対象のヘッジリスクに係る損失14。税効果なし、純損益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "利益1"
-            },
-            {
-              "id": "o2",
-              "label": "利益29"
-            },
-            {
-              "id": "o3",
-              "label": "損失1"
-            },
-            {
-              "id": "o4",
-              "label": "利益15"
-            }
-          ]
-        },
-        "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-        "results": {
-          "o1": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o1",
-            "correct": true,
-            "earned": 1,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": null,
-            "explanation": "15−14＝1を対応させる。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "15−14＝1を対応させる。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o2": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o2",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "15−14＝1を対応させる。",
-            "explanation": "15−14＝1を対応させる。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "15−14＝1を対応させる。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o3": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o3",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "15−14＝1を対応させる。",
-            "explanation": "15−14＝1を対応させる。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "15−14＝1を対応させる。",
-              "条件が変わる場合も確かめる"
-            ]
-          },
-          "o4": {
-            "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-4-ba5190e726ae",
-            "scoringVersion": "synthetic-bookkeeping-question-choice-v1",
-            "optionId": "o4",
-            "correct": false,
-            "earned": 0,
-            "max": 1,
-            "developmentOnly": true,
-            "evidenceQualification": "practice_only",
-            "misconceptionCandidate": "15−14＝1を対応させる。",
-            "explanation": "15−14＝1を対応させる。",
-            "periods": [],
-            "teachBack": "この判断が成り立つ条件を、自分の言葉で説明してください。",
-            "followUp": "条件を一つ変えたら、判断はどう変わりますか？",
-            "checkpoints": [
-              "15−14＝1を対応させる。",
-              "条件が変わる場合も確かめる"
-            ]
-          }
-        },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "時価差額と損益の行先を分け、特例は条件を確認してから使う。"
-      },
-      "applicableYear": null,
-      "intendedUse": "practice",
-      "reviewSha256": "e4840b65645cbea283e34f13005ec968f49c581135d8eea9559687eb94e687bb"
-    },
-    {
-      "materialId": "bk-practice-syllabus-securities-derivatives-5",
-      "version": "synthetic-question-bk-practice-syllabus-securities-derivatives-5-5bde9e5c7223",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-securities-derivatives",
-        "conceptVersion": "synthetic-syllabus-concept-d51192bf9b47",
-        "label": "デリバティブ評価とヘッジの条件を読む",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },
-      "sources": [
-        {
-          "sourceId": "nta-bookkeeping-scope-2026",
-          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
-          "checkedAt": "2026-10-07",
-          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
-          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        },
-        {
-          "sourceId": "asbj-standards-index-2026",
-          "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
-          "checkedAt": "2026-10-07",
-          "attribution": "企業会計基準委員会・基準一覧（原稿の参照入口）",
-          "permissionNote": "一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。",
-          "rights": {
-            "acquisition": "unknown",
-            "storage": "unknown",
-            "reproduction": "unknown",
-            "modification": "unknown",
-            "redistribution": "unknown",
-            "aiInput": "unknown"
-          }
-        }
-      ],
-      "document": {
-        "prompt": {
-          "caseId": "bk-practice-syllabus-securities-derivatives-5",
-          "caseVersion": "synthetic-question-bk-practice-syllabus-securities-derivatives-5-5bde9e5c7223",
-          "conceptId": "syllabus-securities-derivatives",
-          "familyId": "bk-practice-syllabus-securities-derivatives-settle",
-          "developmentOnly": true,
-          "title": "簿記の短い演習",
-          "consultationTitle": "通常処理のデリバティブ資産8を現金8で決済。直前評価が済んでいる。決済時追加損益は？",
-          "context": "簿記論の原稿を試す短い演習です。専門審査前のため正式な診断・習熟認定には使いません。",
-          "consultation": "通常処理のデリバティブ資産8を現金8で決済。直前評価が済んでいる。決済時追加損益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）",
-          "task": "条件に合う回答を選び、判断の根拠を説明しましょう。",
-          "facts": [
-            {
-              "label": "演習の条件",
-              "value": "通常処理のデリバティブ資産8を現金8で決済。直前評価が済んでいる。決済時追加損益は？（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）"
-            }
-          ],
-          "assumption": "架空の条件による原稿試用。評価用の原稿も正式な測定証拠には数えません。",
-          "options": [
-            {
-              "id": "o1",
-              "label": "利益8"
-            },
-            {
-              "id": "o2",
-              "label": "0"
-            },
-            {
-              "id": "o3",
-              "label": "損失8"
-            },
-            {
-              "id": "o4",
-              "label": "利益16"
-            }
-          ]
