@@ -8,7 +8,7 @@ import { createDiagnosticEngine } from '../src/domain/diagnostic-session';
 import { projectBookkeepingTrialReview } from '../src/server/bookkeeping-trial-review';
 
 const legacy = JSON.parse(readFileSync(new URL('../../references/subjects/boki.json',import.meta.url),'utf8'));
-const counts = {practice:263,diagnostic:108,evaluation:36,retention:72,mini_a:6,mini_b:6};
+const counts = {practice:309,diagnostic:108,evaluation:36,retention:72,mini_a:6,mini_b:6};
 test('旧28論点を明示対応し公式出題ポイントのCFとOCIを加え、承認・頻度を捏造しない',()=>{
   assert.equal(BOOKKEEPING_SYLLABUS_LESSONS.length,30);
   assert.deepEqual(BOOKKEEPING_SYLLABUS_LESSONS.filter(item=>item.legacyTopicId.startsWith('boki.')).map(item=>item.legacyTopicId).sort(),legacy.topics.map((item:{id:string})=>item.id).sort());
@@ -28,8 +28,8 @@ test('旧28論点を明示対応し公式出題ポイントのCFとOCIを加え�
     for(const interval of [7,21]) assert.equal(lesson.exercises.filter(item=>item.use==='retention'&&item.family===`retain-${interval}-day`).length,1,id);
   }
 });
-test('全491問は用途別に隔離し正答と根拠を出題前に漏らさず、採点を固定する',()=>{
-  assert.equal(BOOKKEEPING_ALL_QUESTION_DRAFTS.length,491);
+test('全537問は用途別に隔離し正答と根拠を出題前に漏らさず、採点を固定する',()=>{
+  assert.equal(BOOKKEEPING_ALL_QUESTION_DRAFTS.length,537);
   const ids=new Set<string>(); const prompts=new Set<string>();
   for(const [use,count] of Object.entries(counts)) assert.equal(BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item=>item.intendedUse===use).length,count,use);
   for(const item of BOOKKEEPING_ALL_QUESTION_DRAFTS) {
@@ -73,16 +73,16 @@ test('概念だけを改訂しても教材版が変わり旧完了を新版の�
 });
 
 
-test('公開された問題版の先頭バイトから追加383問の正答を復元できない',()=>{
+test('公開された問題版の先頭バイトから追加429問の正答を復元できない',()=>{
   const questions=BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item=>item.question.conceptId.startsWith('syllabus-'));
-  assert.equal(questions.length,383);
+  assert.equal(questions.length,429);
   const recovered=questions.filter(item=>{
     const publicView=publicBookkeepingQuestion(item);
     const hash=publicView.version.split('-').at(-1)!;
     const guessedId=`o${Number.parseInt(hash.slice(0,2),16)%4+1}`;
     return item.question.options.find(option=>option.id===guessedId)?.earned===1;
   }).length;
-  assert.ok(recovered<questions.length/2,`公開版から${recovered}/383問の正答が復元された`);
+  assert.ok(recovered<questions.length/2,`公開版から${recovered}/429問の正答が復元された`);
 });
 
 test('選択肢ごとの誤答理由がある問題は、選んだ誤答に対応する理由を返す',()=>{
@@ -98,4 +98,18 @@ test('選択肢ごとの誤答理由がある問題は、選んだ誤答に対�
       assert.equal(option.errorReason,seed.wrongReasons[seed.wrong.indexOf(option.label)],seed.family);
     }
   });
+});
+
+test('誤答理由つきの問題は、正解の位置と選択肢の長さで答えが推測できない',()=>{
+  const items=BOOKKEEPING_SYLLABUS_LESSONS.flatMap(lesson=>lesson.exercises.flatMap((seed,index)=>seed.wrongReasons?[{seed,id:`bk-${seed.use}-${syllabusConceptId(lesson)}-${index+1}`}]:[]));
+  assert.ok(items.length>=69);
+  const positions=[0,0,0,0]; let longest=0;
+  for(const {seed,id} of items){
+    const item=BOOKKEEPING_ALL_QUESTION_DRAFTS.find(draft=>draft.question.id===id)!;
+    positions[item.question.options.findIndex(option=>option.earned===1)]++;
+    const lengths=seed.wrong.map(label=>label.length);
+    if(seed.answer.length>Math.max(...lengths)) longest++;
+  }
+  for(const count of positions) assert.ok(count>=items.length*0.15&&count<=items.length*0.35,`正解の位置の偏り：${positions.join('/')}`);
+  assert.ok(longest<=items.length/3,`正解だけが最長の問題が${longest}/${items.length}問`);
 });
