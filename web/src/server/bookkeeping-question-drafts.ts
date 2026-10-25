@@ -1606,7 +1606,7 @@ const syllabusQuestions: BookkeepingDraftQuestion[] = BOOKKEEPING_SYLLABUS_LESSO
     poolId:`bk-${use}`,poolVersion:'synthetic-bookkeeping-syllabus-v2',purpose:use==='diagnostic'?'diagnostic':use==='practice'?'practice':'after_evaluation',
     stage:use==='diagnostic'&&seed.family==='anchor'?'anchor':use==='diagnostic'&&seed.family==='boundary'?'boundary':'transfer',
     status:'draft',review:null,prompt:`${seed.prompt}（架空の原稿試用・専門審査前。問題に示す処理条件を使い、税務特例は扱いません。）`,
-    maxScore:1,targetScore:1,options:answers.map((label,i)=>({id:`o${i+1}`,label,earned:i===position?1:0,errorReason:i===position?null:seed.explanation}))},
+    maxScore:1,targetScore:1,options:answers.map((label,i)=>({id:`o${i+1}`,label,earned:i===position?1:0,errorReason:i===position?null:seed.wrongReasons?.[i<position?i:i-1]??seed.explanation}))},
     explanation:seed.explanation,qualification:'practice_only',expertReview:'pending',intendedUse:use};
 }));
 export const BOOKKEEPING_CORE_PRACTICE_DRAFTS: readonly BookkeepingDraftQuestion[] = practiceSeeds.map(draft);
