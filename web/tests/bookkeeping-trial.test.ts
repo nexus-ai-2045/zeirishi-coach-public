@@ -7,7 +7,7 @@ import { APPROVED_CATALOG, MATERIAL_RECORDS } from '../src/server/approved-catal
 
 test('draft inventory cannot activate production and every material selection binds its concept and version', () => {
   assert.equal(BOOKKEEPING_TRIAL_CATALOG[0].concepts.length,36); assert.equal(BOOKKEEPING_TRIAL_CASES.length,35);
-  assert.equal(MATERIAL_RECORDS.length,503); assert.ok(MATERIAL_RECORDS.every(record=>record.status==='draft'));
+  assert.equal(MATERIAL_RECORDS.length,526); assert.ok(MATERIAL_RECORDS.every(record=>record.status==='draft'));
   assert.equal(APPROVED_CATALOG.length,0);
   assert.equal(new Set(BOOKKEEPING_TRIAL_MATERIALS.map(material=>material.caseVersion)).size,BOOKKEEPING_TRIAL_MATERIALS.length);
   for(const choice of BOOKKEEPING_TRIAL_CHOICES) {
