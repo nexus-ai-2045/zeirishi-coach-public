@@ -45,14 +45,14 @@ for (const material of BOOKKEEPING_TRIAL_CASES) test(`案件 ${material.prompt()
     await page.reload(); await expect(page.getByText('相談ケース完了',{exact:true})).toBeVisible();
 });
 
-test('練習240問と独立プールを分離し、選択前に正答・採点情報を返さない', async ({page}) => {
+test('練習263問と独立プールを分離し、選択前に正答・採点情報を返さない', async ({page}) => {
   test.setTimeout(90000);
   const ready=page.waitForResponse(response=>response.url().includes('/api/profile')&&response.request().method()==='GET');
   await page.goto('/#map');
   expect((await ready).status()).toBe(200);
   await expect(page.getByRole('region',{name:'簿記論の問題演習'})).toBeVisible();
   const practice = await (await page.request.get('/api/practice?pool=practice')).json();
-  expect(practice.items).toHaveLength(240);
+  expect(practice.items).toHaveLength(263);
   const serialized=JSON.stringify(practice); for(const field of ['earned','errorReason','explanation','correct','targetScore']) expect(serialized).not.toContain(`"${field}"`);
   const first=practice.items[0];
   const created=await page.request.post('/api/cafe',{headers:{Origin:origin},data:{action:'start',requestId:crypto.randomUUID(),concept:{subjectId:first.subjectId,conceptId:first.conceptId,conceptVersion:first.conceptVersion},materialId:first.id,caseVersion:first.caseVersion}});
