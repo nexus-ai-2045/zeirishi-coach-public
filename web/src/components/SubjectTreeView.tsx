@@ -1,11 +1,28 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import type { MapConcept, SubjectMapPack } from '../domain/subject-map';
 import { topicConcepts } from '../domain/subject-map';
 import styles from './SubjectTreeView.module.css';
 
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
 type Props = { pack: SubjectMapPack; choices: readonly Choice[]; disabled: boolean; onStart: (concept: MapConcept, material: Choice) => void };
+/** Adds a plain-word gloss in parentheses after the first use of each technical term. `seen` is shared within one panel. */
+function glossText(text: string, glossary: Record<string, string> | undefined, seen: Set<string>, className: string): ReactNode {
+  if (!glossary) return text;
+  const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
+  const parts: ReactNode[] = []; let plain = ''; let index = 0;
+  while (index < text.length) {
+    const term = terms.find(item => text.startsWith(item, index));
+    if (term && !seen.has(term) && text[index + term.length] !== '（') {
+      if (plain) { parts.push(plain); plain = ''; }
+      seen.add(term);
+      parts.push(<Fragment key={`${index}-${term}`}>{term}<span className={className}>（{glossary[term]}）</span></Fragment>);
+      index += term.length;
+    } else if (term) { plain += term; index += term.length; } else { plain += text[index]; index += 1; }
+  }
+  if (plain) parts.push(plain);
+  return parts;
+}
 const frequencyLabel = { high: '★頻出', mid: 'よく出る', low: 'ときどき' } as const;
 
 /**
@@ -34,6 +51,7 @@ export function SubjectTreeView({ pack, choices, disabled, onStart }: Props) {
     setSelectedTopic(topicId);
   };
   const toggle = (unitId: string) => setOpen(previous => { const next = new Set(previous); if (next.has(unitId)) next.delete(unitId); else next.add(unitId); return next; });
+  const seen = new Set<string>();
   const frequentCount = pack.topics.filter(item => item.frequency === 'high').length;
 
   return <section className={styles.view} aria-label="科目の全体ツリー">
@@ -59,19 +77,20 @@ export function SubjectTreeView({ pack, choices, disabled, onStart }: Props) {
             return <li key={item.topicId}><button className={styles.topic} data-role={role} aria-current={role === 'selected' ? 'true' : undefined} onClick={() => select(item.topicId)}>
               <span className={styles.topicLine}><strong>{item.label}</strong>{item.frequency === 'high' && <em className={styles.hot}>★頻出</em>}{hasQuestion && <em className={styles.q}>問題あり</em>}
                 {role === 'before' && <em className={styles.relBefore}>← 先に</em>}{role === 'after' && <em className={styles.relAfter}>次に →</em>}</span>
-              <span className={styles.summary}>{item.summary}</span></button></li>;
+              <span className={styles.summary}>{glossText(item.summary, pack.glossary, new Set(), styles.gloss)}</span></button></li>;
           })}</ul>}
         </li>;
       })}</ol>
       {topic && concept && <aside className={styles.detail} aria-live="polite">
         <p className={styles.kicker}>{units.find(unit => unit.unitId === topic.unitId)?.label}{topic.frequency && <> ・ {frequencyLabel[topic.frequency]}</>}</p>
         <h3>{topic.label}</h3>
-        <p className={styles.oneLine}>{topic.summary}</p>
+        <p className={styles.oneLine}>{glossText(topic.summary, pack.glossary, seen, styles.gloss)}</p>
+        {topic.example && <div className={styles.example}><p>具体的にいうと</p><div>{glossText(topic.example, pack.glossary, seen, styles.gloss)}</div></div>}
         <dl>
-          <dt>何か</dt><dd>{concept.definition}</dd>
-          <dt>なぜ大事か</dt><dd>{concept.purpose}</dd>
-          <dt>間違えやすい点</dt><dd>{concept.misconception}</dd>
-          <dt>試験での出方</dt><dd>{concept.examUse}</dd>
+          <dt>何か</dt><dd>{glossText(concept.definition, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>なぜ大事か</dt><dd>{glossText(concept.purpose, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>間違えやすい点</dt><dd>{glossText(concept.misconception, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>試験での出方</dt><dd>{glossText(concept.examUse, pack.glossary, seen, styles.gloss)}</dd>
         </dl>
         <div className={styles.links}>
           <p>先に知ると理解しやすい</p>{before.length ? before.map(item => <button key={item.topicId} className={styles.chipBefore} onClick={() => select(item.topicId)}>← {item.label}</button>) : <span className={styles.none}>この論点が出発点です</span>}

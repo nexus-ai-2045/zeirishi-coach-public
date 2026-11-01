@@ -60,3 +60,7 @@
   .layout { grid-template-columns: 1fr; }
   .detail { position: static; max-height: none; order: -1; }
 }
+.gloss { color: #4f6b75; font-size: .92em; }
+.example { margin: 4px 0 12px; padding: 12px 14px; border-radius: 10px; background: #f3f8ff; border: 1px solid #cfe0f3; }
+.example p { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: #2f5f93; }
+.example div { font-size: 14px; line-height: 1.8; }

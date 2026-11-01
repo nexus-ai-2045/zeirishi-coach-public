@@ -24,7 +24,8 @@ type ConceptFields = { definition: string; purpose: string; applicability: strin
 export type SubjectTree = {
   subjectId: Exclude<SubjectId, 'bookkeeping'>; version: string; note: string;
   units: { unitId: string; label: string }[];
-  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null }[];
+  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null; example?: string }[];
+  glossary?: Record<string, string>;
   prerequisites: { from: string; to: string }[];
 };
 export const SUBJECT_TREES = [financialStatementsTree as SubjectTree];
@@ -97,8 +98,8 @@ function treePack(tree: SubjectTree): SubjectPack {
   }
   const subjectMap = validateSubjectMap({ subjectId: tree.subjectId, version, status: 'draft',
     units: tree.units.map((unit, order) => ({ ...unit, order, ...base })),
-    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...base })),
-    concepts, links });
+    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...(topic.example ? { example: topic.example } : {}), ...base })),
+    concepts, links, ...(tree.glossary ? { glossary: tree.glossary } : {}) });
   return { subjectId: tree.subjectId, version, active: true, subjectMap,
     concepts: concepts.map(concept => ({ subjectId: tree.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion, label: concept.label, importance: 3, durationMinutes: 5, unseenQuestionCount: 0 })) };
 }
