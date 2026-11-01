@@ -1,3 +1,5 @@
+        "examTranslation": "基準番号と立場を先に拾い、取得額・利息・償却と売却判定を指定条件で求める。"
+      },
       "applicableYear": null,
       "intendedUse": "practice",
       "reviewSha256": "41de17c4a39f38eaea89c1d6e825d35fcd04b790d470a1b9ebf887c4e2b970ec"
@@ -20128,13 +20130,10 @@
     },
     {
       "materialId": "bk-practice-syllabus-other-consolidation-18",
-      "version": "synthetic-question-bk-practice-syllabus-other-consolidation-18-5e854b326830",
+      "version": "synthetic-question-bk-practice-syllabus-other-consolidation-18-a40f678a19e7",
       "subjectId": "bookkeeping",
       "authorId": "codex-draft",
       "status": "draft",
       "concept": {
         "subjectId": "bookkeeping",
         "conceptId": "syllabus-other-consolidation",
-        "conceptVersion": "synthetic-syllabus-concept-5d324b2dc818",
-        "label": "連結と企業結合の基礎を組み立てる",
-        "importance": 3,
