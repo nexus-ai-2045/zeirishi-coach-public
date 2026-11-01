@@ -51,3 +51,18 @@ test('試用カタログで各科目を選ぶと見本問題を開始できる',
     assert.equal(material.caseVersion, choice.caseVersion);
   }
 });
+
+test('財務諸表論は全体ツリー（分野→論点）で表示し、旧論点表の全論点を含み、見本問題を論点につなぐ', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { SUBJECT_TREES } = await import('../src/server/subject-samples');
+  const legacy = JSON.parse(readFileSync(new URL('../../references/subjects/zaihyo.json', import.meta.url), 'utf8'));
+  const tree = SUBJECT_TREES.find(item => item.subjectId === 'financial-statements')!;
+  assert.deepEqual(legacy.topics.map((topic: { id: string }) => topic.id).filter((id: string) => !tree.topics.some(topic => topic.legacyTopics.includes(id))), []);
+  const pack = SUBJECT_SAMPLE_CATALOG.find(item => item.subjectId === 'financial-statements')!;
+  const map = pack.subjectMap!;
+  assert.equal(map.units.length, tree.units.length);
+  assert.equal(map.topics.length, tree.topics.length);
+  assert.ok(map.topics.every(topic => topic.frequency && topic.summary));
+  assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length);
+  assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3);
+});

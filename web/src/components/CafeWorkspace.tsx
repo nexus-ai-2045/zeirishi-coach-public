@@ -17,6 +17,7 @@ import { LearningEvidencePanel } from './LearningEvidencePanel';
 import { AiCoachPanel } from './AiCoachPanel';
 import { DiagnosticPanel } from './DiagnosticPanel';
 import { LearningCelebration, type LearningMoment } from './LearningCelebration';
+import { SubjectTreeView } from './SubjectTreeView';
 import { LearningAtlas } from './LearningAtlas';
 import { BookkeepingPractice } from './BookkeepingPractice';
 import { MiniExamPanel } from './MiniExamPanel';
@@ -344,6 +345,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const lesson = view === 'case' && session;
   const result = session?.result;
+  const [treeStyle, setTreeStyle] = useState<'tree' | 'atlas'>('tree');
   const subjectLabel = catalog?.subjects.find(item => item.id === catalog.subjectId)?.label ?? '';
   if (deleted) return <main className={styles.main}><h1>学習データを削除しました</h1><p>アカウントとバックアップは削除していません。削除済みデータへの再保存は停止しています。</p><a href="/login">ログイン状態を確認する</a></main>;
   return <div className={styles.app}>
@@ -417,7 +419,10 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         </>}
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
-          {catalog.subjectMap && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView pack={catalog.subjectMap} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+            onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
+          {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}

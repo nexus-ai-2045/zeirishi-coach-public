@@ -2,7 +2,9 @@ import { parseSubjectId, type SubjectId } from './onboarding';
 
 export type MapReviewStatus = 'draft' | 'expert_review' | 'approved' | 'active';
 export type MapUnit = { unitId: string; label: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null };
-export type MapTopic = { topicId: string; unitId: string; label: string; summary: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null };
+export type MapTopic = { topicId: string; unitId: string; label: string; summary: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null;
+  /** Rough exam frequency, a draft estimate for study order; never a mastery or pass signal. */
+  frequency?: 'high' | 'mid' | 'low' };
 export type MapConcept = {
   conceptId: string; conceptVersion: string; label: string; definition: string; purpose: string;
   applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string;
@@ -69,6 +71,7 @@ export function validateSubjectMap(pack: SubjectMapPack, options: SubjectMapVali
     if (!Number.isInteger(unit.order) || unit.order < 0) invalid(); return unit.unitId; });
   const topics = unique(pack.topics, topic => { id(topic.topicId); id(topic.unitId); text(topic.label); text(topic.summary);
     id(topic.sourceId); status(topic.status); year(topic.applicableYear);
+    if (topic.frequency !== undefined && !['high', 'mid', 'low'].includes(topic.frequency)) invalid();
     if (!Number.isInteger(topic.order) || topic.order < 0 || !units.has(topic.unitId)) invalid(); return topic.topicId; });
   const concepts = unique(pack.concepts, concept => { id(concept.conceptId); id(concept.conceptVersion);
     for (const value of [concept.label, concept.definition, concept.purpose, concept.applicability, concept.counterexample,

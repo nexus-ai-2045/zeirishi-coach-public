@@ -4,6 +4,7 @@ import { StudyError } from '../domain/types';
 import { SUBJECTS, type SubjectId, type SubjectPack } from '../domain/onboarding';
 import { validateSubjectMap, type MapConcept, type MapLink } from '../domain/subject-map';
 import samples from './subject-samples.json' with { type: 'json' };
+import financialStatementsTree from './subject-trees/financial-statements.json' with { type: 'json' };
 
 /**
  * Sample questions for subjects other than bookkeeping: three per subject, so the screens can be
@@ -18,10 +19,24 @@ export const SUBJECT_SAMPLE_BASIS = samples.basis as Record<Exclude<SubjectId, '
 export const SUBJECT_SAMPLES = samples.items as SubjectSample[];
 export const SUBJECT_SAMPLE_SUBJECTS = SUBJECTS.filter(subject => subject.id !== 'bookkeeping');
 
+type ConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string };
+/** Whole-subject tree: field → topic, one concept per topic, with prerequisite links. AI-authored, not expert-reviewed. */
+export type SubjectTree = {
+  subjectId: Exclude<SubjectId, 'bookkeeping'>; version: string; note: string;
+  units: { unitId: string; label: string }[];
+  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null }[];
+  prerequisites: { from: string; to: string }[];
+};
+export const SUBJECT_TREES = [financialStatementsTree as SubjectTree];
+const treeFor = (subjectId: SubjectId) => SUBJECT_TREES.find(tree => tree.subjectId === subjectId);
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 12);
 const label = (subjectId: SubjectId) => SUBJECTS.find(subject => subject.id === subjectId)!.label;
-export const sampleConceptId = (item: SubjectSample) => `sample-${item.id}`;
-const conceptVersion = (item: SubjectSample) => `synthetic-sample-concept-${hash([item.id, item.definition, item.purpose, item.applicability, item.counterexample, item.misconception, item.examUse])}`;
+const treeConceptId = (key: string) => `tree-${key}`;
+const treeConceptVersion = (topic: SubjectTree['topics'][number]) => `synthetic-tree-concept-${hash([topic.key, topic.label, topic.concept])}`;
+const treeTopicOf = (item: SubjectSample) => treeFor(item.subjectId)?.topics.find(topic => topic.sampleId === item.id);
+export const sampleConceptId = (item: SubjectSample) => { const topic = treeTopicOf(item); return topic ? treeConceptId(topic.key) : `sample-${item.id}`; };
+const conceptVersion = (item: SubjectSample) => { const topic = treeTopicOf(item); return topic ? treeConceptVersion(topic)
+  : `synthetic-sample-concept-${hash([item.id, item.definition, item.purpose, item.applicability, item.counterexample, item.misconception, item.examUse])}`; };
 
 /** Deterministic option order so the correct answer is not always first. */
 function options(item: SubjectSample) {
@@ -62,7 +77,35 @@ export function sampleMaterial(item: SubjectSample): CafeMaterial {
 export const SUBJECT_SAMPLE_MATERIALS = SUBJECT_SAMPLES.map(sampleMaterial);
 const base = { status: 'draft' as const, sourceId: 'authored-sample', applicableYear: null };
 
+function treePack(tree: SubjectTree): SubjectPack {
+  const version = tree.version;
+  const concepts: MapConcept[] = tree.topics.map(topic => ({ conceptId: treeConceptId(topic.key), conceptVersion: treeConceptVersion(topic), label: topic.label, ...topic.concept, ...base }));
+  const byKey = new Map(tree.topics.map((topic, index) => [topic.key, concepts[index]]));
+  const links: MapLink[] = tree.topics.map((topic, index) => ({ kind: 'explains-topic' as const, sourceId: concepts[index].conceptId, sourceVersion: concepts[index].conceptVersion,
+    targetId: `topic-${topic.key}`, targetVersion: version, basis: '全体ツリーの論点と考え方の対応。専門審査待ち。', status: 'draft' as const }));
+  for (const { from, to } of tree.prerequisites) {
+    const source = byKey.get(from)!, target = byKey.get(to)!;
+    links.push({ kind: 'prerequisite', sourceId: source.conceptId, sourceVersion: source.conceptVersion, targetId: target.conceptId, targetVersion: target.conceptVersion,
+      basis: '先に知ると理解しやすいという原稿上の関係。順番の強制ではなく、専門審査待ち。', status: 'draft' });
+  }
+  for (const [index, item] of SUBJECT_SAMPLES.entries()) {
+    const topic = item.subjectId === tree.subjectId ? treeTopicOf(item) : undefined;
+    if (!topic) continue;
+    const material = SUBJECT_SAMPLE_MATERIALS[index], concept = byKey.get(topic.key)!;
+    links.push({ kind: 'uses-case', sourceId: concept.conceptId, sourceVersion: concept.conceptVersion, targetId: material.prompt().caseId, targetVersion: material.caseVersion,
+      role: 'primary', basis: '見本問題の主概念。正式な評価・習熟ではない。', status: 'draft' });
+  }
+  const subjectMap = validateSubjectMap({ subjectId: tree.subjectId, version, status: 'draft',
+    units: tree.units.map((unit, order) => ({ ...unit, order, ...base })),
+    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...base })),
+    concepts, links });
+  return { subjectId: tree.subjectId, version, active: true, subjectMap,
+    concepts: concepts.map(concept => ({ subjectId: tree.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion, label: concept.label, importance: 3, durationMinutes: 5, unseenQuestionCount: 0 })) };
+}
+
 function samplePack(subjectId: Exclude<SubjectId, 'bookkeeping'>): SubjectPack | null {
+  const tree = treeFor(subjectId);
+  if (tree) return treePack(tree);
   const items = SUBJECT_SAMPLES.filter(item => item.subjectId === subjectId);
   if (!items.length) return null;
   const version = `synthetic-sample-${subjectId}-v1`;
