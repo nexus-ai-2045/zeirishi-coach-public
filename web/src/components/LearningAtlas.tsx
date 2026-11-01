@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { conceptTopics, topicConcepts, type MapConcept, type SubjectMapPack } from '../domain/subject-map';
-import type { ConfidenceReport } from '../domain/onboarding';
+import { SUBJECTS, type ConfidenceReport } from '../domain/onboarding';
 import type { CafeView, CafeHistoryItem } from '../server/cafe-service';
 import type { LearningEvidenceView } from './LearningEvidencePanel';
 import styles from './LearningAtlas.module.css';
@@ -95,8 +95,8 @@ export function LearningAtlas({ reducedEffects = false, pack, choices, reports, 
       {confidence && <span className={styles.self}>自己申告：{confidenceLabels[confidence]}</span>}
     </div>;
   };
-  return <section className={styles.atlas} data-reduced={reducedEffects} aria-label="簿記のコア概念">
-    <div className={styles.title}><div><p>科目の全体と、あなたの現在地</p><h2>学びの枝を見渡す</h2></div><button disabled={disabled} onClick={onOverview}>簿記の全体像をつかむ →</button></div>
+  return <section className={styles.atlas} data-reduced={reducedEffects} aria-label={pack.subjectId === 'bookkeeping' ? '簿記のコア概念' : 'この科目のコア概念'}>
+    <div className={styles.title}><div><p>科目の全体と、あなたの現在地</p><h2>学びの枝を見渡す</h2></div><button disabled={disabled} onClick={onOverview}>{pack.subjectId === 'bookkeeping' ? '簿記の全体像をつかむ →' : '全体像（準備中）を見る →'}</button></div>
     <div className={styles.stats} aria-label="地図の範囲と学習状況"><div><strong>{pack.units.length}</strong><span>大きな枝</span></div><div><strong>{pack.topics.length}</strong><span>論点</span></div><div><strong>{pack.concepts.length}</strong><span>考え方</span></div><div><strong>{evidence ? confirmed : '—'}<small> / {pack.concepts.length}</small></strong><span>適用以上を確認</span></div></div>
     {evidence && !evidence.mastery?.length && <p className={styles.note}>正式な概念別測定の記録はまだありません。相談の練習履歴は習熟とは別に表示します。</p>}
     <div className={styles.legend}><span>● 現在地</span><span>✓ 証拠で確認</span><span>○ 習熟未確認</span><span>相談の練習・自己申告は別表示</span></div>
@@ -104,7 +104,7 @@ export function LearningAtlas({ reducedEffects = false, pack, choices, reports, 
     <p className={styles.updateNotice} role="status">{newlyConfirmed.length ? `新たに${newlyConfirmed.length}個の考え方で、適用以上を確認しました。` : ''}</p>
     {failure && <p role="alert">学習状況を取得できませんでした。習熟済みとは表示していません。もう一度確認できます。</p>}
     {!refresh && <p className={styles.note}>「保存済みの学習状況を確認」で本人の評価記録を読み込みます。</p>}
-    <LearningTree><div className={styles.root} data-tree-root><span>簿記論</span><small>今回の試用範囲</small></div>
+    <LearningTree><div className={styles.root} data-tree-root><span>{SUBJECTS.find(subject => subject.id === pack.subjectId)?.label ?? '簿記論'}</span><small>今回の試用範囲</small></div>
       {layer === 'concepts' ? <div className={styles.branches} role="group" aria-label="理解したいコア概念">{pack.concepts.map(item => <article key={item.conceptId} data-tree-branch className={`${styles.branch} ${newlyConfirmed.includes(item.conceptId) ? styles.justConfirmed : ''}`} data-current={current === item.conceptId} data-confirmed={isConfirmed(item)}>
         <LearningBranchLinks /><button className={styles.node} aria-label={item.label} aria-pressed={concept?.conceptId === item.conceptId} onClick={() => pickConcept(item.conceptId)}><span className={styles.marker} data-branch-marker aria-hidden="true">{current === item.conceptId ? '●' : '○'}</span><strong>{item.label}</strong></button>
         {status(item)}<ul className={styles.leaves}>{conceptTopics(pack, item.conceptId).map(topic => <li key={topic.topicId}><button data-branch-leaf onClick={() => { setTopicId(topic.topicId); setLayer('topics'); }}>{topic.label} ↗</button></li>)}</ul><p className={styles.note}>{available(item).length ? `相談 ${available(item).length}件につながります` : '相談教材は準備中'}</p>
