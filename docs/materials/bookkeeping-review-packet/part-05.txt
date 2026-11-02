@@ -1,3 +1,25 @@
+        "label": "手形と電子記録債権の決済・譲渡を追う",
+        "importance": 3,
+        "durationMinutes": 5,
+        "unseenQuestionCount": 0
+      },
+      "sources": [
+        {
+          "sourceId": "nta-bookkeeping-scope-2026",
+          "termsUrl": "https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/shikenkekka/pdf/76_01.pdf",
+          "checkedAt": "2026-10-07",
+          "attribution": "国税庁・第76回税理士試験受験案内（範囲のみ）",
+          "permissionNote": "会計処理の正答根拠ではなく、科目の範囲の確認。専門審査・転載利用条件は未確定。",
+          "rights": {
+            "acquisition": "unknown",
+            "storage": "unknown",
+            "reproduction": "unknown",
+            "modification": "unknown",
+            "redistribution": "unknown",
+            "aiInput": "unknown"
+          }
+        },
+        {
           "sourceId": "asbj-standards-index-2026",
           "termsUrl": "https://www.asb-j.jp/jp/accounting_standards.html",
           "checkedAt": "2026-10-07",
@@ -20598,26 +20620,3 @@
             ]
           }
         },
-        "exceptions": [],
-        "aiGrounding": [],
-        "examTranslation": "取得日の資本消去→取得後損益→内部取引消去の順で解く。"
-      },
-      "applicableYear": null,
-      "intendedUse": "retention",
-      "reviewSha256": "63d1107e73330948cc03cc7d484a52b05b939c657f1fc4152075b4ec8366b1c3"
-    },
-    {
-      "materialId": "bk-diagnostic-syllabus-ledger-branch-7",
-      "version": "synthetic-question-bk-diagnostic-syllabus-ledger-branch-7-2b656e63d5fb",
-      "subjectId": "bookkeeping",
-      "authorId": "codex-draft",
-      "status": "draft",
-      "concept": {
-        "subjectId": "bookkeeping",
-        "conceptId": "syllabus-ledger-branch",
-        "conceptVersion": "synthetic-syllabus-concept-70a69ca0e935",
-        "label": "本支店の内部取引を合併表示する",
-        "importance": 3,
-        "durationMinutes": 5,
-        "unseenQuestionCount": 0
-      },

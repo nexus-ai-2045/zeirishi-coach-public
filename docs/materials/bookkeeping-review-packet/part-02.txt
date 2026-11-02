@@ -1,3 +1,6 @@
+    {
+      "materialId": "bk-practice-inventory-cost-6",
+      "version": "synthetic-question-bk-practice-inventory-cost-6-ec953a2b0fb0",
       "subjectId": "bookkeeping",
       "authorId": "codex-draft",
       "status": "draft",
@@ -19963,5 +19966,3 @@
         },
         "exceptions": [],
         "aiGrounding": [],
-        "examTranslation": "基準番号と立場を先に拾い、取得額・利息・償却と売却判定を指定条件で求める。"
-      },
