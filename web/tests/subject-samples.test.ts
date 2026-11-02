@@ -66,3 +66,22 @@ test('財務諸表論は全体ツリー（分野→論点）で表示し、旧�
   assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length);
   assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3);
 });
+
+test('税法4科目も全体ツリーで表示し、旧論点表の全論点・具体例・やさしい言葉を含み、見本問題を論点につなぐ', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { SUBJECT_TREES } = await import('../src/server/subject-samples');
+  const files = { 'income-tax': 'shotoku', 'corporation-tax': 'hojin', 'consumption-tax': 'shohi', 'inheritance-tax': 'sozoku' } as const;
+  for (const [subjectId, file] of Object.entries(files)) {
+    const legacy = JSON.parse(readFileSync(new URL(`../../references/subjects/${file}.json`, import.meta.url), 'utf8'));
+    const tree = SUBJECT_TREES.find(item => item.subjectId === subjectId)!;
+    assert.ok(tree, subjectId);
+    assert.deepEqual(legacy.topics.map((topic: { id: string }) => topic.id).filter((id: string) => !tree.topics.some(topic => topic.legacyTopics.includes(id))), [], subjectId);
+    assert.match(tree.note, /2026年11月時点/);
+    const map = SUBJECT_SAMPLE_CATALOG.find(item => item.subjectId === subjectId)!.subjectMap!;
+    assert.equal(map.topics.length, tree.topics.length);
+    assert.ok(map.topics.every(topic => topic.frequency && topic.summary && topic.example), subjectId);
+    assert.ok(Object.keys(map.glossary ?? {}).length >= 40, subjectId);
+    assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length, subjectId);
+    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3, subjectId);
+  }
+});

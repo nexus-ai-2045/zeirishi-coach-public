@@ -5,6 +5,10 @@ import { SUBJECTS, type SubjectId, type SubjectPack } from '../domain/onboarding
 import { validateSubjectMap, type MapConcept, type MapLink } from '../domain/subject-map';
 import samples from './subject-samples.json' with { type: 'json' };
 import financialStatementsTree from './subject-trees/financial-statements.json' with { type: 'json' };
+import incomeTaxTree from './subject-trees/income-tax.json' with { type: 'json' };
+import corporationTaxTree from './subject-trees/corporation-tax.json' with { type: 'json' };
+import consumptionTaxTree from './subject-trees/consumption-tax.json' with { type: 'json' };
+import inheritanceTaxTree from './subject-trees/inheritance-tax.json' with { type: 'json' };
 
 /**
  * Sample questions for subjects other than bookkeeping: three per subject, so the screens can be
@@ -28,7 +32,7 @@ export type SubjectTree = {
   glossary?: Record<string, string>;
   prerequisites: { from: string; to: string }[];
 };
-export const SUBJECT_TREES = [financialStatementsTree as SubjectTree];
+export const SUBJECT_TREES = [financialStatementsTree, incomeTaxTree, corporationTaxTree, consumptionTaxTree, inheritanceTaxTree] as SubjectTree[];
 const treeFor = (subjectId: SubjectId) => SUBJECT_TREES.find(tree => tree.subjectId === subjectId);
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 12);
 const label = (subjectId: SubjectId) => SUBJECTS.find(subject => subject.id === subjectId)!.label;

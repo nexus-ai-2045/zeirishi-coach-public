@@ -13,7 +13,7 @@ function glossText(text: string, glossary: Record<string, string> | undefined, s
   const parts: ReactNode[] = []; let plain = ''; let index = 0;
   while (index < text.length) {
     const term = terms.find(item => text.startsWith(item, index));
-    if (term && !seen.has(term) && text[index + term.length] !== '（') {
+    if (term && !seen.has(term) && text[index + term.length] !== '（' && text[index - 1] !== '（') {
       if (plain) { parts.push(plain); plain = ''; }
       seen.add(term);
       parts.push(<Fragment key={`${index}-${term}`}>{term}<span className={className}>（{glossary[term]}）</span></Fragment>);

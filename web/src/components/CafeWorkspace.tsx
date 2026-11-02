@@ -420,7 +420,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
           {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
-          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView pack={catalog.subjectMap} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
             onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
           {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
