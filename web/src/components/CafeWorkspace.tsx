@@ -17,6 +17,7 @@ import { LearningEvidencePanel } from './LearningEvidencePanel';
 import { AiCoachPanel } from './AiCoachPanel';
 import { DiagnosticPanel } from './DiagnosticPanel';
 import { LearningCelebration, type LearningMoment } from './LearningCelebration';
+import { SubjectTreeView } from './SubjectTreeView';
 import { LearningAtlas } from './LearningAtlas';
 import { BookkeepingPractice } from './BookkeepingPractice';
 import { MiniExamPanel } from './MiniExamPanel';
@@ -344,6 +345,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const lesson = view === 'case' && session;
   const result = session?.result;
+  const [treeStyle, setTreeStyle] = useState<'tree' | 'atlas'>('tree');
   const subjectLabel = catalog?.subjects.find(item => item.id === catalog.subjectId)?.label ?? '';
   if (deleted) return <main className={styles.main}><h1>学習データを削除しました</h1><p>アカウントとバックアップは削除していません。削除済みデータへの再保存は停止しています。</p><a href="/login">ログイン状態を確認する</a></main>;
   return <div className={styles.app}>
@@ -410,14 +412,17 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         </section>}
         {catalog && view === 'overview' && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
-          <h1>簿記の全体像</h1>
+          <h1>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像' : `${subjectLabel}の全体像`}</h1>
           {catalog.subjectId === 'bookkeeping' && !online ? <BookkeepingIntro disabled={busy} onStart={choice => startConcept({ subjectId: catalog.subjectId, conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, choice.materialId, choice.caseVersion)}
             subjectMap={catalog.subjectMap ?? undefined} availableCases={catalog.materialChoices} /> : <p>この科目の全体像は準備中です。</p>}
           <button className={styles.primary} disabled={busy || dirty} onClick={() => navigate('map')}>学習地図へ進む →</button>
         </>}
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
-          {catalog.subjectMap && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+            onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
+          {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
@@ -483,7 +488,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {catalog && <div hidden={view !== 'records'}><MockExamRecords disabled={busy || dirty} expectedLearnerId={online ? expectedLearnerId : undefined} onBusyChange={setBusy} onDirtyChange={setMockExamDirty} /></div>}
         {lesson && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
-          <p className={styles.eyebrow}>簿記論 · 相談ケース</p><h1 ref={heading} tabIndex={-1}>{session.prompt.title}</h1>
+          <p className={styles.eyebrow}>{subjectLabel || '簿記論'} · 相談ケース</p><h1 ref={heading} tabIndex={-1}>{session.prompt.title}</h1>
           {!online && <details className={navigation.caseContext}><summary>この相談の科目内の位置</summary><ConceptPosition subjectMap={catalog?.subjectMap?.links.some(link => link.kind === 'uses-case' && link.sourceId === session.prompt.conceptId && link.targetId === session.prompt.caseId && link.targetVersion === session.caseVersion) ? catalog.subjectMap : undefined}
             caseId={session.prompt.caseId} caseVersion={session.prompt.caseVersion} conceptId={session.prompt.conceptId} consultationTitle={session.prompt.consultationTitle}
             onOpenMap={(conceptId, topicId) => { setMapFocus({ conceptId, topicId }); navigate('map'); }} /></details>}

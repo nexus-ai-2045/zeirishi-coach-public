@@ -4,6 +4,7 @@ import { BOOKKEEPING_TRIAL_QUESTION_MATERIALS } from './bookkeeping-trial-questi
 import { BOOKKEEPING_ALL_QUESTION_DRAFTS } from './bookkeeping-question-drafts';
 import { BOOKKEEPING_SYLLABUS_LESSONS, BOOKKEEPING_SYLLABUS_CONCEPTS, BOOKKEEPING_SYLLABUS_UNITS } from './bookkeeping-syllabus';
 import { BOOKKEEPING_SYLLABUS_CASES } from './bookkeeping-syllabus-materials';
+import { SUBJECT_SAMPLE_CATALOG, SUBJECT_SAMPLE_CHOICES, SUBJECT_SAMPLE_MATERIALS } from './subject-samples';
 import { validateSubjectMap, type MapLink } from '../domain/subject-map';
 import type { ConceptRef, SubjectPack } from '../domain/onboarding';
 import type { PlanCandidate } from '../domain/weekly-plan';
@@ -42,16 +43,20 @@ for (const item of BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item=>['practice','ret
 }
 export const BOOKKEEPING_TRIAL_MAP = validateSubjectMap({ subjectId:'bookkeeping', version:BOOKKEEPING_TRIAL_VERSION, status:'draft', units:units.map(([unitId,label], order) => ({ unitId,label,order,...base })), topics, concepts:BOOKKEEPING_ALL_CONCEPTS, links });
 export const BOOKKEEPING_TRIAL_CATALOG: readonly SubjectPack[] = [{ subjectId:'bookkeeping',version:BOOKKEEPING_TRIAL_VERSION,active:true,subjectMap:BOOKKEEPING_TRIAL_MAP,
-  concepts:BOOKKEEPING_ALL_CONCEPTS.map(item => ({subjectId:'bookkeeping',conceptId:item.conceptId,conceptVersion:item.conceptVersion,label:item.label,importance:3,durationMinutes:5,unseenQuestionCount:0})) }];
+  concepts:BOOKKEEPING_ALL_CONCEPTS.map(item => ({subjectId:'bookkeeping',conceptId:item.conceptId,conceptVersion:item.conceptVersion,label:item.label,importance:3,durationMinutes:5,unseenQuestionCount:0})) },
+  // Other subjects: three AI-authored sample questions each, practice only.
+  ...SUBJECT_SAMPLE_CATALOG];
 export const BOOKKEEPING_TRIAL_CHOICES = BOOKKEEPING_TRIAL_CASES.map(material => {
   const prompt = material.prompt(); const concept = BOOKKEEPING_ALL_CONCEPTS.find(item => item.conceptId === prompt.conceptId)!;
   return { subjectId:'bookkeeping' as const,conceptId:concept.conceptId,conceptVersion:concept.conceptVersion, materialId:prompt.caseId,caseVersion:material.caseVersion,label:prompt.consultationTitle };
 });
+/** Choices shown on screen: bookkeeping plus the sample questions of other subjects. */
+export const TRIAL_MATERIAL_CHOICES = [...BOOKKEEPING_TRIAL_CHOICES, ...SUBJECT_SAMPLE_CHOICES];
 export const BOOKKEEPING_TRIAL_PLAN: readonly PlanCandidate[] = BOOKKEEPING_TRIAL_CHOICES.map(choice => ({...choice,id:choice.materialId,familyId:BOOKKEEPING_TRIAL_CASES.find(item => item.caseVersion === choice.caseVersion)!.prompt().familyId,minutes:5,bucket:'new',qualification:'practice',unseen:false,differentFormat:false,sourceTrust:1,
   priority:{importance:3,observedExamScoreRatio:null,reviewStatus:'unknown',recentMisconceptions:[],lockedDirectSuccessors:0,observedMinutes:null,designedMinutes:5}}));
 export function getBookkeepingTrialMaterial(input: { concept?: ConceptRef; materialId?: string; caseVersion?: string } = {}): CafeMaterial {
   if (!input.concept && !input.materialId && !input.caseVersion) return DEVELOPMENT_CAFE_MATERIAL;
-  const matches = BOOKKEEPING_TRIAL_MATERIALS.filter(material => {
+  const matches = [...BOOKKEEPING_TRIAL_MATERIALS, ...SUBJECT_SAMPLE_MATERIALS].filter(material => {
     const prompt = material.prompt(); const ref = material.concept ?? {subjectId:'bookkeeping',conceptId:prompt.conceptId,conceptVersion:material.caseVersion};
     return (!input.concept || (ref.subjectId===input.concept.subjectId && ref.conceptId===input.concept.conceptId && ref.conceptVersion===input.concept.conceptVersion)) && (!input.materialId || prompt.caseId===input.materialId) && (!input.caseVersion || material.caseVersion===input.caseVersion);
   });
