@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import type { Concept, ConceptRef, ConfidenceReport, InitialRecommendation, SelfConfidence, SubjectId } from '../domain/onboarding';
+import { SUBJECTS } from '../domain/onboarding';
 import type { SubjectMapPack } from '../domain/subject-map';
 import { caseCountNotice, startableCaseCount } from '../domain/bookkeeping-overview';
 import type { CafeDraftItem, CafeHistoryItem, CafePhase, CafeView } from '../server/cafe-service';
@@ -55,6 +56,12 @@ function pickResumeHint(items: CafeHistoryItem[], drafts: CafeDraftItem[]): Resu
   return candidates.sort((a, b) => time(b.savedAt) - time(a.savedAt))[0] ?? null;
 }
 const storageKey = 'zc-cafe-case-v2';
+/** Local mode only: the subject last shown, so reloading the map keeps it instead of falling back to 簿記論. */
+const subjectKey = 'zc-subject-v1';
+const savedSubject = (): SubjectId | null => {
+  try { const value = localStorage.getItem(subjectKey); return SUBJECTS.some(subject => subject.id === value) ? value as SubjectId : null; }
+  catch { return null; }
+};
 const labels = ['相談を読む', '判断する', '理解する', '説明する', '振り返る'];
 const phaseStep = (phase: CafePhase) => phase === 'consultation' ? 0 : ['decision', 'confidence'].includes(phase) ? 1 : phase === 'feedback' ? 2 : phase === 'teach_back' ? 3 : 4;
 const selfLabels: { value: SelfConfidence; label: string }[] = [{ value: 'explained', label: '説明できる' }, { value: 'uncertain', label: '少し怪しい' }, { value: 'unlearned', label: '未学習' }];
@@ -219,7 +226,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   useEffect(() => {
     void run(async () => {
-      const initial = await loadCatalog();
+      const remembered = online ? null : savedSubject();
+      const initial = remembered ? await loadCatalog(remembered).catch(() => loadCatalog()) : await loadCatalog();
       if (online) await loadResumeHint();
       const route = readRoute();
       historyIndex.current = typeof window.history.state?.zcIndex === 'number' ? window.history.state.zcIndex : 0;
@@ -250,10 +258,15 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         let restored: CafeView | null = null;
         try { restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session; accept(restored); }
         catch { setNotice('前回の相談は再開できませんでした。新しく学習を始められます。'); }
-        if (restored) await loadSubjectOf(restored, initial).catch(() => undefined);
+        // A subject the learner chose last time wins over the resume pointer's subject; opening the case still switches.
+        if (restored && !remembered) await loadSubjectOf(restored, initial).catch(() => undefined);
       }
     });
   }, []);
+  useEffect(() => {
+    if (online || !catalog) return;
+    try { localStorage.setItem(subjectKey, catalog.subjectId); } catch { /* Optional convenience only. */ }
+  }, [online, catalog?.subjectId]);
   // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
   useEffect(() => {
     if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);

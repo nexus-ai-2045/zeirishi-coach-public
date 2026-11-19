@@ -9,7 +9,8 @@ type Choice = { subjectId: string; conceptId: string; conceptVersion: string; ma
 async function openSubject(page: Page, label: string) {
   await page.goto('/#map');
   await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
-  if (label === '簿記論') return;
+  const button = page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: new RegExp(label) });
+  if (await button.getAttribute('aria-current') === 'page') return;
   const loaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/profile' && response.request().method() === 'GET');
   await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: new RegExp(label) }).click();
   await loaded;
@@ -188,4 +189,27 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   }
   await expect(tree.getByRole('button', { name: `${topic.label}（覚えた）` })).toBeVisible();
   await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
+});
+
+test('地図を読み直しても、最後に選んだ科目のまま（別の科目の続きの相談があっても）', async ({ page }) => {
+  test.setTimeout(60000);
+  // 簿記論の相談を始めて「続き」を残してから、酒税法に切り替える。
+  await openSubject(page, '簿記論');
+  await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
+  await page.getByRole('button', { name: /^支払日と費用の期間は別（/ }).click();
+  await page.getByRole('button', { name: '理解を問題で確かめる →' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
+  await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
+  await openSubject(page, '酒税法');
+  await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
+  for (let index = 0; index < 2; index++) {
+    await page.reload();
+    await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
+    await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /酒税法/ })).toHaveAttribute('aria-current', 'page');
+  }
+  // 続きの相談を開けば、その相談の科目（簿記論）に切り替わる。
+  await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
+  await page.getByRole('button', { name: '続きから再開' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
 });
