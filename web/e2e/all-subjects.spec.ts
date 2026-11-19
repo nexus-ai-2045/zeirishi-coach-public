@@ -78,5 +78,13 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
     await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
     await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
     await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
+
+    // ホームの「続きから再開」から戻っても同じ。
+    await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
+    await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
+    await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+    await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
+    await page.getByRole('button', { name: '続きから再開' }).click();
+    await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
   }
 });

@@ -206,7 +206,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       const generation = routeGeneration.current;
       const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session;
       accept(opened);
-      await loadSubjectOf(opened).catch(() => undefined);
       if (generation === routeGeneration.current) navigate('case', id);
     });
   }
@@ -247,6 +246,10 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       }
     });
   }, []);
+  // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
+  useEffect(() => {
+    if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);
+  }, [view, session?.id, catalog?.subjectId]);
   // Online home re-reads the history projection on every visit so a completed case is not offered again.
   useEffect(() => { if (online && view === 'home' && catalog) void loadResumeHint(); }, [view]);
   const focusPhase = session?.phase === 'consultation' ? 'decision' : session?.phase;
@@ -272,7 +275,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           const generation = routeGeneration.current;
           const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(caseId)}`)).session;
           accept(opened);
-          await loadSubjectOf(opened).catch(() => undefined);
           if (generation === routeGeneration.current) setView('case');
         });
       } else setView(route.view === 'case' ? 'home' : route.view);
