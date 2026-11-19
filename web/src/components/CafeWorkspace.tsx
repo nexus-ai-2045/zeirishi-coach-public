@@ -172,9 +172,21 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     }
     finally { lock.current = false; setBusy(false); }
   }
-  async function load(subject: SubjectId = 'bookkeeping') {
-    setCatalog(await request<Catalog>(`/api/profile?subjectId=${subject}`));
+  async function loadCatalog(subject: SubjectId = 'bookkeeping') {
+    const next = await request<Catalog>(`/api/profile?subjectId=${subject}`);
+    setCatalog(next);
     setChoosingConcept(null);
+    return next;
+  }
+  async function load(subject: SubjectId = 'bookkeeping') { await loadCatalog(subject); }
+  /** Local trial: a resumed case may belong to another subject; load that subject's catalog so labels and the map match. */
+  async function loadSubjectOf(next: CafeView, current: Catalog) {
+    if (online || current.materialChoices?.some(item => item.materialId === next.prompt.caseId)) return;
+    for (const subject of current.subjects) {
+      if (subject.id === current.subjectId || !subject.available) continue;
+      const candidate = await request<Catalog>(`/api/profile?subjectId=${subject.id}`);
+      if (candidate.materialChoices?.some(item => item.materialId === next.prompt.caseId)) { setCatalog(candidate); return; }
+    }
   }
   async function loadResumeHint() {
     const requestId = ++resumeHintRequest.current;
@@ -196,7 +208,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   useEffect(() => {
     void run(async () => {
-      await load();
+      const initial = await loadCatalog();
       if (online) await loadResumeHint();
       const route = readRoute();
       historyIndex.current = typeof window.history.state?.zcIndex === 'number' ? window.history.state.zcIndex : 0;
@@ -205,7 +217,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       if (route.view === 'case' && route.caseId) {
         const generation = routeGeneration.current;
         try {
-          accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(route.caseId)}`)).session);
+          const restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(route.caseId)}`)).session;
+          accept(restored);
+          await loadSubjectOf(restored, initial).catch(() => undefined);
           if (generation === routeGeneration.current) setView('case');
         } catch (cause) {
           // Authentication problems keep the case URL and show the sign-in guidance instead of a generic fallback.
@@ -222,8 +236,10 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       let id: string | null = null;
       try { id = localStorage.getItem(storageKey); } catch { /* Optional resume pointer only. */ }
       if (id) {
-        try { accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session); }
+        let restored: CafeView | null = null;
+        try { restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session; accept(restored); }
         catch { setNotice('前回の相談は再開できませんでした。新しく学習を始められます。'); }
+        if (restored) await loadSubjectOf(restored, initial).catch(() => undefined);
       }
     });
   }, []);
