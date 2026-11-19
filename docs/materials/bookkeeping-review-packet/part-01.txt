@@ -1,7 +1,7 @@
 {
   "formatVersion": "bookkeeping-review-draft-v1",
   "sourcePolicy": "public-url-only",
-  "preparedAt": "2026-10-25T22:53:24.036Z",
+  "preparedAt": "2026-11-01T03:32:35.766Z",
   "status": "unreviewed",
   "notice": "専門審査・利用条件・適用年度・出荷承認は未確定。正答を含む開発・レビュー用ソースであり、学習者APIの回答前投影には含めない。",
   "map": {
@@ -4949,7 +4949,7 @@
         "sourceId": "syllabus-other-consolidation",
         "sourceVersion": "synthetic-syllabus-concept-5d324b2dc818",
         "targetId": "bk-practice-syllabus-other-consolidation-18",
-        "targetVersion": "synthetic-question-bk-practice-syllabus-other-consolidation-18-5e854b326830",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-other-consolidation-18-a40f678a19e7",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -5019,7 +5019,7 @@
         "sourceId": "syllabus-ledger-branch",
         "sourceVersion": "synthetic-syllabus-concept-70a69ca0e935",
         "targetId": "bk-practice-syllabus-ledger-branch-13",
-        "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-branch-13-5a7b79ea3562",
+        "targetVersion": "synthetic-question-bk-practice-syllabus-ledger-branch-13-74797859ef51",
         "role": "primary",
         "basis": "原稿の練習問題と概念の対応。正式な評価・習熟ではない。",
         "status": "draft"
@@ -6463,12 +6463,13 @@
         "外貨債権債務の換算・決済",
         "非貨幣性資産との区別",
         "条件付き振当・直先差額配分",
-        "条件を与えた在外支店換算の一勘定計算"
+        "条件を与えた在外支店換算の一勘定計算",
+        "在外子会社の財務諸表換算の基礎（換算レート・為替換算調整勘定・非支配株主への配分）"
       ],
       "remainingSkills": [
         "振当処理の適用要件全体",
         "ヘッジとの接続と2026改正",
-        "海外子会社財務諸表換算",
+        "在外子会社の換算を含む連結全体の総合問題",
         "専門審査前のpractice_only教材。試験適用年度と最新改正の正式照合はpending。",
         "在外支店の各勘定別換算と本支店勘定の全体照合は未網羅。"
       ],
@@ -6817,7 +6818,7 @@
   ],
   "publication": "disabled",
   "retention_check": "required",
-  "mapSha256": "3e1ad15fcc9bdb5eee69b9d140e1fb267c2eb9127e246d7ae6364f2064ab1397",
+  "mapSha256": "427a42305ddb99b63164d844228a58d4b7aebe6703bcbaaf5753c11a38e091b0",
   "materials": [
     {
       "materialId": "cafe-prepaid",
@@ -19965,6 +19966,3 @@
       "intendedUse": "practice",
       "reviewSha256": "8a7d7206ba37acc9691281db114558855dbc412474ee75893ec2544c4c749ca3"
     },
-    {
-      "materialId": "bk-practice-inventory-cost-6",
-      "version": "synthetic-question-bk-practice-inventory-cost-6-ec953a2b0fb0",
