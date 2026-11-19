@@ -101,7 +101,7 @@
     },
     {
       "key": "real-estate", "unitId": "income", "label": "不動産所得",
-      "summary": "土地や建物を貸して得る家賃など。商売の規模でも事業所得にはならない。",
+      "summary": "土地や建物を貸して得る家賃など。貸付けの規模が大きくても事業所得にはならない。",
       "frequency": "mid", "legacyTopics": ["shotoku.theory.real-estate", "shotoku.calc.real-estate-interest"], "sampleId": "shotoku-rental-income",
       "example": "アパート10室を貸して家賃を年600万円得ていても、それは事業所得ではなく不動産所得です。ただし、ホテルや下宿のように食事などのサービスも付けると、事業所得や雑所得になることがあります。",
       "concept": {
