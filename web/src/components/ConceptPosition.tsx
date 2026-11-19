@@ -7,10 +7,12 @@ type Props = {
   caseVersion: string;
   conceptId: string;
   consultationTitle: string;
+  /** Shown at the start of the path; defaults to 簿記論 for the original bookkeeping screens. */
+  subjectLabel?: string;
   onOpenMap?: (conceptId: string, topicId: string | null) => void;
 };
 
-export function ConceptPosition({ subjectMap, caseId, caseVersion, conceptId, consultationTitle, onOpenMap }: Props) {
+export function ConceptPosition({ subjectMap, caseId, caseVersion, conceptId, consultationTitle, subjectLabel = '簿記論', onOpenMap }: Props) {
   const caseLink = subjectMap?.links.find(link => link.kind === 'uses-case' && link.targetId === caseId
     && link.targetVersion === caseVersion && link.sourceId === conceptId && link.role === 'primary');
   if (!subjectMap || !caseLink) return <section className={styles.map} aria-labelledby="concept-position-title">
@@ -21,7 +23,7 @@ export function ConceptPosition({ subjectMap, caseId, caseVersion, conceptId, co
   const topics = subjectMap ? conceptTopics(subjectMap, conceptId) : [];
   const representativeTopic = topics[0];
   const unit = subjectMap.units.find(item => item.unitId === representativeTopic?.unitId);
-  const path = ['簿記論', unit?.label ?? '分類を確認中', representativeTopic?.label ?? '論点を確認中', concept?.label ?? '概念を確認中', `今回の相談：${consultationTitle}（試用例）`];
+  const path = [subjectLabel, unit?.label ?? '分類を確認中', representativeTopic?.label ?? '論点を確認中', concept?.label ?? '概念を確認中', `今回の相談：${consultationTitle}（試用例）`];
   return (
     <section className={styles.map} aria-labelledby="concept-position-title">
       <div className={styles.intro}>
@@ -30,7 +32,7 @@ export function ConceptPosition({ subjectMap, caseId, caseVersion, conceptId, co
       </div>
       <ol className={styles.path} aria-label="今回の相談の概念位置">
         {path.map((label, index) => (
-          <li key={label} aria-current={index === path.length - 1 ? 'step' : undefined}>
+          <li key={`${index}-${label}`} aria-current={index === path.length - 1 ? 'step' : undefined}>
             <span className={styles.step}>0{index + 1}</span>
             <span className={styles.label}>{label}</span>
           </li>

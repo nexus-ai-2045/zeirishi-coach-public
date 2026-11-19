@@ -96,7 +96,7 @@ export function LearningAtlas({ reducedEffects = false, pack, choices, reports, 
     </div>;
   };
   return <section className={styles.atlas} data-reduced={reducedEffects} aria-label={pack.subjectId === 'bookkeeping' ? '簿記のコア概念' : 'この科目のコア概念'}>
-    <div className={styles.title}><div><p>科目の全体と、あなたの現在地</p><h2>学びの枝を見渡す</h2></div><button disabled={disabled} onClick={onOverview}>{pack.subjectId === 'bookkeeping' ? '簿記の全体像をつかむ →' : '全体像（準備中）を見る →'}</button></div>
+    <div className={styles.title}><div><p>科目の全体と、あなたの現在地</p><h2>学びの枝を見渡す</h2></div>{pack.subjectId === 'bookkeeping' && <button disabled={disabled} onClick={onOverview}>簿記の全体像をつかむ →</button>}</div>
     <div className={styles.stats} aria-label="地図の範囲と学習状況"><div><strong>{pack.units.length}</strong><span>大きな枝</span></div><div><strong>{pack.topics.length}</strong><span>論点</span></div><div><strong>{pack.concepts.length}</strong><span>考え方</span></div><div><strong>{evidence ? confirmed : '—'}<small> / {pack.concepts.length}</small></strong><span>適用以上を確認</span></div></div>
     {evidence && !evidence.mastery?.length && <p className={styles.note}>正式な概念別測定の記録はまだありません。相談の練習履歴は習熟とは別に表示します。</p>}
     <div className={styles.legend}><span>● 現在地</span><span>✓ 証拠で確認</span><span>○ 習熟未確認</span><span>相談の練習・自己申告は別表示</span>{pack.topics.some(topic => topic.frequency) && <span>★頻出＝本試験でよく出る論点の目安（AI推定・要確認）</span>}</div>

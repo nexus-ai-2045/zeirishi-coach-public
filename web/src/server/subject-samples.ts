@@ -93,7 +93,7 @@ export function sampleMaterial(item: SubjectSample): CafeMaterial {
         developmentOnly: true, evidenceQualification: 'practice_only' as const,
         misconceptionCandidate: correct ? null : item.wrongReasons[selected.wrongIndex],
         explanation: item.explanation, periods: [], teachBack: 'この判断が成り立つ条件を、自分の言葉で説明してください。',
-        followUp: '条件を一つ変えたら、判断はどう変わりますか？', checkpoints: [item.explanation, '条件が変わる場合も確かめる'],
+        followUp: '条件を一つ変えたら、判断はどう変わりますか？', checkpoints: [sampleConcept(item).applicability, sampleConcept(item).purpose, '条件が変わる場合も確かめる'],
         learningNotes: { exceptions: [sampleConcept(item).counterexample], examTranslation: sampleConcept(item).examUse } };
     },
   };
