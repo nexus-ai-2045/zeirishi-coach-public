@@ -306,7 +306,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   function startConcept(ref: ConceptRef, materialId?: string, caseVersion?: string) {
     if (!canStartConcept(ref)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId && item.conceptVersion === ref.conceptVersion) ?? [];
-    if (online && !materialId && choices.length > 1) { setChoosingConcept(ref); return; }
+    if (!materialId && choices.length > 1) { setChoosingConcept(ref); return; }
     const selected = !materialId && choices.length === 1 ? choices[0] : undefined;
     setChoosingConcept(null);
     mutate('start', {
@@ -424,7 +424,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
           {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
-          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+            initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
             onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
           {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}

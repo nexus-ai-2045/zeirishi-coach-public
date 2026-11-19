@@ -1,11 +1,11 @@
 'use client';
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { MapConcept, MapTopic, SubjectMapPack } from '../domain/subject-map';
-import { topicConcepts } from '../domain/subject-map';
+import { conceptTopics, topicConcepts } from '../domain/subject-map';
 import styles from './SubjectTreeView.module.css';
 
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
-type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; onStart: (concept: MapConcept, material: Choice) => void };
+type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; initialConceptId?: string; initialTopicId?: string | null; onStart: (concept: MapConcept, material: Choice) => void };
 /** Adds a plain-word gloss in parentheses after the first use of each technical term. `seen` is shared within one panel. */
 function glossText(text: string, glossary: Record<string, string> | undefined, seen: Set<string>, className: string): ReactNode {
   if (!glossary) return text;
@@ -52,16 +52,18 @@ const at = (point: { x: number; y: number }) => ({ left: `${point.x / 10}%`, top
  * and a collapsible outline. Both share one detail pane: what it is, why it matters, and which
  * topics come before/after it.
  */
-export function SubjectTreeView({ pack, subjectLabel, choices, disabled, onStart }: Props) {
+export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart }: Props) {
   const units = useMemo(() => [...pack.units].sort((a, b) => a.order - b.order), [pack.units]);
   const topicsOf = (unitId: string) => pack.topics.filter(topic => topic.unitId === unitId).sort((a, b) => a.order - b.order);
   const conceptOf = (topicId: string) => topicConcepts(pack, topicId)[0];
   const [layout, setLayout] = useState<'map' | 'list'>('map');
   const compact = useCompact();
   const shape = compact ? { rx: 390, ry: 295, minX: 150 } : { rx: 350, ry: 260, minX: 90 };
-  const [selectedTopic, setSelectedTopic] = useState('');
-  const [focusUnit, setFocusUnit] = useState('');
-  const [open, setOpen] = useState(() => new Set<string>());
+  const initialTopic = (initialTopicId ? pack.topics.find(item => item.topicId === initialTopicId) : undefined)
+    ?? (initialConceptId ? conceptTopics(pack, initialConceptId)[0] : undefined);
+  const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
+  const [focusUnit, setFocusUnit] = useState(initialTopic?.unitId ?? '');
+  const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : []));
   const [onlyFrequent, setOnlyFrequent] = useState(false);
   const topic = pack.topics.find(item => item.topicId === selectedTopic);
   const concept = topic ? conceptOf(topic.topicId) : undefined;
