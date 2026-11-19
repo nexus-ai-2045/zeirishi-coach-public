@@ -72,7 +72,7 @@ test('復習カードの記録は決まった項目だけ受け付ける', () =>
     assert.throws(() => parseReviewCheck(bad));
 });
 
-test('復習カードの記録は同じ要求を二重に数えず、本人のデータ削除で消える', async () => {
+test('復習カードの記録は同じ要求を二重に数えず、本人の書き出しに入り、データ削除で消える', async () => {
   const { PGlite } = await import('@electric-sql/pglite');
   const { createReviewCardService } = await import('../src/server/review-card-service');
   const { createCafeService } = await import('../src/server/cafe-service');
@@ -93,6 +93,8 @@ test('復習カードの記録は同じ要求を二重に数えず、本人の�
     await cards.record(other, { ...input, requestId: crypto.randomUUID() });
     assert.deepEqual(await cards.checks(owner), [{ subjectId: 'income-tax', topicId: 'topic-x', checkedAt: '2026-11-20T01:00:00.000Z', remembered: true }]);
     await assert.rejects(cards.record(owner, { ...input, topicId: '../x' }));
+    const exported = await data.export(owner) as { reviewCards?: unknown[] };
+    assert.deepEqual(exported.reviewCards, [{ subjectId: 'income-tax', topicId: 'topic-x', checkedAt: '2026-11-20T01:00:00.000Z', remembered: true }]);
     await data.delete(owner);
     await assert.rejects(cards.checks(owner));
     assert.equal((await db.query<{ n: number }>('SELECT count(*)::int AS n FROM review_card_checks WHERE owner_id=$1', [owner])).rows[0].n, 0);
