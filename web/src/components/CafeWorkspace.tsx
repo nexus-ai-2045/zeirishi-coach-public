@@ -172,6 +172,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     }
     finally { lock.current = false; setBusy(false); }
   }
+  const catalogRef = useRef(catalog);
+  catalogRef.current = catalog;
   async function loadCatalog(subject: SubjectId = 'bookkeeping') {
     const next = await request<Catalog>(`/api/profile?subjectId=${subject}`);
     setCatalog(next);
@@ -180,8 +182,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   async function load(subject: SubjectId = 'bookkeeping') { await loadCatalog(subject); }
   /** Local trial: a resumed case may belong to another subject; load that subject's catalog so labels and the map match. */
-  async function loadSubjectOf(next: CafeView, current: Catalog) {
-    if (online || current.materialChoices?.some(item => item.materialId === next.prompt.caseId)) return;
+  async function loadSubjectOf(next: CafeView, current: Catalog | null = catalogRef.current) {
+    if (!current || online || current.materialChoices?.some(item => item.materialId === next.prompt.caseId)) return;
     for (const subject of current.subjects) {
       if (subject.id === current.subjectId || !subject.available) continue;
       const candidate = await request<Catalog>(`/api/profile?subjectId=${subject.id}`);
@@ -202,7 +204,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   function openCase(id: string) {
     void run(async () => {
       const generation = routeGeneration.current;
-      accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session);
+      const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session;
+      accept(opened);
+      await loadSubjectOf(opened).catch(() => undefined);
       if (generation === routeGeneration.current) navigate('case', id);
     });
   }
@@ -266,7 +270,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       if (caseId) {
         void run(async () => {
           const generation = routeGeneration.current;
-          accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(caseId)}`)).session);
+          const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(caseId)}`)).session;
+          accept(opened);
+          await loadSubjectOf(opened).catch(() => undefined);
           if (generation === routeGeneration.current) setView('case');
         });
       } else setView(route.view === 'case' ? 'home' : route.view);

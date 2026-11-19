@@ -70,4 +70,13 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   await expect(page.getByRole('heading', { name: '学習地図' })).toBeVisible();
   if (subject.id === 'bookkeeping') await expect(page.locator('[data-tree-root]')).toHaveText(/^簿記論/);
   else await expect(page.getByLabel(`${subject.label}のブレインマップ`)).toBeVisible();
+
+  // 別の科目に切り替えてから学習記録で開き直しても、問題の科目に戻る。
+  if (subject.id !== 'bookkeeping') {
+    await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
+    await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+    await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
+    await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
+    await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
+  }
 });
