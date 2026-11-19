@@ -16,8 +16,8 @@ import enterpriseTaxTree from './subject-trees/enterprise-tax.json' with { type:
 import fixedAssetTaxTree from './subject-trees/fixed-asset-tax.json' with { type: 'json' };
 
 /**
- * Sample questions for subjects other than bookkeeping: three per subject, so the screens can be
- * checked before writing the rest. AI-authored drafts, not expert-reviewed; practice only.
+ * Check questions for the ten subjects other than bookkeeping: at least one per frequently tested
+ * (★) tree topic. AI-authored drafts, not expert-reviewed; practice only.
  */
 type SampleConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; examUse: string };
 /**
