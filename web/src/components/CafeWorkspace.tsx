@@ -182,12 +182,15 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   async function load(subject: SubjectId = 'bookkeeping') { await loadCatalog(subject); }
   /** Local trial: a resumed case may belong to another subject; load that subject's catalog so labels and the map match. */
+  // A subject owns a case when its map links to it (covers practice questions that are not listed as choices) or lists it as a choice.
+  const ownsCase = (owner: Catalog, caseId: string) => owner.materialChoices?.some(item => item.materialId === caseId)
+    || owner.subjectMap?.links.some(link => link.kind === 'uses-case' && link.targetId === caseId) === true;
   async function loadSubjectOf(next: CafeView, current: Catalog | null = catalogRef.current) {
-    if (!current || online || current.materialChoices?.some(item => item.materialId === next.prompt.caseId)) return;
+    if (!current || online || ownsCase(current, next.prompt.caseId)) return;
     for (const subject of current.subjects) {
       if (subject.id === current.subjectId || !subject.available) continue;
       const candidate = await request<Catalog>(`/api/profile?subjectId=${subject.id}`);
-      if (candidate.materialChoices?.some(item => item.materialId === next.prompt.caseId)) { setCatalog(candidate); return; }
+      if (ownsCase(candidate, next.prompt.caseId)) { setCatalog(candidate); return; }
     }
   }
   async function loadResumeHint() {

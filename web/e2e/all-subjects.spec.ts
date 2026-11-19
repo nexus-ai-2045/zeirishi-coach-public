@@ -88,3 +88,20 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
     await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
   }
 });
+
+test('簿記論の問題演習の問題も、別の科目から学習記録で開くと簿記論に戻る', async ({ page }) => {
+  test.setTimeout(60000);
+  await openSubject(page, '簿記論');
+  const profile = await (await page.request.get('/api/profile?subjectId=bookkeeping')).json() as { subjectMap: SubjectMapPack; materialChoices: Choice[] };
+  const listed = new Set(profile.materialChoices.map(item => item.materialId));
+  const link = profile.subjectMap.links.find(item => item.kind === 'uses-case' && !listed.has(item.targetId));
+  expect(link, '選択肢に出ない問題演習の問題がある').toBeDefined();
+  const concept = profile.subjectMap.concepts.find(item => item.conceptId === link!.sourceId && item.conceptVersion === link!.sourceVersion)!;
+  const created = await page.request.post('/api/cafe', { headers: { Origin: origin }, data: { action: 'start', requestId: crypto.randomUUID(),
+    concept: { subjectId: 'bookkeeping', conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, materialId: link!.targetId, caseVersion: link!.targetVersion } });
+  expect(created.status()).toBe(200);
+  await openSubject(page, '固定資産税');
+  await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
+  await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
+});
