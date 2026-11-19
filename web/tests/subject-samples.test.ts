@@ -85,3 +85,20 @@ test('税法4科目も全体ツリーで表示し、旧論点表の全論点・�
     assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3, subjectId);
   }
 });
+
+test('残り5科目（酒税・国税徴収・住民税・事業税・固定資産税）も全体ツリーで表示し、具体例・やさしい言葉を含み、見本問題を論点につなぐ', async () => {
+  const { SUBJECT_TREES } = await import('../src/server/subject-samples');
+  for (const subjectId of ['liquor-tax', 'national-tax-collection', 'inhabitant-tax', 'enterprise-tax', 'fixed-asset-tax']) {
+    const tree = SUBJECT_TREES.find(item => item.subjectId === subjectId)!;
+    assert.ok(tree, subjectId);
+    assert.match(tree.note, /2026年11月時点/);
+    const map = SUBJECT_SAMPLE_CATALOG.find(item => item.subjectId === subjectId)!.subjectMap!;
+    assert.ok(map.topics.length >= 10, subjectId);
+    assert.equal(map.topics.length, tree.topics.length);
+    assert.ok(map.topics.every(topic => topic.frequency && topic.summary && topic.example), subjectId);
+    assert.ok(Object.keys(map.glossary ?? {}).length >= 40, subjectId);
+    assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length, subjectId);
+    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3, subjectId);
+  }
+  assert.equal(SUBJECT_TREES.length, 10);
+});
