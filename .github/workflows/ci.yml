@@ -91,6 +91,11 @@ jobs:
         working-directory: web
         run: npm run test:e2e:bookkeeping
 
+      # Every subject: map heading, a frequent-topic question, one explanation, and reload keeps the subject.
+      - name: Run all-subjects E2E
+        working-directory: web
+        run: npx playwright test --config playwright.subjects.config.ts
+
   verification:
     name: 検証結果の回収
     needs: [cli, web]
