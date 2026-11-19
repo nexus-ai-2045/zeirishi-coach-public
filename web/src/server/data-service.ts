@@ -91,6 +91,10 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
         const identity = await lockOwner(tx, owner);
         if (identity.revokedAt === null) {
           const at = clock();
+          // Review cards exist only in the local mode's database; the online schema has no such table or grant.
+          const cards = await tx.query<{ ok: boolean }>(`SELECT to_regclass('review_card_checks') IS NOT NULL
+            AND has_table_privilege('review_card_checks', 'DELETE') AS ok`);
+          if (cards.rows[0]?.ok) await tx.query('DELETE FROM review_card_checks WHERE owner_id=$1', [owner]);
           await tx.query(`DELETE FROM cafe_confidence WHERE attempt_id IN
             (SELECT id FROM cafe_attempts WHERE owner_id=$1)`, [owner]);
           // Static table names only, ordered by existing foreign keys. All changes commit together.

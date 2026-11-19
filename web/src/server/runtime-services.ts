@@ -9,6 +9,7 @@ import { bookkeepingTrialEnabled, BOOKKEEPING_TRIAL_CATALOG, BOOKKEEPING_TRIAL_P
 import type { ConceptRef } from '../domain/onboarding';
 import { createCafeServiceOnPreparedDatabase, readOwnedCafeVersion, createCafeService } from './cafe-service';
 import { createDataService } from './data-service';
+import { createReviewCardService } from './review-card-service';
 import { createWeeklyPlanServiceOnPreparedDatabase, createWeeklyPlanService } from './weekly-plan-service';
 import { createMockExamService } from './mock-exam-service';
 import { initializeExamEvidenceSchema } from './exam-evidence-service';
@@ -44,6 +45,7 @@ const runtimeGlobal = globalThis as typeof globalThis & {
   zeirishiEvidenceDatabaseV3?: Promise<PGlite>;
   zeirishiMockExamsV1?: Promise<Awaited<ReturnType<typeof createMockExamService>>>;
   zeirishiPlanV1?: Promise<Plan>;
+  zeirishiReviewCardsV1?: ReturnType<typeof createReviewCardService>;
 };
 /** All adapters share one file-backed connection. An old hot-reloaded process must restart. */
 export function getDevelopmentDatabase(): Promise<PGlite> {
@@ -73,6 +75,11 @@ export function getConfidenceService(): Promise<Confidence> {
 export function getCafeService(): Promise<Cafe> {
   return runtimeGlobal.zeirishiCafeV3 ??= getDevelopmentDatabase().then(db => createCafeService(db))
     .catch(error => { delete runtimeGlobal.zeirishiCafeV3; throw error; });
+}
+/** Local-mode review cards (forgetting-curve self checks); shares the development database. */
+export function getReviewCardService(): ReturnType<typeof createReviewCardService> {
+  return runtimeGlobal.zeirishiReviewCardsV1 ??= getDevelopmentDatabase().then(db => createReviewCardService(db))
+    .catch(error => { delete runtimeGlobal.zeirishiReviewCardsV1; throw error; });
 }
 export function getDataService(): Promise<Data> {
   return runtimeGlobal.zeirishiDataV8 ??= getDevelopmentDatabase().then(async db => {

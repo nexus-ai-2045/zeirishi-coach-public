@@ -20,13 +20,11 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   test.setTimeout(60000);
   await openSubject(page, subject.label);
 
-  // 地図の見出しが選んだ科目名になる（「これまでの地図」の根の箱も含む）。
-  if (subject.id !== 'bookkeeping') {
-    await expect(page.getByLabel(`${subject.label}のブレインマップ`)).toBeVisible();
-    await page.getByRole('button', { name: 'これまでの地図' }).click();
-  }
-  await expect(page.locator('[data-tree-root]')).toHaveText(new RegExp(`^${subject.label}`));
-  if (subject.id !== 'bookkeeping') await expect(page.locator('[data-tree-root]')).not.toContainText('簿記論');
+  // 学習地図はどの科目も同じツリー1つで、見出しが選んだ科目名になる。
+  await expect(page.getByRole('list', { name: `${subject.label}の全体ツリー` })).toBeVisible();
+  await expect(page.locator('[data-tree-root]')).toHaveText(subject.label);
+  await expect(page.getByLabel(/ブレインマップ/)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'これまでの地図' })).toHaveCount(0);
 
   // ★頻出の論点につながる確認問題を1問選ぶ。
   const profile = await (await page.request.get(`/api/profile?subjectId=${subject.id}`)).json() as { subjectMap: SubjectMapPack; materialChoices: Choice[] };
@@ -68,13 +66,12 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
   await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
   await expect(page.getByRole('heading', { name: '学習地図' })).toBeVisible();
-  if (subject.id === 'bookkeeping') await expect(page.locator('[data-tree-root]')).toHaveText(/^簿記論/);
-  else await expect(page.getByLabel(`${subject.label}のブレインマップ`)).toBeVisible();
+  await expect(page.getByRole('list', { name: `${subject.label}の全体ツリー` })).toBeVisible();
 
   // 別の科目に切り替えてから学習記録で開き直しても、問題の科目に戻る。
   if (subject.id !== 'bookkeeping') {
     await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
-    await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+    await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
     await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
     await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
     await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
@@ -82,7 +79,7 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
     // ホームの「続きから再開」から戻っても同じ。
     await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
     await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
-    await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+    await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
     await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
     await page.getByRole('button', { name: '続きから再開' }).click();
     await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
@@ -122,7 +119,73 @@ test('問題の科目を探している間に別の科目を選んでも、選�
   await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
   await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
   await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /酒税法/ }).click();
-  await expect(page.getByLabel('酒税法のブレインマップ')).toBeVisible();
+  await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
   await page.waitForTimeout(6000);
-  await expect(page.getByLabel('酒税法のブレインマップ')).toBeVisible();
+  await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
+});
+
+test('確認問題の正誤で論点・分野・科目の色が変わり、翌日から復習カードで「覚えた」まで進められる', async ({ page }) => {
+  test.setTimeout(90000);
+  await openSubject(page, '所得税法');
+  const profile = await (await page.request.get('/api/profile?subjectId=income-tax')).json() as { subjectMap: SubjectMapPack; materialChoices: Choice[] };
+  const topic = profile.subjectMap.topics.find(item => topicConcepts(profile.subjectMap, item.topicId)
+    .some(concept => profile.materialChoices.some(choice => choice.conceptId === concept.conceptId)))!;
+  const concept = topicConcepts(profile.subjectMap, topic.topicId)[0];
+  const choice = profile.materialChoices.find(item => item.conceptId === concept.conceptId)!;
+  const unit = profile.subjectMap.units.find(item => item.unitId === topic.unitId)!;
+  const tree = page.getByRole('list', { name: '所得税法の全体ツリー' });
+  // 同じ #map への移動では読み直されないため、ページを読み直してから科目を選び直す。
+  const reopen = async () => { await page.reload(); await openSubject(page, '所得税法'); };
+  await expect(tree.getByRole('button', { name: `${topic.label}（まだ）` })).toBeVisible();
+
+  // 確認問題を解く：まず不正解 → 「もう一度」、次に正解 → 「理解した」。
+  async function solve(correct: boolean) {
+    const created = await page.request.post('/api/cafe', { headers: { Origin: origin }, data: { action: 'start', requestId: crypto.randomUUID(),
+      concept: { subjectId: choice.subjectId, conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, materialId: choice.materialId, caseVersion: choice.caseVersion } });
+    const { session } = await created.json();
+    const sample = (await import('../src/server/subject-samples.json', { with: { type: 'json' } })).default.items.find((item: { title: string }) => item.title === session.prompt.title)!;
+    const option = session.prompt.options.find((item: { label: string }) => (item.label === sample.answer) === correct);
+    for (const data of [{ action: 'submit', optionId: option.id }, { action: 'confidence', confidence: 'normal' }]) {
+      const response = await page.request.post('/api/cafe', { headers: { Origin: origin }, data: { ...data, requestId: crypto.randomUUID(), caseId: session.id } });
+      expect(response.status()).toBe(200);
+    }
+  }
+  await solve(false);
+  await reopen();
+  await expect(tree.getByRole('button', { name: `${topic.label}（もう一度）` })).toBeVisible();
+  await solve(true);
+  await reopen();
+  const understood = tree.getByRole('button', { name: `${topic.label}（理解した）` });
+  await expect(understood).toBeVisible();
+  await expect(understood.locator('[data-stage="understood"]').first()).toHaveCSS('background-color', 'rgb(47, 111, 179)');
+  await expect(tree.locator(`[title^="${unit.label}："]`)).toHaveAttribute('title', /理解した1/);
+  await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('理解した 1（うち覚えた 0）');
+  const cards = page.getByRole('region', { name: '今日の復習カード' });
+  await expect(cards).toContainText('今日の復習カードはありません');
+  await understood.click();
+  await expect(page.getByRole('complementary', { name: '選んだ論点の説明' })).toContainText('いまの復習：0 / 3回');
+
+  // 翌日・3日後・7日後のカードで続けて「覚えていた」→「覚えた」（緑）。サーバーの記録時刻も同じ日付で進める。
+  // サーバーは本当の現在時刻で記録するため、読み込み時だけ記録時刻を画面の時計（進めた日付）に置き換える。
+  let now = Date.now();
+  const checkedAt: string[] = [];
+  await page.route('**/api/practice-progress', async route => {
+    if (route.request().method() === 'POST') { checkedAt.push(new Date(now).toISOString()); return route.continue(); }
+    const response = await route.fetch();
+    const body = await response.json();
+    await route.fulfill({ response, json: { ...body, checks: body.checks.map((check: object, index: number) => ({ ...check, checkedAt: checkedAt[index] ?? (check as { checkedAt: string }).checkedAt })) } });
+  });
+  for (const [index, days] of [1, 3, 7].entries()) {
+    now += days * 86_400_000;
+    if (index === 0) await page.clock.install({ time: new Date(now) }); else await page.clock.setSystemTime(new Date(now));
+    await reopen();
+    await expect(cards.getByRole('heading', { name: topic.label })).toBeVisible();
+    await cards.getByRole('button', { name: '裏返す' }).click();
+    await expect(cards).toContainText(topic.summary);
+    await cards.getByRole('button', { name: '覚えていた' }).click();
+    await expect(cards).toContainText('今日の分は終わりです');
+    if (index < 2) await expect(tree.getByRole('button', { name: `${topic.label}（理解した）` })).toBeVisible();
+  }
+  await expect(tree.getByRole('button', { name: `${topic.label}（覚えた）` })).toBeVisible();
+  await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
 });

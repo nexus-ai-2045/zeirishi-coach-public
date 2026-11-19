@@ -11,7 +11,7 @@ async function openBookkeepingMap(page: Page) {
   const response = await ready;
   expect(response.status()).toBe(200);
   const profile = await response.json();
-  await expect(page.getByRole('region', { name: '簿記のコア概念' })).toBeVisible();
+  await expect(page.getByRole('region', { name: '科目の全体ツリー' })).toBeVisible();
   await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
   return profile;
 }
@@ -19,7 +19,7 @@ for (const material of BOOKKEEPING_TRIAL_CASES) test(`案件 ${material.prompt()
   test.setTimeout(45000);
   const profile = await openBookkeepingMap(page);
   expect(profile.concepts).toHaveLength(36); expect(profile.materialChoices).toHaveLength(35);
-  await expect(page.getByRole('region',{name:'簿記のコア概念'})).toContainText('大きな枝');
+  await expect(page.getByRole('region',{name:'科目の全体ツリー'})).toContainText('10分野・36論点');
     const prompt = material.prompt();
     const choice = profile.materialChoices.find((item:{materialId:string}) => item.materialId===prompt.caseId);
     const created = await page.request.post('/api/cafe',{headers:{Origin:origin},data:{action:'start',requestId:crypto.randomUUID(),concept:{subjectId:choice.subjectId,conceptId:choice.conceptId,conceptVersion:choice.conceptVersion},materialId:choice.materialId,caseVersion:choice.caseVersion}});
@@ -60,7 +60,7 @@ test('練習309問と独立プールを分離し、選択前に正答・採点�
   const {session}=await created.json(); await page.goto(`/#case/${session.id}`);
   await expect(page.getByRole('button',{name:'資料を見て判断する →',exact:true})).toBeVisible();
   await page.getByRole('navigation',{name:'学習ナビゲーション'}).getByRole('button',{name:'学習地図',exact:true}).click();
-  await expect(page.getByRole('region',{name:'簿記のコア概念'}).locator('[data-current="true"]').first()).toBeVisible();
+  await expect(page.getByRole('list',{name:'簿記論の全体ツリー'})).toBeVisible();
   await page.goto(`/#case/${session.id}`);
   await page.getByRole('button',{name:'資料を見て判断する →'}).click();
   await page.getByRole('radio').first().check(); await expect(page.locator('main')).toHaveAttribute('aria-busy','false');
@@ -163,14 +163,17 @@ test('未審査の診断を3問まで試し、復習は保存済み完了から�
   expect(reviews.items.every((item:{status:string})=>item.status==='unknown')).toBe(true);
 });
 
-test('キーボードで地図の枝を展開し、390px・200%拡大でも案件完了まで進める',async ({page})=>{
+test('キーボードで地図の分野を開閉し、論点から390px・200%拡大でも案件完了まで進める',async ({page})=>{
   test.setTimeout(45000);
   await page.setViewportSize({width:390,height:844}); await page.goto('/#map');
-  const atlas=page.getByRole('region',{name:'簿記のコア概念'});
-  const branch=atlas.getByRole('region',{name:'試験論点の地図'}).getByRole('heading').first().getByRole('button');
-  await branch.focus(); await page.keyboard.press('Enter'); await expect(branch).toHaveAttribute('aria-expanded','false');
-  await page.keyboard.press('Enter'); await expect(branch).toHaveAttribute('aria-expanded','true');
-  const start=page.getByRole('button',{name:'この考え方を相談で試す →',exact:true}); await start.focus(); await page.keyboard.press('Enter');
+  const tree=page.getByRole('list',{name:'簿記論の全体ツリー'});
+  const unit=tree.getByRole('button',{name:/記録・利益・期間配分の基礎/});
+  await unit.focus(); await page.keyboard.press('Enter'); await expect(unit).toHaveAttribute('aria-expanded','true');
+  await page.keyboard.press('Enter'); await expect(unit).toHaveAttribute('aria-expanded','false');
+  await page.keyboard.press('Enter'); await expect(unit).toHaveAttribute('aria-expanded','true');
+  const topic=tree.getByRole('button',{name:/^支払日と費用の期間は別（/}); await topic.focus(); await page.keyboard.press('Enter');
+  await expect(page.getByRole('complementary',{name:'選んだ論点の説明'})).toContainText('支払日と費用の期間は別');
+  const start=page.getByRole('button',{name:'理解を問題で確かめる →',exact:true}); await start.focus(); await page.keyboard.press('Enter');
   await expect(page.getByRole('button',{name:'資料を見て判断する →',exact:true})).toBeVisible();
   await page.evaluate(()=>{document.documentElement.style.zoom='2';});
   for(const name of ['資料を見て判断する →','この回答で進む →','自分の言葉で説明してみる →','保存して振り返る →','この相談を完了する']) {
@@ -181,59 +184,21 @@ test('キーボードで地図の枝を展開し、390px・200%拡大でも案�
   await expect(page.getByText('相談ケース完了',{exact:true})).toBeVisible();
 });
 
-test('地図の接続線はPC・縦ツリー・拡大・枝の開閉で親子カードへ届く', async ({ page }) => {
+test('簿記論の学習地図も他科目と同じツリー1つで、ブレインマップや旧地図の切り替えがない', async ({ page }) => {
   await page.goto('/#map');
-  const atlas = page.getByRole('region', { name: '簿記のコア概念' });
-  async function connected() {
-    await expect.poll(() => atlas.evaluate(element => {
-      const root = element.querySelector<HTMLElement>('[data-tree-root]');
-      const svg = element.querySelector<SVGSVGElement>('[aria-label="簿記の全体像"] > svg');
-      const cards = [...element.querySelectorAll<HTMLElement>('[data-tree-branch]')];
-      const paths = [...(svg?.querySelectorAll<SVGPathElement>(':scope > path') ?? [])];
-      if (!root || !svg || paths.length !== cards.length || !paths.length) return false;
-      const rootBox = root.getBoundingClientRect();
-      const matrix = svg.getScreenCTM();
-      if (!matrix) return false;
-      return paths.every((path, index) => {
-        const start = path.getPointAtLength(0).matrixTransform(matrix);
-        const end = path.getPointAtLength(path.getTotalLength()).matrixTransform(matrix);
-        const box = cards[index].getBoundingClientRect();
-        const onParent = Math.abs(start.y-rootBox.bottom) < 3 && start.x >= rootBox.left && start.x <= rootBox.right;
-        const onChild = (Math.abs(end.y-box.top) < 3 && end.x >= box.left && end.x <= box.right) ||
-          (Math.abs(end.x-box.left) < 3 && end.y >= box.top && end.y <= box.bottom);
-        return onParent && onChild && getComputedStyle(svg).pointerEvents === 'none';
-      });
-    })).toBe(true);
-    await expect.poll(() => atlas.evaluate(element => [...element.querySelectorAll<HTMLElement>('[data-tree-branch]')].every(card => {
-      const marker=card.querySelector<HTMLElement>('[data-branch-marker]');
-      const leaves=[...card.querySelectorAll<HTMLElement>('[data-branch-leaf]')].filter(node=>node.getClientRects().length>0);
-      const svg=card.querySelector<SVGSVGElement>(':scope > svg'); const path=svg?.querySelector('path');
-      if(!marker || !svg || !path) return false;
-      if(!leaves.length) return !path.getAttribute('d');
-      if(!path.getAttribute('d')) return false;
-      const matrix=svg.getScreenCTM(); if(!matrix) return false;
-      const start=path.getPointAtLength(0).matrixTransform(matrix), end=path.getPointAtLength(path.getTotalLength()).matrixTransform(matrix);
-      const parent=marker.getBoundingClientRect(), child=leaves[leaves.length-1].getBoundingClientRect();
-      return Math.abs(start.x-(parent.left+parent.width/2))<3 && Math.abs(start.y-parent.bottom)<3 &&
-        Math.abs(end.x-child.left)<3 && Math.abs(end.y-(child.top+child.height/2))<3;
-    }))).toBe(true);
+  const view = page.getByRole('region', { name: '科目の全体ツリー' });
+  await expect(view.locator('[data-tree-root]')).toHaveText('簿記論');
+  await expect(page.getByRole('region', { name: '簿記のコア概念' })).toHaveCount(0);
+  for (const name of ['これまでの地図', '全体ツリー（新）', 'マップ', 'リスト']) await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
+  await expect(page.getByLabel(/ブレインマップ/)).toHaveCount(0);
+  await expect(view.locator('[aria-label="この科目の進み具合"]')).toContainText('理解した');
+  await view.getByRole('button', { name: '簿記の全体像をつかむ →' }).click();
+  await expect(page).toHaveURL(/#overview$/);
+  for (const width of [1440, 900, 390]) {
+    await page.goto('/#map'); await page.setViewportSize({ width, height: 900 });
+    await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.setViewportSize({ width: 1505, height: 1045 });
-  await connected();
-  await atlas.locator('[aria-label="簿記の全体像"]').screenshot({ path: '/tmp/zeirishi-tree-desktop-final.png' });
-  const branch = atlas.getByRole('region', { name: '試験論点の地図' }).getByRole('heading').first().getByRole('button');
-  await branch.focus(); await page.keyboard.press('Enter'); await connected();
-  await page.keyboard.press('Enter'); await connected();
-  await page.setViewportSize({ width: 1101, height: 1000 }); await connected();
-  await atlas.getByRole('button', { name: '考え方で見る' }).click(); await connected();
-  await atlas.locator('[aria-label="簿記の全体像"]').screenshot({path:'/tmp/zeirishi-tree-inner-final.png'});
-  await atlas.getByRole('button', { name: '試験論点で見る' }).click(); await connected();
-  await page.setViewportSize({ width: 900, height: 1000 }); await connected();
-  await page.setViewportSize({ width: 390, height: 844 }); await connected();
-  await atlas.locator('[aria-label="簿記の全体像"]').screenshot({ path: '/tmp/zeirishi-tree-mobile-final.png' });
-  await page.evaluate(() => { document.documentElement.style.zoom = '2'; }); await connected();
-  await atlas.getByRole('button', { name: '考え方で見る' }).click(); await connected();
 });
 
 
@@ -262,6 +227,6 @@ test('期限切れの別教材は地図へ戻り、保険料ケースへ無指�
   await page.goto(`/#case/${session.id}`);
   await expect(page.getByRole('heading',{name:'この下書きの保存期限が切れました'})).toBeVisible();
   await page.getByRole('button',{name:'学習地図で教材を選ぶ',exact:true}).click();
-  await expect(page.getByRole('region',{name:'簿記のコア概念'})).toBeVisible();
+  await expect(page.getByRole('region',{name:'科目の全体ツリー'})).toBeVisible();
   expect(unintendedStarts).toBe(0);
 });
