@@ -2,7 +2,11 @@ import { parseSubjectId, type SubjectId } from './onboarding';
 
 export type MapReviewStatus = 'draft' | 'expert_review' | 'approved' | 'active';
 export type MapUnit = { unitId: string; label: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null };
-export type MapTopic = { topicId: string; unitId: string; label: string; summary: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null };
+export type MapTopic = { topicId: string; unitId: string; label: string; summary: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null;
+  /** Rough exam frequency, a draft estimate for study order; never a mastery or pass signal. */
+  frequency?: 'high' | 'mid' | 'low';
+  /** A familiar, concrete example in plain words (draft). */
+  example?: string };
 export type MapConcept = {
   conceptId: string; conceptVersion: string; label: string; definition: string; purpose: string;
   applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string;
@@ -18,6 +22,8 @@ export type SubjectMapPack = {
   /** Explicit legacy subject namespace only. Legacy topic IDs require reviewed one-by-one mapping. */
   legacySubjectId?: 'boki';
   units: MapUnit[]; topics: MapTopic[]; concepts: MapConcept[]; links: MapLink[];
+  /** Plain-word glosses for technical terms, shown in parentheses on first use (draft). */
+  glossary?: Record<string, string>;
 };
 
 export class SubjectMapError extends Error {
@@ -63,12 +69,15 @@ export function validateSubjectMap(pack: SubjectMapPack, options: SubjectMapVali
   id(pack.version); status(pack.status);
   if (pack.legacySubjectId !== undefined && (mapLegacySubjectId(pack.legacySubjectId) !== pack.subjectId)) invalid();
   if (![pack.units, pack.topics, pack.concepts, pack.links].every(Array.isArray)) invalid();
+  if (pack.glossary !== undefined && (typeof pack.glossary !== 'object' || pack.glossary === null || Object.entries(pack.glossary).some(([term, gloss]) => !term.trim() || typeof gloss !== 'string' || !gloss.trim()))) invalid();
   if (options.published && (pack.status !== 'active' || pack.version.startsWith('synthetic-'))) invalid();
 
   const units = unique(pack.units, unit => { id(unit.unitId); text(unit.label); id(unit.sourceId); status(unit.status); year(unit.applicableYear);
     if (!Number.isInteger(unit.order) || unit.order < 0) invalid(); return unit.unitId; });
   const topics = unique(pack.topics, topic => { id(topic.topicId); id(topic.unitId); text(topic.label); text(topic.summary);
     id(topic.sourceId); status(topic.status); year(topic.applicableYear);
+    if (topic.frequency !== undefined && !['high', 'mid', 'low'].includes(topic.frequency)) invalid();
+    if (topic.example !== undefined) text(topic.example);
     if (!Number.isInteger(topic.order) || topic.order < 0 || !units.has(topic.unitId)) invalid(); return topic.topicId; });
   const concepts = unique(pack.concepts, concept => { id(concept.conceptId); id(concept.conceptVersion);
     for (const value of [concept.label, concept.definition, concept.purpose, concept.applicability, concept.counterexample,

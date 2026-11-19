@@ -17,6 +17,7 @@ import { LearningEvidencePanel } from './LearningEvidencePanel';
 import { AiCoachPanel } from './AiCoachPanel';
 import { DiagnosticPanel } from './DiagnosticPanel';
 import { LearningCelebration, type LearningMoment } from './LearningCelebration';
+import { SubjectTreeView } from './SubjectTreeView';
 import { LearningAtlas } from './LearningAtlas';
 import { BookkeepingPractice } from './BookkeepingPractice';
 import { MiniExamPanel } from './MiniExamPanel';
@@ -171,9 +172,31 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     }
     finally { lock.current = false; setBusy(false); }
   }
-  async function load(subject: SubjectId = 'bookkeeping') {
-    setCatalog(await request<Catalog>(`/api/profile?subjectId=${subject}`));
+  const catalogRef = useRef(catalog);
+  catalogRef.current = catalog;
+  // Bumped by every explicit subject load and when the shown case changes, so a stale subject search never overwrites it.
+  const subjectSearch = useRef(0);
+  async function loadCatalog(subject: SubjectId = 'bookkeeping') {
+    subjectSearch.current += 1;
+    const next = await request<Catalog>(`/api/profile?subjectId=${subject}`);
+    setCatalog(next);
     setChoosingConcept(null);
+    return next;
+  }
+  async function load(subject: SubjectId = 'bookkeeping') { await loadCatalog(subject); }
+  /** Local trial: a resumed case may belong to another subject; load that subject's catalog so labels and the map match. */
+  // A subject owns a case when its map links to it (covers practice questions that are not listed as choices) or lists it as a choice.
+  const ownsCase = (owner: Catalog, caseId: string) => owner.materialChoices?.some(item => item.materialId === caseId)
+    || owner.subjectMap?.links.some(link => link.kind === 'uses-case' && link.targetId === caseId) === true;
+  async function loadSubjectOf(next: CafeView, current: Catalog | null = catalogRef.current) {
+    if (!current || online || ownsCase(current, next.prompt.caseId)) return;
+    const search = subjectSearch.current;
+    for (const subject of current.subjects) {
+      if (subject.id === current.subjectId || !subject.available) continue;
+      const candidate = await request<Catalog>(`/api/profile?subjectId=${subject.id}`);
+      if (search !== subjectSearch.current) return;
+      if (ownsCase(candidate, next.prompt.caseId)) { setCatalog(candidate); return; }
+    }
   }
   async function loadResumeHint() {
     const requestId = ++resumeHintRequest.current;
@@ -189,13 +212,14 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   function openCase(id: string) {
     void run(async () => {
       const generation = routeGeneration.current;
-      accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session);
+      const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session;
+      accept(opened);
       if (generation === routeGeneration.current) navigate('case', id);
     });
   }
   useEffect(() => {
     void run(async () => {
-      await load();
+      const initial = await loadCatalog();
       if (online) await loadResumeHint();
       const route = readRoute();
       historyIndex.current = typeof window.history.state?.zcIndex === 'number' ? window.history.state.zcIndex : 0;
@@ -204,7 +228,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       if (route.view === 'case' && route.caseId) {
         const generation = routeGeneration.current;
         try {
-          accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(route.caseId)}`)).session);
+          const restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(route.caseId)}`)).session;
+          accept(restored);
+          await loadSubjectOf(restored, initial).catch(() => undefined);
           if (generation === routeGeneration.current) setView('case');
         } catch (cause) {
           // Authentication problems keep the case URL and show the sign-in guidance instead of a generic fallback.
@@ -221,11 +247,18 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       let id: string | null = null;
       try { id = localStorage.getItem(storageKey); } catch { /* Optional resume pointer only. */ }
       if (id) {
-        try { accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session); }
+        let restored: CafeView | null = null;
+        try { restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session; accept(restored); }
         catch { setNotice('前回の相談は再開できませんでした。新しく学習を始められます。'); }
+        if (restored) await loadSubjectOf(restored, initial).catch(() => undefined);
       }
     });
   }, []);
+  // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
+  useEffect(() => {
+    if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);
+    return () => { subjectSearch.current += 1; };
+  }, [view, session?.id, catalog?.subjectId]);
   // Online home re-reads the history projection on every visit so a completed case is not offered again.
   useEffect(() => { if (online && view === 'home' && catalog) void loadResumeHint(); }, [view]);
   const focusPhase = session?.phase === 'consultation' ? 'decision' : session?.phase;
@@ -249,7 +282,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       if (caseId) {
         void run(async () => {
           const generation = routeGeneration.current;
-          accept((await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(caseId)}`)).session);
+          const opened = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(caseId)}`)).session;
+          accept(opened);
           if (generation === routeGeneration.current) setView('case');
         });
       } else setView(route.view === 'case' ? 'home' : route.view);
@@ -305,7 +339,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   function startConcept(ref: ConceptRef, materialId?: string, caseVersion?: string) {
     if (!canStartConcept(ref)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId && item.conceptVersion === ref.conceptVersion) ?? [];
-    if (online && !materialId && choices.length > 1) { setChoosingConcept(ref); return; }
+    if (!materialId && choices.length > 1) { setChoosingConcept(ref); return; }
     const selected = !materialId && choices.length === 1 ? choices[0] : undefined;
     setChoosingConcept(null);
     mutate('start', {
@@ -344,6 +378,11 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const lesson = view === 'case' && session;
   const result = session?.result;
+  /** Points shown under the explanation, without repeating the explanation text itself. */
+  const feedbackPoints = result ? result.checkpoints.filter(item => item !== result.explanation) : [];
+  /** The diagram already lists the points, so the bullet list is shown only when the diagram is not. */
+  const showReasonDiagram = !!session && session.prompt.caseId !== 'cafe-prepaid' && feedbackPoints.length >= 2;
+  const [treeStyle, setTreeStyle] = useState<'tree' | 'atlas'>('tree');
   const subjectLabel = catalog?.subjects.find(item => item.id === catalog.subjectId)?.label ?? '';
   if (deleted) return <main className={styles.main}><h1>学習データを削除しました</h1><p>アカウントとバックアップは削除していません。削除済みデータへの再保存は停止しています。</p><a href="/login">ログイン状態を確認する</a></main>;
   return <div className={styles.app}>
@@ -399,10 +438,10 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {!catalog && <p role="status">学習内容を読み込んでいます…</p>}
         {catalog && view === 'home' && <section className={navigation.home} aria-label="ホーム">
           <h1>今日は、どこから始めますか？</h1>
-          <p className={styles.lead}>簿記の考え方を知り、相談で試し、自分の言葉で説明します。順番を飛ばしてもかまいません。</p>
+          <p className={styles.lead}>{catalog.subjectId === 'bookkeeping' ? '簿記' : subjectLabel}の考え方を知り、問題で試し、自分の言葉で説明します。順番を飛ばしてもかまいません。</p>
           {session?.status === 'active' ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>{session.prompt.title} · {labels[phaseStep(session.phase)]}</p></div><button className={styles.primary} disabled={busy} onClick={() => navigate('case', session.id)}>続きから再開</button></div>
             : resumeHint && resumeHint.caseId !== session?.id ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>保存中の相談ケース · {labels[phaseStep(resumeHint.phase)]}{resumeHint.savedAt && <> · 最終保存 <time dateTime={resumeHint.savedAt}>{new Date(resumeHint.savedAt).toLocaleString('ja-JP')}</time></>}</p></div><button className={styles.primary} disabled={busy || resumeHintChecking} onClick={() => openCase(resumeHint.caseId)}>続きから再開</button></div>
-            : <button className={styles.primary} disabled={busy} onClick={() => navigate(online ? 'map' : 'overview')}>簿記の全体像を見る →</button>}
+            : <button className={styles.primary} disabled={busy} onClick={() => navigate(online || catalog.subjectId !== 'bookkeeping' ? 'map' : 'overview')}>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像を見る →' : `${subjectLabel}の全体ツリーを見る →`}</button>}
           {resumeHintFailed && session?.status !== 'active' && <p className={styles.note}>保存中の相談を確認できませんでした。学習記録の一覧から再開できます。</p>}
           <ol className={styles.learningRoute} aria-label="学習の順番"><li><span>1</span><strong>概念を知る</strong><small>考え方と試験論点の地図</small></li><li><span>2</span><strong>相談で試す</strong><small>資料を読み、判断する</small></li><li><span>3</span><strong>説明して振り返る</strong><small>自分の言葉と対話</small></li></ol>
           <p className={styles.note}>{online ? catalog.materialNotice : '現在の教材は架空のローカル試用版です。専門審査前で、合格判定には使用しません。'}</p>
@@ -410,14 +449,18 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         </section>}
         {catalog && view === 'overview' && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
-          <h1>簿記の全体像</h1>
+          <h1>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像' : `${subjectLabel}の全体像`}</h1>
           {catalog.subjectId === 'bookkeeping' && !online ? <BookkeepingIntro disabled={busy} onStart={choice => startConcept({ subjectId: catalog.subjectId, conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, choice.materialId, choice.caseVersion)}
-            subjectMap={catalog.subjectMap ?? undefined} availableCases={catalog.materialChoices} /> : <p>この科目の全体像は準備中です。</p>}
+            subjectMap={catalog.subjectMap ?? undefined} availableCases={catalog.materialChoices} /> : <p>この科目の全体像は、学習地図の「全体ツリー」で見られます。</p>}
           <button className={styles.primary} disabled={busy || dirty} onClick={() => navigate('map')}>学習地図へ進む →</button>
         </>}
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
-          {catalog.subjectMap && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
+          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+            initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
+            onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
+          {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
@@ -483,9 +526,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {catalog && <div hidden={view !== 'records'}><MockExamRecords disabled={busy || dirty} expectedLearnerId={online ? expectedLearnerId : undefined} onBusyChange={setBusy} onDirtyChange={setMockExamDirty} /></div>}
         {lesson && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
-          <p className={styles.eyebrow}>簿記論 · 相談ケース</p><h1 ref={heading} tabIndex={-1}>{session.prompt.title}</h1>
+          <p className={styles.eyebrow}>{subjectLabel || '簿記論'} · 相談ケース</p><h1 ref={heading} tabIndex={-1}>{session.prompt.title}</h1>
           {!online && <details className={navigation.caseContext}><summary>この相談の科目内の位置</summary><ConceptPosition subjectMap={catalog?.subjectMap?.links.some(link => link.kind === 'uses-case' && link.sourceId === session.prompt.conceptId && link.targetId === session.prompt.caseId && link.targetVersion === session.caseVersion) ? catalog.subjectMap : undefined}
-            caseId={session.prompt.caseId} caseVersion={session.prompt.caseVersion} conceptId={session.prompt.conceptId} consultationTitle={session.prompt.consultationTitle}
+            caseId={session.prompt.caseId} caseVersion={session.prompt.caseVersion} conceptId={session.prompt.conceptId} consultationTitle={session.prompt.consultationTitle} subjectLabel={subjectLabel || undefined}
             onOpenMap={(conceptId, topicId) => { setMapFocus({ conceptId, topicId }); navigate('map'); }} /></details>}
           {!online && <details className={navigation.caseContext}><summary>この相談につながるコア概念</summary>{session.prompt.caseId === 'cafe-prepaid' ? <BookkeepingIntro subjectMap={catalog?.subjectMap ?? undefined} availableCases={catalog?.materialChoices} /> : <><h3>{catalog?.subjectMap?.concepts.find(item => item.conceptId === session.prompt.conceptId)?.label ?? '判断を支える考え方'}</h3><p>{catalog?.subjectMap?.concepts.find(item => item.conceptId === session.prompt.conceptId)?.definition}</p><p>{catalog?.subjectMap?.concepts.find(item => item.conceptId === session.prompt.conceptId)?.purpose}</p></>}</details>}
           <ol className={styles.steps} aria-label="学習の流れ">{labels.map((label, index) => {
@@ -515,9 +558,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           {session.phase === 'confidence' && <section className={styles.card}><p className={styles.caption}>答えを見る前に · 任意</p><h2>今の回答、どれくらい自信がありますか？</h2><p>正解かどうかとは別に、自分の感覚を残します。</p><div className={styles.actions}>{([{ value: 'low', label: '自信がない' }, { value: 'normal', label: '少し自信がある' }, { value: 'high', label: '理由も説明できる' }] as const).map(item => <button disabled={busy} key={item.value} onClick={() => mutate('confidence', { confidence: item.value })}>{item.label}</button>)}</div><button className={styles.linkButton} disabled={busy} onClick={() => mutate('confidence', { confidence: null })}>選ばずに解説を見る →</button></section>}
           {session.phase === 'feedback' && result && <section className={styles.card}><p className={styles.result}>{result.correct ? '判断できました' : 'ここが理解のチャンスです'}</p><h2>判断の理由を理解する</h2><p className={styles.choiceReflection}>{(session.prompt.caseId === 'cafe-prepaid' ? choiceReflection[result.optionId] : undefined) ?? (result.correct ? '判断の根拠を、自分の言葉でも説明してみましょう。' : '選んだ回答と資料を見比べて、見落とした条件を確かめましょう。')}</p><p>{result.explanation}</p>
             {session.prompt.caseId === 'cafe-prepaid' && result.periods.length > 0 && <><div className={styles.periodLegend}><span>● 当期の費用（12〜3月）</span><span>● 翌期以降の前払費用（4〜11月）</span></div><div className={styles.months} aria-label="教材の期間配分">{result.periods.map((period, i) => <div key={i} aria-label={`${period.month}月：${period.allocation}、${period.amount.toLocaleString('ja-JP')}円`} className={period.allocation === '当期の費用' ? styles.currentPeriod : styles.nextPeriod}><strong>{period.month}月</strong><small>{period.allocation === '当期の費用' ? '当期' : '翌期'}</small><small>{period.amount.toLocaleString('ja-JP')}円</small></div>)}</div><div className={styles.periodTotals}><div><span>当期の費用 · 4か月</span><strong>40,000円</strong></div><div><span>翌期以降に残す · 8か月</span><strong>80,000円</strong></div></div></>}
-            {session.prompt.caseId !== 'cafe-prepaid' && <div className={journey.reason} aria-label="判断の根拠の図"><article><small>① 資料の条件</small><strong>{session.prompt.facts[0]?.label}</strong><p>{session.prompt.facts[0]?.value}</p></article><article><small>② 見分けるポイント</small><strong>{result.checkpoints[0]}</strong></article><article><small>③ 判断の根拠</small><strong>{result.checkpoints[1] ?? result.checkpoints[0]}</strong><p>{result.checkpoints[2]}</p></article></div>}
+            {showReasonDiagram && <div className={journey.reason} aria-label="判断の根拠の図"><article><small>① 資料の条件</small><strong>{session.prompt.facts[0]?.label}</strong><p>{session.prompt.facts[0]?.value}</p></article><article><small>② 見分けるポイント</small><strong>{feedbackPoints[0]}</strong></article><article><small>③ 判断の根拠</small><strong>{feedbackPoints[1]}</strong><p>{feedbackPoints[2]}</p></article></div>}
             {result.misconceptionCandidate && <p className={styles.note}>{result.misconceptionCandidate} あなたの考え方を断定するものではありません。</p>}
-            <div className={styles.insight}><strong>考え方のポイント</strong><ul>{result.checkpoints.map(item => <li key={item}>{item}</li>)}</ul></div>
+            {!showReasonDiagram && feedbackPoints.length > 0 && <div className={styles.insight}><strong>考え方のポイント</strong><ul>{feedbackPoints.map(item => <li key={item}>{item}</li>)}</ul></div>}
             {result.learningNotes && <section aria-label="原則の適用範囲と試験への接続"><h3>原則の適用範囲・例外</h3>{result.learningNotes.exceptions.length ? <ul>{result.learningNotes.exceptions.map(item => <li key={item}>{item}</li>)}</ul> : <p>この教材には追加の例外説明が登録されていません。例外が存在しないという意味ではありません。</p>}<h3>試験問題ではどう問われる？</h3><p>{result.learningNotes.examTranslation}</p></section>}
             <div className={styles.actions}><button className={styles.primary} disabled={busy} onClick={() => progress('teach_back')}>自分の言葉で説明してみる →</button></div></section>}
           {session.phase === 'teach_back' && result && <section className={styles.card}><p className={styles.caption}>教えることで、理解を確かめる</p><h2>あなたの言葉で伝えてみよう</h2><blockquote className={styles.quote}>{result.teachBack}</blockquote><label htmlFor="teach-back">相談者への説明（任意・2,000文字まで）</label><textarea id="teach-back" maxLength={2000} disabled={busy} value={explanation} onChange={event => setExplanation(event.target.value)} placeholder="どの事実から、どう考えたかを、自分の言葉で…" /><p className={styles.note}>{explanation.length} / 2,000文字 · {dirty ? '未保存です。下書きを保存すると再開できます。' : '保存済みの内容です。'}</p><button className={styles.linkButton} disabled={busy} onClick={() => setShowQuestion(true)}>相談者からの追加質問を見る</button>{showQuestion && <blockquote className={styles.quote}>{result.followUp}</blockquote>}<p className={styles.note}>追加質問は固定教材です。保存後の「説明をもう一歩深める」では、接続が有効な場合にAIの問い返しを利用できます。採点には使いません。</p><div className={styles.actions}><button disabled={busy} onClick={() => progress('teach_back')}>下書きを保存</button><button className={styles.primary} disabled={busy} onClick={() => progress('reflection')}>保存して振り返る →</button></div></section>}

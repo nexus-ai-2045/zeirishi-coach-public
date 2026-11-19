@@ -58,9 +58,16 @@ jobs:
         working-directory: web
         run: npm ci
 
+      # Ubuntu のミラーが一時的に 503 を返すと依存パッケージの取得に失敗するため、間をあけて3回まで試す。
       - name: Install Playwright Chromium
         working-directory: web
-        run: npx playwright install --with-deps chromium
+        run: |
+          for attempt in 1 2 3; do
+            npx playwright install --with-deps chromium && exit 0
+            echo "Playwright install failed (attempt $attempt); retrying after $((attempt * 60))s"
+            sleep $((attempt * 60))
+          done
+          exit 1
 
       # next build generates the .next/types files imported by next-env.d.ts.
       - name: Build web app
@@ -90,6 +97,11 @@ jobs:
       - name: Run bookkeeping MVP E2E
         working-directory: web
         run: npm run test:e2e:bookkeeping
+
+      # Every subject: map heading, a frequent-topic question, one explanation, and reload keeps the subject.
+      - name: Run all-subjects E2E
+        working-directory: web
+        run: npx playwright test --config playwright.subjects.config.ts
 
   verification:
     name: 検証結果の回収
