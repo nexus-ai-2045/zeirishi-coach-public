@@ -105,3 +105,24 @@ test('簿記論の問題演習の問題も、別の科目から学習記録で�
   await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
   await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
 });
+
+test('問題の科目を探している間に別の科目を選んでも、選んだ科目のまま', async ({ page }) => {
+  test.setTimeout(60000);
+  await openSubject(page, '簿記論');
+  const profile = await (await page.request.get('/api/profile?subjectId=bookkeeping')).json() as { materialChoices: Choice[] };
+  const choice = profile.materialChoices[0];
+  const created = await page.request.post('/api/cafe', { headers: { Origin: origin }, data: { action: 'start', requestId: crypto.randomUUID(),
+    concept: { subjectId: 'bookkeeping', conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, materialId: choice.materialId, caseVersion: choice.caseVersion } });
+  expect(created.status()).toBe(200);
+  await openSubject(page, '固定資産税');
+  // 簿記論の一覧だけ遅らせ、科目探しが終わる前に利用者が酒税法を選ぶ。
+  await page.route(url => url.pathname === '/api/profile' && url.searchParams.get('subjectId') === 'bookkeeping',
+    async route => { await new Promise(resolve => setTimeout(resolve, 4000)); await route.continue().catch(() => undefined); });
+  await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
+  await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
+  await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
+  await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /酒税法/ }).click();
+  await expect(page.getByLabel('酒税法のブレインマップ')).toBeVisible();
+  await page.waitForTimeout(6000);
+  await expect(page.getByLabel('酒税法のブレインマップ')).toBeVisible();
+});

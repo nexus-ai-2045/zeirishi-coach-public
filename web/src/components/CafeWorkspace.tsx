@@ -174,7 +174,10 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const catalogRef = useRef(catalog);
   catalogRef.current = catalog;
+  // Bumped by every explicit subject load and when the shown case changes, so a stale subject search never overwrites it.
+  const subjectSearch = useRef(0);
   async function loadCatalog(subject: SubjectId = 'bookkeeping') {
+    subjectSearch.current += 1;
     const next = await request<Catalog>(`/api/profile?subjectId=${subject}`);
     setCatalog(next);
     setChoosingConcept(null);
@@ -187,9 +190,11 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     || owner.subjectMap?.links.some(link => link.kind === 'uses-case' && link.targetId === caseId) === true;
   async function loadSubjectOf(next: CafeView, current: Catalog | null = catalogRef.current) {
     if (!current || online || ownsCase(current, next.prompt.caseId)) return;
+    const search = subjectSearch.current;
     for (const subject of current.subjects) {
       if (subject.id === current.subjectId || !subject.available) continue;
       const candidate = await request<Catalog>(`/api/profile?subjectId=${subject.id}`);
+      if (search !== subjectSearch.current) return;
       if (ownsCase(candidate, next.prompt.caseId)) { setCatalog(candidate); return; }
     }
   }
@@ -252,6 +257,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
   useEffect(() => {
     if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);
+    return () => { subjectSearch.current += 1; };
   }, [view, session?.id, catalog?.subjectId]);
   // Online home re-reads the history projection on every visit so a completed case is not offered again.
   useEffect(() => { if (online && view === 'home' && catalog) void loadResumeHint(); }, [view]);
