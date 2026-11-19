@@ -1,18 +1,37 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { SUBJECTS } from '../src/domain/onboarding';
-import { SUBJECT_SAMPLES, SUBJECT_SAMPLE_BASIS, SUBJECT_SAMPLE_CATALOG, SUBJECT_SAMPLE_MATERIALS } from '../src/server/subject-samples';
+import { SUBJECT_SAMPLES, SUBJECT_SAMPLE_BASIS, SUBJECT_SAMPLE_CATALOG, SUBJECT_SAMPLE_MATERIALS, sampleConcept } from '../src/server/subject-samples';
 import { BOOKKEEPING_TRIAL_CATALOG, TRIAL_MATERIAL_CHOICES, getBookkeepingTrialPracticeMaterial } from '../src/server/bookkeeping-trial-supply';
 
 const others = SUBJECTS.filter(subject => subject.id !== 'bookkeeping');
 
-test('簿記論以外の10科目に見本問題が3問ずつあり、前提（法令の時点）を明記する', () => {
-  assert.equal(SUBJECT_SAMPLES.length, 30);
+test('簿記論以外の10科目に確認問題が3問以上ずつあり、前提（法令の時点）を明記する', () => {
+  assert.equal(SUBJECT_SAMPLES.length, 106);
   for (const subject of others) {
-    assert.equal(SUBJECT_SAMPLES.filter(item => item.subjectId === subject.id).length, 3, subject.id);
+    assert.ok(SUBJECT_SAMPLES.filter(item => item.subjectId === subject.id).length >= 3, subject.id);
     assert.match(SUBJECT_SAMPLE_BASIS[subject.id as keyof typeof SUBJECT_SAMPLE_BASIS], /2026年11月時点/);
   }
-  assert.equal(new Set(SUBJECT_SAMPLES.map(item => item.id)).size, 30);
+  assert.equal(new Set(SUBJECT_SAMPLES.map(item => item.id)).size, SUBJECT_SAMPLES.length);
+});
+
+test('全体ツリーの★頻出論点には、すべて確認問題が1問以上つながっている', async () => {
+  const { SUBJECT_TREES } = await import('../src/server/subject-samples');
+  for (const tree of SUBJECT_TREES) {
+    const map = SUBJECT_SAMPLE_CATALOG.find(item => item.subjectId === tree.subjectId)!.subjectMap!;
+    const withQuestion = new Set(map.links.filter(link => link.kind === 'uses-case').map(link => link.sourceId));
+    const missing = map.topics.filter(topic => topic.frequency === 'high')
+      .filter(topic => !map.links.some(link => link.kind === 'explains-topic' && link.targetId === topic.topicId && withQuestion.has(link.sourceId)));
+    assert.deepEqual(missing.map(topic => topic.label), [], tree.subjectId);
+  }
+});
+
+test('論点を指す確認問題は、説明文を論点から借り、存在しない論点を指さない', () => {
+  for (const item of SUBJECT_SAMPLES.filter(sample => sample.treeTopic)) {
+    const concept = sampleConcept(item);
+    assert.ok(concept.definition && concept.counterexample && concept.examUse, item.id);
+    assert.equal(item.definition, undefined, `${item.id} は説明文を二重に持たない`);
+  }
 });
 
 test('見本問題は選択肢が重複せず、正解の位置と「正解だけ最長」に偏りがない', () => {
@@ -27,8 +46,9 @@ test('見本問題は選択肢が重複せず、正解の位置と「正解だ�
     const lengths = prompt.options.map(option => option.label.length);
     if (lengths[index] === Math.max(...lengths) && lengths.filter(value => value === lengths[index]).length === 1) longestOnly++;
   }
-  assert.ok([...positions.values()].every(count => count <= 15), JSON.stringify([...positions]));
-  assert.ok(longestOnly <= 5, `正解だけ最長: ${longestOnly}`);
+  const total = SUBJECT_SAMPLE_MATERIALS.length;
+  assert.ok([...positions.values()].every(count => count <= total * 0.4), JSON.stringify([...positions]));
+  assert.ok(longestOnly <= total * 0.1, `正解だけ最長: ${longestOnly} / ${total}`);
 });
 
 test('誤答には選んだ選択肢ごとの理由を返し、正式な評価には使わない', () => {
@@ -64,7 +84,7 @@ test('財務諸表論は全体ツリー（分野→論点）で表示し、旧�
   assert.equal(map.topics.length, tree.topics.length);
   assert.ok(map.topics.every(topic => topic.frequency && topic.summary));
   assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length);
-  assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3);
+  assert.equal(map.links.filter(link => link.kind === 'uses-case').length, SUBJECT_SAMPLES.filter(item => item.subjectId === 'financial-statements').length);
 });
 
 test('税法4科目も全体ツリーで表示し、旧論点表の全論点・具体例・やさしい言葉を含み、見本問題を論点につなぐ', async () => {
@@ -82,7 +102,7 @@ test('税法4科目も全体ツリーで表示し、旧論点表の全論点・�
     assert.ok(map.topics.every(topic => topic.frequency && topic.summary && topic.example), subjectId);
     assert.ok(Object.keys(map.glossary ?? {}).length >= 40, subjectId);
     assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length, subjectId);
-    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3, subjectId);
+    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, SUBJECT_SAMPLES.filter(item => item.subjectId === subjectId).length, subjectId);
   }
 });
 
@@ -98,7 +118,7 @@ test('残り5科目（酒税・国税徴収・住民税・事業税・固定資�
     assert.ok(map.topics.every(topic => topic.frequency && topic.summary && topic.example), subjectId);
     assert.ok(Object.keys(map.glossary ?? {}).length >= 40, subjectId);
     assert.ok(map.links.filter(link => link.kind === 'prerequisite').length >= tree.topics.length - tree.units.length, subjectId);
-    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, 3, subjectId);
+    assert.equal(map.links.filter(link => link.kind === 'uses-case').length, SUBJECT_SAMPLES.filter(item => item.subjectId === subjectId).length, subjectId);
   }
   assert.equal(SUBJECT_TREES.length, 10);
 });

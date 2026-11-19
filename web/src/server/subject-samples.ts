@@ -19,11 +19,15 @@ import fixedAssetTaxTree from './subject-trees/fixed-asset-tax.json' with { type
  * Sample questions for subjects other than bookkeeping: three per subject, so the screens can be
  * checked before writing the rest. AI-authored drafts, not expert-reviewed; practice only.
  */
+type SampleConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; examUse: string };
+/**
+ * A question either carries its own concept text (older samples) or points at a whole-subject tree topic
+ * with `treeTopic` and borrows that topic's concept text, so one explanation lives in one place.
+ */
 export type SubjectSample = {
-  id: string; subjectId: Exclude<SubjectId, 'bookkeeping'>; topic: string | null; title: string;
-  definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; examUse: string;
+  id: string; subjectId: Exclude<SubjectId, 'bookkeeping'>; topic: string | null; title: string; treeTopic?: string;
   prompt: string; answer: string; wrong: [string, string, string]; wrongReasons: [string, string, string]; explanation: string;
-};
+} & Partial<SampleConceptFields>;
 export const SUBJECT_SAMPLE_BASIS = samples.basis as Record<Exclude<SubjectId, 'bookkeeping'>, string>;
 export const SUBJECT_SAMPLES = samples.items as SubjectSample[];
 export const SUBJECT_SAMPLE_SUBJECTS = SUBJECTS.filter(subject => subject.id !== 'bookkeeping');
@@ -44,10 +48,20 @@ const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(valu
 const label = (subjectId: SubjectId) => SUBJECTS.find(subject => subject.id === subjectId)!.label;
 const treeConceptId = (key: string) => `tree-${key}`;
 const treeConceptVersion = (topic: SubjectTree['topics'][number]) => `synthetic-tree-concept-${hash([topic.key, topic.label, topic.concept])}`;
-const treeTopicOf = (item: SubjectSample) => treeFor(item.subjectId)?.topics.find(topic => topic.sampleId === item.id);
+const treeTopicOf = (item: SubjectSample) => treeFor(item.subjectId)?.topics.find(topic => item.treeTopic ? topic.key === item.treeTopic : topic.sampleId === item.id);
+/** Concept text for a question: its own fields, or the tree topic's when it points at one. */
+export function sampleConcept(item: SubjectSample): SampleConceptFields {
+  if (!item.treeTopic) {
+    const { definition, purpose, applicability, counterexample, misconception, examUse } = item as SubjectSample & SampleConceptFields;
+    return { definition, purpose, applicability, counterexample, misconception, examUse };
+  }
+  const topic = treeTopicOf(item);
+  if (!topic) throw new Error(`見本問題 ${item.id} の論点 ${item.treeTopic} が全体ツリーにない`);
+  return topic.concept;
+}
 export const sampleConceptId = (item: SubjectSample) => { const topic = treeTopicOf(item); return topic ? treeConceptId(topic.key) : `sample-${item.id}`; };
 const conceptVersion = (item: SubjectSample) => { const topic = treeTopicOf(item); return topic ? treeConceptVersion(topic)
-  : `synthetic-sample-concept-${hash([item.id, item.definition, item.purpose, item.applicability, item.counterexample, item.misconception, item.examUse])}`; };
+  : `synthetic-sample-concept-${hash([item.id, ...Object.values(sampleConcept(item))])}`; };
 
 /** Deterministic option order so the correct answer is not always first. */
 function options(item: SubjectSample) {
@@ -80,7 +94,7 @@ export function sampleMaterial(item: SubjectSample): CafeMaterial {
         misconceptionCandidate: correct ? null : item.wrongReasons[selected.wrongIndex],
         explanation: item.explanation, periods: [], teachBack: 'この判断が成り立つ条件を、自分の言葉で説明してください。',
         followUp: '条件を一つ変えたら、判断はどう変わりますか？', checkpoints: [item.explanation, '条件が変わる場合も確かめる'],
-        learningNotes: { exceptions: [item.counterexample], examTranslation: item.examUse } };
+        learningNotes: { exceptions: [sampleConcept(item).counterexample], examTranslation: sampleConcept(item).examUse } };
     },
   };
 }
@@ -121,8 +135,7 @@ function samplePack(subjectId: Exclude<SubjectId, 'bookkeeping'>): SubjectPack |
   if (!items.length) return null;
   const version = `synthetic-sample-${subjectId}-v1`;
   const concepts: MapConcept[] = items.map(item => ({ conceptId: sampleConceptId(item), conceptVersion: conceptVersion(item), label: item.title,
-    definition: item.definition, purpose: item.purpose, applicability: item.applicability, counterexample: item.counterexample,
-    misconception: item.misconception, materialCue: item.prompt, examUse: item.examUse, ...base }));
+    ...sampleConcept(item), materialCue: item.prompt, ...base }));
   const links: MapLink[] = items.flatMap((item, index) => {
     const material = SUBJECT_SAMPLE_MATERIALS[SUBJECT_SAMPLES.indexOf(item)];
     return [
@@ -132,7 +145,7 @@ function samplePack(subjectId: Exclude<SubjectId, 'bookkeeping'>): SubjectPack |
   });
   const subjectMap = validateSubjectMap({ subjectId, version, status: 'draft',
     units: [{ unitId: 'samples', label: '見本問題（AI作成・確認前）', order: 0, ...base }],
-    topics: items.map((item, order) => ({ topicId: `topic-${item.id}`, unitId: 'samples', label: item.title, summary: item.definition, order, ...base })),
+    topics: items.map((item, order) => ({ topicId: `topic-${item.id}`, unitId: 'samples', label: item.title, summary: sampleConcept(item).definition, order, ...base })),
     concepts, links });
   return { subjectId, version, active: true, subjectMap,
     concepts: concepts.map(concept => ({ subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion, label: concept.label, importance: 3, durationMinutes: 5, unseenQuestionCount: 0 })) };

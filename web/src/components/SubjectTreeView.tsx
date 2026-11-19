@@ -178,7 +178,7 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, onStart
           <p>先に知ると理解しやすい</p>{before.length ? before.map(item => <button key={item.topicId} className={styles.chipBefore} onClick={() => select(item.topicId)}>← {item.label}</button>) : <span className={styles.none}>この論点が出発点です</span>}
           <p>次につながる</p>{after.length ? after.map(item => <button key={item.topicId} className={styles.chipAfter} onClick={() => select(item.topicId)}>{item.label} →</button>) : <span className={styles.none}>ここから先の論点は設定していません</span>}
         </div>
-        <div className={styles.actions}>{materials(concept).length ? materials(concept).map(choice => <button key={choice.materialId} disabled={disabled} onClick={() => onStart(concept, choice)}>理解を問題で確かめる →</button>)
+        <div className={styles.actions}>{materials(concept).length ? materials(concept).map(choice => <button key={choice.materialId} disabled={disabled} onClick={() => onStart(concept, choice)}>{materials(concept).length > 1 ? `問題で確かめる：${choice.label} →` : '理解を問題で確かめる →'}</button>)
           : <span className={styles.none}>この論点の問題はまだありません</span>}</div>
       </aside> : <aside className={styles.detail}><p className={styles.kicker}>使い方</p><h3>まず全体を眺めましょう</h3>
         <ol className={styles.howto}><li>{layout === 'map' ? '気になる分野の丸をタップ' : '気になる分野の見出しをタップ'}</li><li>論点を選ぶと、ここに「何か・なぜ大事か・具体例」が出ます</li><li>青は先に、オレンジは次に学ぶとよい論点です</li></ol></aside>}
