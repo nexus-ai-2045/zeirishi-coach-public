@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import type { CafeMaterial } from './cafe-case';
 import { StudyError } from '../domain/types';
 import { SUBJECTS, type SubjectId, type SubjectPack } from '../domain/onboarding';
-import { validateSubjectMap, type MapConcept, type MapLink } from '../domain/subject-map';
+import { validateSubjectMap, type MapConcept, type MapLink, type PendingReform } from '../domain/subject-map';
 import samples from './subject-samples.json' with { type: 'json' };
 import financialStatementsTree from './subject-trees/financial-statements.json' with { type: 'json' };
 import incomeTaxTree from './subject-trees/income-tax.json' with { type: 'json' };
@@ -37,7 +37,7 @@ type ConceptFields = { definition: string; purpose: string; applicability: strin
 export type SubjectTree = {
   subjectId: Exclude<SubjectId, 'bookkeeping'>; version: string; note: string;
   units: { unitId: string; label: string }[];
-  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null; example?: string }[];
+  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null; example?: string; pendingReform?: PendingReform }[];
   glossary?: Record<string, string>;
   prerequisites: { from: string; to: string }[];
 };
@@ -122,7 +122,7 @@ function treePack(tree: SubjectTree): SubjectPack {
   }
   const subjectMap = validateSubjectMap({ subjectId: tree.subjectId, version, status: 'draft',
     units: tree.units.map((unit, order) => ({ ...unit, order, ...base })),
-    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...(topic.example ? { example: topic.example } : {}), ...base })),
+    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...(topic.example ? { example: topic.example } : {}), ...(topic.pendingReform ? { pendingReform: topic.pendingReform } : {}), ...base })),
     concepts, links, ...(tree.glossary ? { glossary: tree.glossary } : {}) });
   return { subjectId: tree.subjectId, version, active: true, subjectMap,
     concepts: concepts.map(concept => ({ subjectId: tree.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion, label: concept.label, importance: 3, durationMinutes: 5, unseenQuestionCount: 0 })) };

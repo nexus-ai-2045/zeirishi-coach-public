@@ -6,7 +6,14 @@ export type MapTopic = { topicId: string; unitId: string; label: string; summary
   /** Rough exam frequency, a draft estimate for study order; never a mastery or pass signal. */
   frequency?: 'high' | 'mid' | 'low';
   /** A familiar, concrete example in plain words (draft). */
-  example?: string };
+  example?: string;
+  /**
+   * A reform that is still a bill (not enacted). The topic text stays on current law; this holds the
+   * "if enacted" version so the learner can switch between the two. Remove once the outcome is known.
+   */
+  pendingReform?: PendingReform };
+export type PendingReformText = { summary?: string; example?: string; definition?: string; purpose?: string; misconception?: string; examUse?: string };
+export type PendingReform = { title: string; status: string; ifEnacted: PendingReformText };
 export type MapConcept = {
   conceptId: string; conceptVersion: string; label: string; definition: string; purpose: string;
   applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string;
@@ -78,6 +85,10 @@ export function validateSubjectMap(pack: SubjectMapPack, options: SubjectMapVali
     id(topic.sourceId); status(topic.status); year(topic.applicableYear);
     if (topic.frequency !== undefined && !['high', 'mid', 'low'].includes(topic.frequency)) invalid();
     if (topic.example !== undefined) text(topic.example);
+    if (topic.pendingReform !== undefined) { const reform = topic.pendingReform; text(reform.title); text(reform.status);
+      const values = Object.entries(reform.ifEnacted ?? {});
+      if (!values.length || values.some(([key, value]) => !['summary', 'example', 'definition', 'purpose', 'misconception', 'examUse'].includes(key) || typeof value !== 'string')) invalid();
+      values.forEach(([, value]) => text(value)); }
     if (!Number.isInteger(topic.order) || topic.order < 0 || !units.has(topic.unitId)) invalid(); return topic.topicId; });
   const concepts = unique(pack.concepts, concept => { id(concept.conceptId); id(concept.conceptVersion);
     for (const value of [concept.label, concept.definition, concept.purpose, concept.applicability, concept.counterexample,

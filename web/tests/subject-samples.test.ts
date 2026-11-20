@@ -122,3 +122,17 @@ test('残り5科目（酒税・国税徴収・住民税・事業税・固定資�
   }
   assert.equal(SUBJECT_TREES.length, 10);
 });
+
+test('未成立の改正（1%法案）は、現行の本文を変えずに「成立した場合」の版を論点に持ち、不正な形は弾く', async () => {
+  const { validateSubjectMap } = await import('../src/domain/subject-map');
+  const map = SUBJECT_SAMPLE_CATALOG.find(item => item.subjectId === 'consumption-tax')!.subjectMap!;
+  const topic = map.topics.find(item => item.topicId === 'topic-tax-base')!;
+  assert.match(topic.summary, /食料品や新聞は8%/);
+  assert.match(topic.pendingReform!.status, /未確定/);
+  assert.match(topic.pendingReform!.ifEnacted.summary!, /1%/);
+  assert.match(topic.pendingReform!.ifEnacted.definition!, /2027年4月1日から2029年3月31日/);
+  const withReform = (pendingReform: unknown) => ({ ...map, topics: map.topics.map(item => item === topic ? { ...item, pendingReform } : item) });
+  assert.throws(() => validateSubjectMap(withReform({ title: '法案', status: '審議中', ifEnacted: {} }) as never));
+  assert.throws(() => validateSubjectMap(withReform({ title: '法案', status: '審議中', ifEnacted: { rate: '1%' } }) as never));
+  assert.doesNotThrow(() => validateSubjectMap(withReform({ title: '法案', status: '審議中', ifEnacted: { summary: '1%' } }) as never));
+});
