@@ -1,4 +1,4 @@
-import type { SchemaDatabase, TransactionDatabase } from './database';
+import type { QueryExecutor, SchemaDatabase, TransactionDatabase } from './database';
 import { StudyError } from '../domain/types';
 import type { Answer, SessionView } from '../domain/types';
 import type { ConfidenceProfile } from './confidence-service';
@@ -26,6 +26,11 @@ type ExportCafe = { id: string; caseVersion: string; status: CafeView['status'];
   confidence: CafeView['confidence']; confidenceFixed: boolean; result: CafeView['result'] };
 
 /** Existing adapters must initialize their schemas on this same database before construction. */
+/** True when the local-only review-card table exists and this role may use it (the online schema has neither). */
+async function hasReviewCards(tx: QueryExecutor, privilege: 'SELECT' | 'DELETE') {
+  return (await tx.query<{ ok: boolean }>(`SELECT to_regclass('review_card_checks') IS NOT NULL
+    AND has_table_privilege('review_card_checks', $1) AS ok`, [privilege])).rows[0]?.ok === true;
+}
 export async function createDataService(db: SchemaDatabase, now: () => Date = () => new Date()) {
   await initializeOwnerAccess(db);
   await initializeWeeklyPlanSchema(db);
@@ -76,6 +81,11 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
           LEFT JOIN cafe_confidence c ON c.attempt_id=a.id
           LEFT JOIN cafe_progress p ON p.instance_id=i.id AND p.owner_id=i.owner_id
           WHERE i.owner_id=$1 ORDER BY i.id`, [owner])).rows;
+        // Review cards exist only in the local mode's database (see review-card-service.ts).
+        const reviewCards = developmentOnly && await hasReviewCards(tx, 'SELECT')
+          ? (await tx.query<{ subjectId: string; topicId: string; checkedAt: string; remembered: boolean }>(`SELECT subject_id AS "subjectId",
+            topic_id AS "topicId",checked_at AS "checkedAt",remembered FROM review_card_checks WHERE owner_id=$1 ORDER BY checked_at,request_id`, [owner])).rows
+          : undefined;
         return { formatVersion: developmentOnly ? 'zeirishi-local-data-v1' as const : 'zeirishi-learning-data-v1' as const, exportedAt: at.toISOString(),
           developmentOnly, notice, profile, studySessions, cafeCases,
           weeklyPlan: await readWeeklyPlanRecord(tx, owner), mockExamRecords: await readMockExamRecords(tx, owner, true),
@@ -83,7 +93,7 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
           masteryEvidence: await readMasteryEvidenceHistory(tx, owner),
           diagnostics: await readDiagnosticRecords(tx, owner, undefined, at.toISOString()),
           reviewEvidence: (await tx.query<{ event_id: string; kind: string; payload: ReviewScheduleEvent | ReviewCorrection }>('SELECT event_id,kind,payload FROM review_evidence_events WHERE owner_id=$1 ORDER BY sequence', [owner])).rows,
-          aiInteractions: (await tx.query<{ request_id: string; instance_id: string; attempt_id: string; case_version: string; progress_revision: number; kind: string; purpose: string; status: string; created_at: string }>('SELECT request_id,instance_id,attempt_id,case_version,progress_revision,kind,purpose,status,created_at FROM ai_interaction_summaries WHERE owner_id=$1 ORDER BY created_at,request_id', [owner])).rows };
+          aiInteractions: (await tx.query<{ request_id: string; instance_id: string; attempt_id: string; case_version: string; progress_revision: number; kind: string; purpose: string; status: string; created_at: string }>('SELECT request_id,instance_id,attempt_id,case_version,progress_revision,kind,purpose,status,created_at FROM ai_interaction_summaries WHERE owner_id=$1 ORDER BY created_at,request_id', [owner])).rows, ...(reviewCards ? { reviewCards } : {}) };
       });
     },
     async delete(owner: string) {
@@ -91,6 +101,8 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
         const identity = await lockOwner(tx, owner);
         if (identity.revokedAt === null) {
           const at = clock();
+          // Review cards exist only in the local mode's database; the online schema has no such table or grant.
+          if (await hasReviewCards(tx, 'DELETE')) await tx.query('DELETE FROM review_card_checks WHERE owner_id=$1', [owner]);
           await tx.query(`DELETE FROM cafe_confidence WHERE attempt_id IN
             (SELECT id FROM cafe_attempts WHERE owner_id=$1)`, [owner]);
           // Static table names only, ordered by existing foreign keys. All changes commit together.

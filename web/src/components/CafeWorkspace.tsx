@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import type { Concept, ConceptRef, ConfidenceReport, InitialRecommendation, SelfConfidence, SubjectId } from '../domain/onboarding';
+import { SUBJECTS } from '../domain/onboarding';
 import type { SubjectMapPack } from '../domain/subject-map';
 import { caseCountNotice, startableCaseCount } from '../domain/bookkeeping-overview';
 import type { CafeDraftItem, CafeHistoryItem, CafePhase, CafeView } from '../server/cafe-service';
@@ -55,6 +56,12 @@ function pickResumeHint(items: CafeHistoryItem[], drafts: CafeDraftItem[]): Resu
   return candidates.sort((a, b) => time(b.savedAt) - time(a.savedAt))[0] ?? null;
 }
 const storageKey = 'zc-cafe-case-v2';
+/** Local mode only: the subject last shown, so reloading the map keeps it instead of falling back to 簿記論. */
+const subjectKey = 'zc-subject-v1';
+const savedSubject = (): SubjectId | null => {
+  try { const value = localStorage.getItem(subjectKey); return SUBJECTS.some(subject => subject.id === value) ? value as SubjectId : null; }
+  catch { return null; }
+};
 const labels = ['相談を読む', '判断する', '理解する', '説明する', '振り返る'];
 const phaseStep = (phase: CafePhase) => phase === 'consultation' ? 0 : ['decision', 'confidence'].includes(phase) ? 1 : phase === 'feedback' ? 2 : phase === 'teach_back' ? 3 : 4;
 const selfLabels: { value: SelfConfidence; label: string }[] = [{ value: 'explained', label: '説明できる' }, { value: 'uncertain', label: '少し怪しい' }, { value: 'unlearned', label: '未学習' }];
@@ -219,7 +226,8 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   useEffect(() => {
     void run(async () => {
-      const initial = await loadCatalog();
+      const remembered = online ? null : savedSubject();
+      const initial = remembered ? await loadCatalog(remembered).catch(() => loadCatalog()) : await loadCatalog();
       if (online) await loadResumeHint();
       const route = readRoute();
       historyIndex.current = typeof window.history.state?.zcIndex === 'number' ? window.history.state.zcIndex : 0;
@@ -250,10 +258,15 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         let restored: CafeView | null = null;
         try { restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session; accept(restored); }
         catch { setNotice('前回の相談は再開できませんでした。新しく学習を始められます。'); }
-        if (restored) await loadSubjectOf(restored, initial).catch(() => undefined);
+        // A subject the learner chose last time wins over the resume pointer's subject; opening the case still switches.
+        if (restored && !remembered) await loadSubjectOf(restored, initial).catch(() => undefined);
       }
     });
   }, []);
+  useEffect(() => {
+    if (online || !catalog) return;
+    try { localStorage.setItem(subjectKey, catalog.subjectId); } catch { /* Optional convenience only. */ }
+  }, [online, catalog?.subjectId]);
   // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
   useEffect(() => {
     if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);
@@ -382,7 +395,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   const feedbackPoints = result ? result.checkpoints.filter(item => item !== result.explanation) : [];
   /** The diagram already lists the points, so the bullet list is shown only when the diagram is not. */
   const showReasonDiagram = !!session && session.prompt.caseId !== 'cafe-prepaid' && feedbackPoints.length >= 2;
-  const [treeStyle, setTreeStyle] = useState<'tree' | 'atlas'>('tree');
   const subjectLabel = catalog?.subjects.find(item => item.id === catalog.subjectId)?.label ?? '';
   if (deleted) return <main className={styles.main}><h1>学習データを削除しました</h1><p>アカウントとバックアップは削除していません。削除済みデータへの再保存は停止しています。</p><a href="/login">ログイン状態を確認する</a></main>;
   return <div className={styles.app}>
@@ -441,7 +453,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           <p className={styles.lead}>{catalog.subjectId === 'bookkeeping' ? '簿記' : subjectLabel}の考え方を知り、問題で試し、自分の言葉で説明します。順番を飛ばしてもかまいません。</p>
           {session?.status === 'active' ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>{session.prompt.title} · {labels[phaseStep(session.phase)]}</p></div><button className={styles.primary} disabled={busy} onClick={() => navigate('case', session.id)}>続きから再開</button></div>
             : resumeHint && resumeHint.caseId !== session?.id ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>保存中の相談ケース · {labels[phaseStep(resumeHint.phase)]}{resumeHint.savedAt && <> · 最終保存 <time dateTime={resumeHint.savedAt}>{new Date(resumeHint.savedAt).toLocaleString('ja-JP')}</time></>}</p></div><button className={styles.primary} disabled={busy || resumeHintChecking} onClick={() => openCase(resumeHint.caseId)}>続きから再開</button></div>
-            : <button className={styles.primary} disabled={busy} onClick={() => navigate(online || catalog.subjectId !== 'bookkeeping' ? 'map' : 'overview')}>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像を見る →' : `${subjectLabel}の全体ツリーを見る →`}</button>}
+            : <button className={styles.primary} disabled={busy} onClick={() => navigate(online || catalog.subjectId !== 'bookkeeping' ? 'map' : 'overview')}>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像を見る →' : `${subjectLabel}の学習地図を見る →`}</button>}
           {resumeHintFailed && session?.status !== 'active' && <p className={styles.note}>保存中の相談を確認できませんでした。学習記録の一覧から再開できます。</p>}
           <ol className={styles.learningRoute} aria-label="学習の順番"><li><span>1</span><strong>概念を知る</strong><small>考え方と試験論点の地図</small></li><li><span>2</span><strong>相談で試す</strong><small>資料を読み、判断する</small></li><li><span>3</span><strong>説明して振り返る</strong><small>自分の言葉と対話</small></li></ol>
           <p className={styles.note}>{online ? catalog.materialNotice : '現在の教材は架空のローカル試用版です。専門審査前で、合格判定には使用しません。'}</p>
@@ -451,16 +463,18 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
           <h1>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像' : `${subjectLabel}の全体像`}</h1>
           {catalog.subjectId === 'bookkeeping' && !online ? <BookkeepingIntro disabled={busy} onStart={choice => startConcept({ subjectId: catalog.subjectId, conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, choice.materialId, choice.caseVersion)}
-            subjectMap={catalog.subjectMap ?? undefined} availableCases={catalog.materialChoices} /> : <p>この科目の全体像は、学習地図の「全体ツリー」で見られます。</p>}
+            subjectMap={catalog.subjectMap ?? undefined} availableCases={catalog.materialChoices} /> : <p>この科目の全体像は、学習地図で見られます。</p>}
           <button className={styles.primary} disabled={busy || dirty} onClick={() => navigate('map')}>学習地図へ進む →</button>
         </>}
         {catalog && (view === 'map' || view === 'records') && <>
           {view === 'map' && <><h1>学習地図</h1>
-          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && <div className={styles.actions} role="group" aria-label="地図の見え方"><button aria-pressed={treeStyle === 'tree'} onClick={() => setTreeStyle('tree')}>全体ツリー（新）</button><button aria-pressed={treeStyle === 'atlas'} onClick={() => setTreeStyle('atlas')}>これまでの地図</button></div>}
-          {!online && catalog.subjectMap && catalog.subjectId !== 'bookkeeping' && treeStyle === 'tree' && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
+          {!online && catalog.subjectMap && !catalog.subjectMap.legacySubjectId && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
+            onOverview={catalog.subjectId === 'bookkeeping' ? () => navigate('overview') : undefined}
             onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
-          {catalog.subjectMap && (online || catalog.subjectId === 'bookkeeping' || treeStyle === 'atlas') && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
+          {/* The learning map is the subject tree for every subject. The older atlas stays only for the online mode and the small
+              legacy development fixture (legacySubjectId), whose existing E2E suite exercises it. */}
+          {catalog.subjectMap && (online || !!catalog.subjectMap.legacySubjectId) && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}

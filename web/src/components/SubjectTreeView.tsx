@@ -1,11 +1,14 @@
 'use client';
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { countStages, MEMORIZED_STEP, STAGE_LABELS, STAGE_ORDER, topicProgressMap, type PracticeRecord, type ReviewCheck, type StageCounts, type TopicStage } from '../domain/topic-progress';
+import { ReviewCards } from './ReviewCards';
 import type { MapConcept, MapTopic, SubjectMapPack } from '../domain/subject-map';
 import { conceptTopics, topicConcepts } from '../domain/subject-map';
 import styles from './SubjectTreeView.module.css';
 
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
-type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; initialConceptId?: string; initialTopicId?: string | null; onStart: (concept: MapConcept, material: Choice) => void };
+type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; initialConceptId?: string; initialTopicId?: string | null;
+  onStart: (concept: MapConcept, material: Choice) => void; onOverview?: () => void };
 /** Adds a plain-word gloss in parentheses after the first use of each technical term. `seen` is shared within one panel. */
 function glossText(text: string, glossary: Record<string, string> | undefined, seen: Set<string>, className: string): ReactNode {
   if (!glossary) return text;
@@ -24,167 +27,147 @@ function glossText(text: string, glossary: Record<string, string> | undefined, s
   return parts;
 }
 const frequencyLabel = { high: '★頻出', mid: 'よく出る', low: 'ときどき' } as const;
-const palette = ['#147d72', '#2f6fb3', '#a15c00', '#7b4fb0', '#b23a5b', '#3f7d2c', '#9a6b12', '#356a8a'];
-/** Positions on an ellipse in a 1000×700 box, starting at the top and going clockwise. */
-const ring = (count: number, rx: number, ry: number, minX = 0) => Array.from({ length: count }, (_, index) => {
-  const angle = -Math.PI / 2 + (2 * Math.PI * index) / Math.max(count, 1);
-  return { x: Math.min(1000 - minX, Math.max(minX, 500 + rx * Math.cos(angle))), y: 350 + ry * Math.sin(angle) };
-});
-/** True on narrow (phone) screens, where the map is taller than wide and needs a wider, taller ring. */
-function useCompact() {
-  const [compact, setCompact] = useState(false);
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 600px)');
-    const update = () => setCompact(query.matches);
-    update(); query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-  return compact;
-}
-const curve = (from: { x: number; y: number }, to: { x: number; y: number }, bend = 0.18) => {
-  const mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2;
-  return `M${from.x},${from.y} Q${mx - (to.y - from.y) * bend},${my + (to.x - from.x) * bend} ${to.x},${to.y}`;
+const nextStep: Record<TopicStage, string> = {
+  none: 'この論点の確認問題はまだありません。説明を読んで全体の中の位置をつかみましょう。',
+  new: 'まだ解いていません。確認問題に正解すると「理解した」になります。',
+  retry: '直近の解答が不正解でした。解説を読み直して、もう一度解いてみましょう。',
+  understood: '正解できました。この論点は復習カードに入りました。1日・3日・7日後のカードで3回続けて「覚えていた」になると「覚えた」になります。',
+  memorized: '時間をあけても3回続けて思い出せました。忘れないよう、21日ごとにカードが出ます。',
 };
-const at = (point: { x: number; y: number }) => ({ left: `${point.x / 10}%`, top: `${point.y / 7}%` });
+
+/** Coloured bar of topic stages (覚えた・理解した・もう一度・まだ) for a field or the whole subject. */
+function StageBar({ counts, label, decorative = false }: { counts: StageCounts; label: string; decorative?: boolean }) {
+  const total = STAGE_ORDER.reduce((sum, stage) => sum + counts[stage], 0);
+  const text = `${label}：問題のある${total}論点のうち、覚えた${counts.memorized}・理解した${counts.understood}・もう一度${counts.retry}・まだ${counts.new}`;
+  return <span className={styles.bar} {...decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': text }} title={text}>
+    {total ? STAGE_ORDER.filter(stage => counts[stage]).map(stage => <span key={stage} data-stage={stage} style={{ flexGrow: counts[stage] }} />) : <span data-stage="none" style={{ flexGrow: 1 }} />}
+  </span>;
+}
 
 /**
- * Whole-subject view with two layouts: a brain map (subject → fields → topics, one field at a time)
- * and a collapsible outline. Both share one detail pane: what it is, why it matters, and which
- * topics come before/after it.
+ * The learning map of one subject: a tree of fields → topics. Each topic is coloured by how far the
+ * learner has got (まだ・もう一度・理解した・覚えた), and selecting one shows what it is, why it matters,
+ * and which topics come before/after it.
  */
-export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart }: Props) {
+export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart, onOverview }: Props) {
   const units = useMemo(() => [...pack.units].sort((a, b) => a.order - b.order), [pack.units]);
   const topicsOf = (unitId: string) => pack.topics.filter(topic => topic.unitId === unitId).sort((a, b) => a.order - b.order);
   const conceptOf = (topicId: string) => topicConcepts(pack, topicId)[0];
-  const [layout, setLayout] = useState<'map' | 'list'>('map');
-  const compact = useCompact();
-  const shape = compact ? { rx: 390, ry: 295, minX: 150 } : { rx: 350, ry: 260, minX: 90 };
   const initialTopic = (initialTopicId ? pack.topics.find(item => item.topicId === initialTopicId) : undefined)
     ?? (initialConceptId ? conceptTopics(pack, initialConceptId)[0] : undefined);
   const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
-  const [focusUnit, setFocusUnit] = useState(initialTopic?.unitId ?? '');
-  const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : []));
+  const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : units.length <= 4 ? units.map(unit => unit.unitId) : []));
   const [onlyFrequent, setOnlyFrequent] = useState(false);
+  const [records, setRecords] = useState<PracticeRecord[] | null>(null);
+  const [checks, setChecks] = useState<ReviewCheck[]>([]);
+  const [progressFailed, setProgressFailed] = useState(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetch('/api/practice-progress', { credentials: 'same-origin', cache: 'no-store', signal: controller.signal })
+      .then(async response => { if (!response.ok) throw new Error('PROGRESS_UNAVAILABLE'); return response.json(); })
+      .then(body => { if (!Array.isArray(body.records) || !Array.isArray(body.checks)) throw new Error('PROGRESS_INVALID'); setChecks(body.checks); setRecords(body.records); })
+      .catch(() => { if (!controller.signal.aborted) setProgressFailed(true); });
+    return () => controller.abort();
+  }, [pack.subjectId, pack.version]);
+  const progress = useMemo(() => topicProgressMap(pack, records ?? [], checks), [pack, records, checks]);
+  const stageOf = (topicId: string): TopicStage => records ? progress.get(topicId)?.stage ?? 'none' : 'none';
+  const subjectCounts = countStages(pack.topics.map(item => stageOf(item.topicId)));
   const topic = pack.topics.find(item => item.topicId === selectedTopic);
   const concept = topic ? conceptOf(topic.topicId) : undefined;
-  const topicOfConcept = (conceptId: string) => pack.topics.find(item => conceptOf(item.topicId)?.conceptId === conceptId);
+  const topicOfConcept = (conceptId: string) => pack.topics.find(item => topicConcepts(pack, item.topicId).some(linked => linked.conceptId === conceptId));
   const related = (direction: 'before' | 'after') => !concept ? [] : pack.links
     .filter(link => link.kind === 'prerequisite' && (direction === 'before' ? link.targetId : link.sourceId) === concept.conceptId)
     .map(link => topicOfConcept(direction === 'before' ? link.sourceId : link.targetId)).filter(item => item !== undefined);
   const before = related('before'), after = related('after');
   const roleOf = (topicId: string) => topicId === selectedTopic ? 'selected' : before.some(item => item.topicId === topicId) ? 'before' : after.some(item => item.topicId === topicId) ? 'after' : undefined;
   const unitRoleOf = (unitId: string) => topic?.unitId === unitId ? 'selected' : before.some(item => item.unitId === unitId) ? 'before' : after.some(item => item.unitId === unitId) ? 'after' : undefined;
-  const materials = (item: MapConcept | undefined) => !item ? [] : choices.filter(choice => choice.conceptId === item.conceptId && choice.conceptVersion === item.conceptVersion);
+  const materials = (topicId: string) => {
+    const linked = topicConcepts(pack, topicId);
+    return linked.flatMap(item => choices.filter(choice => choice.conceptId === item.conceptId && choice.conceptVersion === item.conceptVersion).map(choice => ({ concept: item, choice })));
+  };
   const select = (topicId: string) => {
     const unitId = pack.topics.find(item => item.topicId === topicId)?.unitId;
-    if (unitId) { setOpen(previous => new Set(previous).add(unitId)); setFocusUnit(unitId); }
+    if (unitId) setOpen(previous => new Set(previous).add(unitId));
     setSelectedTopic(topicId);
-    if (layout === 'map') requestAnimationFrame(() => document.getElementById('subject-tree-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    if (window.matchMedia('(max-width: 860px)').matches) requestAnimationFrame(() => document.getElementById('subject-tree-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   };
   const toggle = (unitId: string) => setOpen(previous => { const next = new Set(previous); if (next.has(unitId)) next.delete(unitId); else next.add(unitId); return next; });
   const seen = new Set<string>();
   const frequentCount = pack.topics.filter(item => item.frequency === 'high').length;
   const visible = (item: MapTopic) => !onlyFrequent || item.frequency === 'high';
-  const colorOf = (unitId: string) => palette[Math.max(units.findIndex(unit => unit.unitId === unitId), 0) % palette.length];
+  const label = subjectLabel ?? '科目';
+  const stageBadge = (stage: TopicStage) => <em className={styles.stage} data-stage={stage}>{STAGE_LABELS[stage]}</em>;
+  const selectedStage = topic ? stageOf(topic.topicId) : 'none';
+  const selectedMaterials = topic ? materials(topic.topicId) : [];
 
-  const map = () => {
-    const unit = units.find(item => item.unitId === focusUnit);
-    if (!unit) {
-      const points = ring(units.length, shape.rx, shape.ry, shape.minX);
-      return <div className={styles.map} aria-label={`${subjectLabel ?? '科目'}のブレインマップ`}>
-        <svg viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
-          {points.map((point, index) => <path key={units[index].unitId} d={curve({ x: 500, y: 350 }, point)} stroke={palette[index % palette.length]} />)}
-        </svg>
-        <div className={styles.hub} style={at({ x: 500, y: 350 })}><strong>{subjectLabel ?? '科目'}</strong><small>{units.length}分野・{pack.topics.length}論点</small></div>
-        {units.map((item, index) => {
-          const topics = topicsOf(item.unitId);
-          return <button key={item.unitId} className={styles.unitNode} data-role={unitRoleOf(item.unitId)} style={{ ...at(points[index]), borderColor: palette[index % palette.length] }}
-            onClick={() => setFocusUnit(item.unitId)} aria-label={`${item.label}（${topics.length}論点）を開く`}>
-            <span className={styles.unitNo} style={{ background: palette[index % palette.length] }}>{index + 1}</span>
-            <strong>{item.label}</strong><small>{topics.length}論点{topics.some(t => t.frequency === 'high') && ` ・ ★${topics.filter(t => t.frequency === 'high').length}`}</small></button>;
-        })}
-      </div>;
-    }
-    const index = units.indexOf(unit), color = palette[index % palette.length];
-    const topics = topicsOf(unit.unitId).filter(visible);
-    const points = ring(topics.length, shape.rx, shape.ry, shape.minX);
-    const position = new Map(topics.map((item, i) => [conceptOf(item.topicId)?.conceptId, points[i]]));
-    const inner = pack.links.filter(link => link.kind === 'prerequisite' && position.has(link.sourceId) && position.has(link.targetId));
-    return <><button className={styles.back} onClick={() => setFocusUnit('')}>← {subjectLabel ?? '科目'}の全体へ</button><div className={styles.map} aria-label={`${unit.label}のブレインマップ`}>
-      <svg viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
-        {points.map((point, i) => <path key={topics[i].topicId} d={curve({ x: 500, y: 350 }, point, 0.12)} stroke={color} />)}
-        {inner.map(link => {
-          const source = topicOfConcept(link.sourceId)?.topicId, target = topicOfConcept(link.targetId)?.topicId;
-          const lit = source === selectedTopic ? 'after' : target === selectedTopic ? 'before' : undefined;
-          return <path key={`${link.sourceId}-${link.targetId}`} className={styles.prereq} data-role={lit} d={curve(position.get(link.sourceId)!, position.get(link.targetId)!, 0.3)} />;
-        })}
-      </svg>
-      <div className={styles.hub} style={{ ...at({ x: 500, y: 350 }), borderColor: color }}><span className={styles.unitNo} style={{ background: color }}>{index + 1}</span><strong>{unit.label}</strong><small>{topics.length}論点</small></div>
-      {topics.map((item, i) => {
-        const role = roleOf(item.topicId);
-        return <button key={item.topicId} className={styles.topicNode} data-role={role} aria-current={role === 'selected' ? 'true' : undefined} style={{ ...at(points[i]), borderColor: role ? undefined : color }}
-          onClick={() => select(item.topicId)}>{item.frequency === 'high' && <em className={styles.hot}>★頻出</em>}<strong>{item.label}</strong></button>;
-      })}
-    </div>
-    <nav className={styles.others} aria-label="ほかの分野"><span>ほかの分野へ：</span>{units.filter(item => item.unitId !== unit.unitId).map(item => <button key={item.unitId} data-role={unitRoleOf(item.unitId)}
-      style={{ borderColor: colorOf(item.unitId) }} onClick={() => setFocusUnit(item.unitId)}>{item.label}</button>)}</nav></>;
-  };
-
-  const list = () => <ol className={styles.outline}>{units.map((unit, index) => {
+  const tree = () => <ol className={styles.outline} aria-label={`${label}の全体ツリー`}>{units.map((unit, index) => {
     const topics = topicsOf(unit.unitId).filter(visible);
     if (!topics.length) return null;
     const expanded = open.has(unit.unitId);
+    const counts = countStages(topicsOf(unit.unitId).map(item => stageOf(item.topicId)));
     return <li key={unit.unitId} id={`tree-${unit.unitId}`} className={styles.unit}>
       <button className={styles.unitHead} aria-expanded={expanded} onClick={() => toggle(unit.unitId)}>
-        <span className={styles.unitNo} style={{ background: palette[index % palette.length] }}>{index + 1}</span><strong>{unit.label}</strong>
+        <span className={styles.unitNo}>{index + 1}</span>
+        <span className={styles.unitText}><strong>{unit.label}</strong>
+          <span className={styles.unitMeta}><StageBar counts={counts} label={unit.label} decorative /><small>{topicsOf(unit.unitId).length}論点{counts.memorized + counts.understood > 0 && ` ・ 理解${counts.memorized + counts.understood}（うち覚えた${counts.memorized}）`}</small></span></span>
         {!expanded && unitRoleOf(unit.unitId) === 'before' && <em className={styles.relBefore}>← 先に</em>}{!expanded && unitRoleOf(unit.unitId) === 'after' && <em className={styles.relAfter}>次に →</em>}
-        <small>{topics.length}論点</small><span aria-hidden="true" className={styles.chevron}>{expanded ? '▾' : '▸'}</span></button>
+        <span aria-hidden="true" className={styles.chevron}>{expanded ? '▾' : '▸'}</span></button>
       {expanded && <ul className={styles.topics}>{topics.map(item => {
         const role = roleOf(item.topicId);
-        const hasQuestion = materials(conceptOf(item.topicId)).length > 0;
-        return <li key={item.topicId}><button className={styles.topic} data-role={role} aria-current={role === 'selected' ? 'true' : undefined} onClick={() => select(item.topicId)}>
-          <span className={styles.topicLine}><strong>{item.label}</strong>{item.frequency === 'high' && <em className={styles.hot}>★頻出</em>}{hasQuestion && <em className={styles.q}>問題あり</em>}
+        const stage = stageOf(item.topicId);
+        return <li key={item.topicId}><button className={styles.topic} data-role={role} data-stage={stage} aria-current={role === 'selected' ? 'true' : undefined}
+          aria-label={`${item.label}（${STAGE_LABELS[stage]}）`} onClick={() => select(item.topicId)}>
+          <span className={styles.topicLine}><span className={styles.dot} data-stage={stage} aria-hidden="true" /><strong>{item.label}</strong>{item.frequency === 'high' && <em className={styles.hot}>★頻出</em>}
+            {stageBadge(stage)}
             {role === 'before' && <em className={styles.relBefore}>← 先に</em>}{role === 'after' && <em className={styles.relAfter}>次に →</em>}</span>
           <span className={styles.summary}>{glossText(item.summary, pack.glossary, new Set(), styles.gloss)}</span></button></li>;
       })}</ul>}
     </li>;
   })}</ol>;
 
-  return <section className={styles.view} aria-label="科目の全体ツリー">
+  return <section className={styles.view} aria-label="科目の全体ツリー" data-subject={pack.subjectId}>
     <div className={styles.header}>
-      <div><p className={styles.kicker}>科目の全体像</p><h2>全体ツリー</h2>
-        <p className={styles.lead}>{units.length}分野・{pack.topics.length}論点。{layout === 'map' ? '分野をタップすると論点が広がります。論点を選ぶと、先に知るとよい論点（青）と次につながる論点（オレンジ）が光ります。' : '分野をタップすると開きます。論点を選ぶと、前後につながる論点が色で光ります。'}</p></div>
+      <div><p className={styles.kicker}>科目の全体像と、あなたの進み具合</p><h2 data-tree-root>{label}</h2>
+        <p className={styles.lead}>{units.length}分野・{pack.topics.length}論点のツリーです。分野をタップすると論点が開きます。論点を選ぶと、説明と「先に知るとよい論点」「次につながる論点」が出ます。</p></div>
       <div className={styles.controls}>
-        <div className={styles.switch} role="group" aria-label="表示のしかた">
-          <button aria-pressed={layout === 'map'} onClick={() => setLayout('map')}>マップ</button>
-          <button aria-pressed={layout === 'list'} onClick={() => setLayout('list')}>リスト</button>
-        </div>
+        {onOverview && <button className={styles.overview} disabled={disabled} onClick={onOverview}>簿記の全体像をつかむ →</button>}
         <label className={styles.filter}><input type="checkbox" checked={onlyFrequent} onChange={event => setOnlyFrequent(event.target.checked)} /> ★頻出だけ（{frequentCount}論点）</label>
       </div>
     </div>
-    <div className={styles.legend} aria-hidden="true"><span className={styles.swBefore} />先に知ると理解しやすい<span className={styles.swSelected} />選んだ論点<span className={styles.swAfter} />次につながる</div>
-    <div className={styles.layout} data-layout={layout}>
-      {layout === 'map' ? map() : list()}
-      {topic && concept ? <aside id="subject-tree-detail" className={styles.detail} aria-live="polite">
+    <div className={styles.progress} aria-label="この科目の進み具合">
+      <StageBar counts={subjectCounts} label={`${label}全体`} />
+      <p className={styles.counts}>{records ? <>理解した <strong>{subjectCounts.understood + subjectCounts.memorized}</strong>（うち覚えた <strong>{subjectCounts.memorized}</strong>）／ 問題のある {pack.topics.length - subjectCounts.none} 論点
+        {subjectCounts.retry > 0 && <> ・ もう一度 {subjectCounts.retry}</>}</> : progressFailed ? '進み具合を読み込めませんでした（色は「まだ」のまま表示しています）' : '進み具合を読み込み中…'}</p>
+      <ul className={styles.legend} aria-label="色の意味">
+        {(['new', 'retry', 'understood', 'memorized'] as const).map(stage => <li key={stage}><span className={styles.dot} data-stage={stage} />{STAGE_LABELS[stage]}</li>)}
+      </ul>
+      <p className={styles.define}>理解した＝確認問題に正解した。覚えた＝復習カード（1日・3日・7日後）で3回続けて思い出せた。</p>
+    </div>
+    {records && <ReviewCards pack={pack} progress={progress} disabled={disabled} onChecked={check => setChecks(previous => [...previous, check])} onOpen={select} />}
+    <div className={styles.layout}>
+      {tree()}
+      {topic ? <aside id="subject-tree-detail" className={styles.detail} data-stage={selectedStage} aria-live="polite" aria-label="選んだ論点の説明">
         <p className={styles.kicker}>{units.find(unit => unit.unitId === topic.unitId)?.label}{topic.frequency && <> ・ {frequencyLabel[topic.frequency]}</>}</p>
         <h3>{topic.label}</h3>
+        <p className={styles.status}>{stageBadge(selectedStage)}<span>{nextStep[selectedStage]}{selectedStage === 'understood' && ` いまの復習：${progress.get(topic.topicId)?.step ?? 0} / ${MEMORIZED_STEP}回。`}</span></p>
         <p className={styles.oneLine}>{glossText(topic.summary, pack.glossary, seen, styles.gloss)}</p>
         {topic.example && <div className={styles.example}><p>具体的にいうと</p><div>{glossText(topic.example, pack.glossary, seen, styles.gloss)}</div></div>}
-        <dl>
+        {concept ? <dl>
           <dt>何か</dt><dd>{glossText(concept.definition, pack.glossary, seen, styles.gloss)}</dd>
           <dt>なぜ大事か</dt><dd>{glossText(concept.purpose, pack.glossary, seen, styles.gloss)}</dd>
           <dt>間違えやすい点</dt><dd>{glossText(concept.misconception, pack.glossary, seen, styles.gloss)}</dd>
           <dt>試験での出方</dt><dd>{glossText(concept.examUse, pack.glossary, seen, styles.gloss)}</dd>
-        </dl>
+        </dl> : <p className={styles.none}>この論点に対応する考え方は未確認です。</p>}
         <div className={styles.links}>
           <p>先に知ると理解しやすい</p>{before.length ? before.map(item => <button key={item.topicId} className={styles.chipBefore} onClick={() => select(item.topicId)}>← {item.label}</button>) : <span className={styles.none}>この論点が出発点です</span>}
           <p>次につながる</p>{after.length ? after.map(item => <button key={item.topicId} className={styles.chipAfter} onClick={() => select(item.topicId)}>{item.label} →</button>) : <span className={styles.none}>ここから先の論点は設定していません</span>}
         </div>
-        <div className={styles.actions}>{materials(concept).length ? materials(concept).map(choice => <button key={choice.materialId} disabled={disabled} onClick={() => onStart(concept, choice)}>{materials(concept).length > 1 ? `問題で確かめる：${choice.label} →` : '理解を問題で確かめる →'}</button>)
+        <div className={styles.actions}>{selectedMaterials.length ? selectedMaterials.map(({ concept: linked, choice }) => <button key={`${linked.conceptId}:${choice.materialId}`} disabled={disabled} onClick={() => onStart(linked, choice)}>
+          {selectedMaterials.length > 1 ? `問題で確かめる：${choice.label} →` : '理解を問題で確かめる →'}</button>)
           : <span className={styles.none}>この論点の問題はまだありません</span>}</div>
       </aside> : <aside className={styles.detail}><p className={styles.kicker}>使い方</p><h3>まず全体を眺めましょう</h3>
-        <ol className={styles.howto}><li>{layout === 'map' ? '気になる分野の丸をタップ' : '気になる分野の見出しをタップ'}</li><li>論点を選ぶと、ここに「何か・なぜ大事か・具体例」が出ます</li><li>青は先に、オレンジは次に学ぶとよい論点です</li></ol></aside>}
+        <ol className={styles.howto}><li>気になる分野の見出しをタップ</li><li>論点を選ぶと、ここに「何か・なぜ大事か・具体例」が出ます</li><li>確認問題に正解すると青（理解した）、復習カードで3回続けて思い出せると緑（覚えた）になります</li></ol></aside>}
     </div>
-    <p className={styles.note}>AI作成の原稿です（専門家の確認前）。★頻出は本試験でよく出る論点の目安で、公式の情報ではありません。</p>
+    <p className={styles.note}>AI作成の原稿です（専門家の確認前）。★頻出は本試験でよく出る論点の目安で、公式の情報ではありません。色は確認問題の解答から数えた練習の記録で、合格や習熟の判定ではありません。</p>
   </section>;
 }

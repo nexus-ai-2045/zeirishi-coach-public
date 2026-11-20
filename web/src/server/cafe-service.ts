@@ -181,6 +181,18 @@ export function createCafeServiceOnPreparedDatabase(db: TransactionDatabase, now
         return result.rows;
       }, owner);
     },
+    /** Every answer whose feedback was shown (confidence fixed), oldest first, for topic progress on the map. */
+    async practiceRecords(owner: string): Promise<{ caseVersion: string; submittedAt: string; correct: boolean }[]> {
+      validId(owner);
+      return transact(async tx => {
+        const rows = await tx.query<{ case_version: string; submitted_at: string; correct: boolean | null }>(`SELECT a.case_version, a.submitted_at,
+          (a.result->>'correct')::boolean AS correct
+          FROM cafe_attempts a JOIN cafe_confidence c ON c.attempt_id=a.id
+          WHERE a.owner_id=$1 ORDER BY a.submitted_at, a.id`, [owner]);
+        return rows.rows.filter(row => typeof row.correct === 'boolean')
+          .map(row => ({ caseVersion: row.case_version, submittedAt: row.submitted_at, correct: row.correct as boolean }));
+      }, owner);
+    },
     async history(owner: string): Promise<CafeHistoryItem[]> {
       validId(owner);
       return transact(async tx => {
