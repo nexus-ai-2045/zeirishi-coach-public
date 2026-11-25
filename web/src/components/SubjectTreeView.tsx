@@ -2,7 +2,7 @@
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { countStages, MEMORIZED_STEP, STAGE_LABELS, STAGE_ORDER, topicProgressMap, type PracticeRecord, type ReviewCheck, type StageCounts, type TopicStage } from '../domain/topic-progress';
 import { ReviewCards } from './ReviewCards';
-import type { MapConcept, MapTopic, SubjectMapPack } from '../domain/subject-map';
+import type { MapConcept, MapTopic, PendingReformText, SubjectMapPack } from '../domain/subject-map';
 import { conceptTopics, topicConcepts } from '../domain/subject-map';
 import styles from './SubjectTreeView.module.css';
 
@@ -58,6 +58,8 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
   const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
   const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : units.length <= 4 ? units.map(unit => unit.unitId) : []));
   const [onlyFrequent, setOnlyFrequent] = useState(false);
+  /** Which version of a topic with a pending bill to show; kept across topics so the choice sticks while browsing. */
+  const [showEnacted, setShowEnacted] = useState(false);
   const [records, setRecords] = useState<PracticeRecord[] | null>(null);
   const [checks, setChecks] = useState<ReviewCheck[]>([]);
   const [progressFailed, setProgressFailed] = useState(false);
@@ -74,6 +76,10 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
   const subjectCounts = countStages(pack.topics.map(item => stageOf(item.topicId)));
   const topic = pack.topics.find(item => item.topicId === selectedTopic);
   const concept = topic ? conceptOf(topic.topicId) : undefined;
+  const reform = topic?.pendingReform;
+  const enacted = Boolean(reform && showEnacted);
+  /** Text shown for the selected topic: current law, or the bill's "if enacted" version when chosen. */
+  const view: PendingReformText & { summary: string } = topic ? { summary: topic.summary, ...(topic.example ? { example: topic.example } : {}), ...(enacted ? reform!.ifEnacted : {}) } : { summary: '' };
   const topicOfConcept = (conceptId: string) => pack.topics.find(item => topicConcepts(pack, item.topicId).some(linked => linked.conceptId === conceptId));
   const related = (direction: 'before' | 'after') => !concept ? [] : pack.links
     .filter(link => link.kind === 'prerequisite' && (direction === 'before' ? link.targetId : link.sourceId) === concept.conceptId)
@@ -150,13 +156,21 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
         <p className={styles.kicker}>{units.find(unit => unit.unitId === topic.unitId)?.label}{topic.frequency && <> ・ {frequencyLabel[topic.frequency]}</>}</p>
         <h3>{topic.label}</h3>
         <p className={styles.status}>{stageBadge(selectedStage)}<span>{nextStep[selectedStage]}{selectedStage === 'understood' && ` いまの復習：${progress.get(topic.topicId)?.step ?? 0} / ${MEMORIZED_STEP}回。`}</span></p>
-        <p className={styles.oneLine}>{glossText(topic.summary, pack.glossary, seen, styles.gloss)}</p>
-        {topic.example && <div className={styles.example}><p>具体的にいうと</p><div>{glossText(topic.example, pack.glossary, seen, styles.gloss)}</div></div>}
+        {reform && <div className={styles.reform}>
+          <p className={styles.reformTitle}>{reform.title}</p>
+          <div className={styles.reformSwitch} role="group" aria-label="表示する内容">
+            <button type="button" aria-pressed={!enacted} onClick={() => setShowEnacted(false)}>現行の制度</button>
+            <button type="button" aria-pressed={enacted} onClick={() => setShowEnacted(true)}>成立した場合（未確定）</button>
+          </div>
+          <p className={styles.reformStatus}>{enacted ? '法案が成立した場合の内容です。まだ決まっていません。' : 'いまの法律の内容です。'}{reform.status}</p>
+        </div>}
+        <p className={styles.oneLine}>{glossText(view.summary, pack.glossary, seen, styles.gloss)}</p>
+        {view.example && <div className={styles.example}><p>具体的にいうと</p><div>{glossText(view.example, pack.glossary, seen, styles.gloss)}</div></div>}
         {concept ? <dl>
-          <dt>何か</dt><dd>{glossText(concept.definition, pack.glossary, seen, styles.gloss)}</dd>
-          <dt>なぜ大事か</dt><dd>{glossText(concept.purpose, pack.glossary, seen, styles.gloss)}</dd>
-          <dt>間違えやすい点</dt><dd>{glossText(concept.misconception, pack.glossary, seen, styles.gloss)}</dd>
-          <dt>試験での出方</dt><dd>{glossText(concept.examUse, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>何か</dt><dd>{glossText(view.definition ?? concept.definition, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>なぜ大事か</dt><dd>{glossText(view.purpose ?? concept.purpose, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>間違えやすい点</dt><dd>{glossText(view.misconception ?? concept.misconception, pack.glossary, seen, styles.gloss)}</dd>
+          <dt>試験での出方</dt><dd>{glossText(view.examUse ?? concept.examUse, pack.glossary, seen, styles.gloss)}</dd>
         </dl> : <p className={styles.none}>この論点に対応する考え方は未確認です。</p>}
         <div className={styles.links}>
           <p>先に知ると理解しやすい</p>{before.length ? before.map(item => <button key={item.topicId} className={styles.chipBefore} onClick={() => select(item.topicId)}>← {item.label}</button>) : <span className={styles.none}>この論点が出発点です</span>}

@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import type { CafeMaterial } from './cafe-case';
 import { StudyError } from '../domain/types';
 import { SUBJECTS, type SubjectId, type SubjectPack } from '../domain/onboarding';
-import { validateSubjectMap, type MapConcept, type MapLink } from '../domain/subject-map';
+import { validateSubjectMap, type MapConcept, type MapLink, type PendingReform, type PendingReformText } from '../domain/subject-map';
+import { resolveItemReform, resolveTopicReform, type ReformOutcomes, type ReformSource } from './pending-reforms';
 import samples from './subject-samples.json' with { type: 'json' };
 import financialStatementsTree from './subject-trees/financial-statements.json' with { type: 'json' };
 import incomeTaxTree from './subject-trees/income-tax.json' with { type: 'json' };
@@ -28,8 +29,11 @@ export type SubjectSample = {
   id: string; subjectId: Exclude<SubjectId, 'bookkeeping'>; topic: string | null; title: string; treeTopic?: string;
   prompt: string; answer: string; wrong: [string, string, string]; wrongReasons: [string, string, string]; explanation: string;
 } & Partial<SampleConceptFields>;
+type SubjectSampleSource = SubjectSample & { pendingReform?: ReformSource<Partial<SubjectSample>> };
 export const SUBJECT_SAMPLE_BASIS = samples.basis as Record<Exclude<SubjectId, 'bookkeeping'>, string>;
-export const SUBJECT_SAMPLES = samples.items as SubjectSample[];
+/** Questions with any bill-dependent text resolved by `pending-reforms.json`. */
+export const resolveSamples = (outcomes?: ReformOutcomes) => (samples.items as SubjectSampleSource[]).map(item => resolveItemReform(item, outcomes) as SubjectSample);
+export const SUBJECT_SAMPLES = resolveSamples();
 export const SUBJECT_SAMPLE_SUBJECTS = SUBJECTS.filter(subject => subject.id !== 'bookkeeping');
 
 type ConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string };
@@ -37,12 +41,16 @@ type ConceptFields = { definition: string; purpose: string; applicability: strin
 export type SubjectTree = {
   subjectId: Exclude<SubjectId, 'bookkeeping'>; version: string; note: string;
   units: { unitId: string; label: string }[];
-  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null; example?: string }[];
+  topics: { key: string; unitId: string; label: string; summary: string; frequency: 'high' | 'mid' | 'low'; legacyTopics: string[]; concept: ConceptFields; sampleId: string | null; example?: string; pendingReform?: PendingReform }[];
   glossary?: Record<string, string>;
   prerequisites: { from: string; to: string }[];
 };
-export const SUBJECT_TREES = [financialStatementsTree, incomeTaxTree, corporationTaxTree, consumptionTaxTree, inheritanceTaxTree,
-  liquorTaxTree, nationalTaxCollectionTree, inhabitantTaxTree, enterpriseTaxTree, fixedAssetTaxTree] as SubjectTree[];
+type SubjectTreeSource = Omit<SubjectTree, 'topics'> & { topics: (Omit<SubjectTree['topics'][number], 'pendingReform'> & { pendingReform?: ReformSource<PendingReformText> })[] };
+const TREE_SOURCES = [financialStatementsTree, incomeTaxTree, corporationTaxTree, consumptionTaxTree, inheritanceTaxTree,
+  liquorTaxTree, nationalTaxCollectionTree, inhabitantTaxTree, enterpriseTaxTree, fixedAssetTaxTree] as SubjectTreeSource[];
+/** Whole-subject trees with any bill-dependent text resolved by `pending-reforms.json`. */
+export const resolveTrees = (outcomes?: ReformOutcomes): SubjectTree[] => TREE_SOURCES.map(tree => ({ ...tree, topics: tree.topics.map(topic => resolveTopicReform(topic, outcomes)) }));
+export const SUBJECT_TREES = resolveTrees();
 const treeFor = (subjectId: SubjectId) => SUBJECT_TREES.find(tree => tree.subjectId === subjectId);
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 12);
 const label = (subjectId: SubjectId) => SUBJECTS.find(subject => subject.id === subjectId)!.label;
@@ -122,7 +130,7 @@ function treePack(tree: SubjectTree): SubjectPack {
   }
   const subjectMap = validateSubjectMap({ subjectId: tree.subjectId, version, status: 'draft',
     units: tree.units.map((unit, order) => ({ ...unit, order, ...base })),
-    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...(topic.example ? { example: topic.example } : {}), ...base })),
+    topics: tree.topics.map((topic, order) => ({ topicId: `topic-${topic.key}`, unitId: topic.unitId, label: topic.label, summary: topic.summary, order, frequency: topic.frequency, ...(topic.example ? { example: topic.example } : {}), ...(topic.pendingReform ? { pendingReform: topic.pendingReform } : {}), ...base })),
     concepts, links, ...(tree.glossary ? { glossary: tree.glossary } : {}) });
   return { subjectId: tree.subjectId, version, active: true, subjectMap,
     concepts: concepts.map(concept => ({ subjectId: tree.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion, label: concept.label, importance: 3, durationMinutes: 5, unseenQuestionCount: 0 })) };

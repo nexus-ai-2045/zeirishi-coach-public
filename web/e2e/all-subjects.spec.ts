@@ -213,3 +213,32 @@ test('地図を読み直しても、最後に選んだ科目のまま（別の�
   await page.getByRole('button', { name: '続きから再開' }).click();
   await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
 });
+
+test('消費税法：未成立の1%法案は「現行の制度」と「成立した場合（未確定）」をボタンで切り替えられる', async ({ page }) => {
+  test.setTimeout(60000);
+  await openSubject(page, '消費税法');
+  const tree = page.getByRole('list', { name: '消費税法の全体ツリー' });
+  const unit = tree.getByRole('button', { name: /基本（何に・いつ・いくらに課税）/ });
+  if (await unit.getAttribute('aria-expanded') !== 'true') await unit.click();
+  await tree.getByRole('button', { name: /^課税標準と税率（軽減税率）（/ }).click();
+  const detail = page.getByRole('complementary', { name: '選んだ論点の説明' });
+  const current = detail.getByRole('button', { name: '現行の制度' });
+  const enacted = detail.getByRole('button', { name: '成立した場合（未確定）' });
+  // 最初は現行の法律の内容。
+  await expect(current).toHaveAttribute('aria-pressed', 'true');
+  await expect(detail).toContainText('食料品や新聞は8%');
+  await expect(detail).not.toContainText('2027年4月1日から2029年3月31日');
+  // 切り替えると、成立した場合の内容と「未確定」の表示になる。
+  await enacted.click();
+  await expect(enacted).toHaveAttribute('aria-pressed', 'true');
+  await expect(detail).toContainText('食料品は2027年4月から2年間だけ1%');
+  await expect(detail).toContainText('2027年4月1日から2029年3月31日');
+  await expect(detail).toContainText('まだ決まっていません');
+  // ほかの論点には切り替えボタンが出ない。
+  await tree.getByRole('button', { name: /^非課税・免税・不課税の区分（/ }).click();
+  await expect(detail.getByRole('button', { name: '成立した場合（未確定）' })).toHaveCount(0);
+  // 戻すと現行に戻る。
+  await tree.getByRole('button', { name: /^課税標準と税率（軽減税率）（/ }).click();
+  await current.click();
+  await expect(detail).toContainText('食料品や新聞は8%');
+});
