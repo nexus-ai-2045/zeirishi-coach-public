@@ -146,6 +146,13 @@ test('簿記論の学習地図も他科目と同じツリー1つで、ブレイ�
   await detail.getByText(/^練習問題（\d+問）$/).click();
   await detail.getByRole('button', { name: '練習問題 1 →' }).click();
   await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
+  // 確認問題（相談ケース）が無い論点でも、練習問題は開ける。
+  await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
+  await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
+  await page.getByRole('button', { name: /^取引には二つの面がある（/ }).click();
+  await detail.getByText(/^練習問題（\d+問）$/).click();
+  await detail.getByRole('button', { name: '練習問題 1 →' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
   for (const width of [1440, 900, 390]) {
     await page.goto('/#map'); await page.setViewportSize({ width, height: 900 });
     await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();

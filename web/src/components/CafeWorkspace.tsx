@@ -353,7 +353,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     });
   }
   function startConcept(ref: ConceptRef, materialId?: string, caseVersion?: string) {
-    if (!canStartConcept(ref)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
+    if (!canStartConcept(ref) && !isMapPractice(ref, materialId, caseVersion)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId && item.conceptVersion === ref.conceptVersion) ?? [];
     if (!materialId && choices.length > 1) { setChoosingConcept(ref); return; }
     const selected = !materialId && choices.length === 1 ? choices[0] : undefined;
@@ -363,6 +363,13 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       ...((materialId || selected) ? { materialId: materialId ?? selected!.materialId } : {}),
       ...((caseVersion || selected) ? { caseVersion: caseVersion ?? selected!.caseVersion } : {}),
     });
+  }
+  /** Local tree only: a practice question picked explicitly from a topic, which the map links to that concept (any role). */
+  function isMapPractice(ref: ConceptRef, materialId?: string, caseVersion?: string) {
+    const map = catalog?.subjectMap;
+    return !online && !!materialId && !!caseVersion && !!map && map.subjectId === ref.subjectId
+      && map.links.some(link => link.kind === 'uses-case' && link.sourceId === ref.conceptId && link.sourceVersion === ref.conceptVersion
+        && link.targetId === materialId && link.targetVersion === caseVersion);
   }
   function canStartConcept(ref: ConceptRef) {
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId
