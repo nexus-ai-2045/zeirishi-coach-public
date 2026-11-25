@@ -23,7 +23,7 @@ function reformOf(id: string): ReformConfig {
   return reform;
 }
 
-type TopicConcept = { definition: string; purpose: string; misconception: string; examUse: string };
+type TopicConcept = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; examUse: string };
 type ReformTopic = { summary: string; example?: string; concept: TopicConcept; pendingReform?: ReformSource<PendingReformText> };
 type ResolvedTopic<T> = Omit<T, 'pendingReform'> & { pendingReform?: PendingReform };
 

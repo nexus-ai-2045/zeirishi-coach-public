@@ -155,7 +155,9 @@ test('1%法案の成否は pending-reforms.json の outcome 1か所で切り替�
   assert.equal(enacted.pendingReform, undefined);
   assert.match(enacted.summary, /2年間だけ1%/);
   assert.match(enacted.concept.definition, /2027年4月1日から2029年3月31日/);
-  assert.match(enacted.concept.applicability, /100\/108/, '書き換えない項目は残る');
+  assert.match(enacted.concept.applicability, /100\/101/, '計算手順も1%の割り戻しを含む');
+  assert.match(enacted.concept.counterexample, /1%の特例の対象外/);
+  assert.equal(enacted.concept.purpose, taxBase('pending').concept.purpose, '書き換えない項目は残る');
   const enactedQuestion = question('enacted');
   assert.match(enactedQuestion.answer, /新聞/);
   assert.ok(enactedQuestion.wrong.includes('スーパーで買って持ち帰るお弁当'));

@@ -12,7 +12,7 @@ export type MapTopic = { topicId: string; unitId: string; label: string; summary
    * "if enacted" version so the learner can switch between the two. Remove once the outcome is known.
    */
   pendingReform?: PendingReform };
-export type PendingReformText = { summary?: string; example?: string; definition?: string; purpose?: string; misconception?: string; examUse?: string };
+export type PendingReformText = { summary?: string; example?: string; definition?: string; purpose?: string; applicability?: string; counterexample?: string; misconception?: string; examUse?: string };
 export type PendingReform = { title: string; status: string; ifEnacted: PendingReformText };
 export type MapConcept = {
   conceptId: string; conceptVersion: string; label: string; definition: string; purpose: string;
@@ -87,7 +87,7 @@ export function validateSubjectMap(pack: SubjectMapPack, options: SubjectMapVali
     if (topic.example !== undefined) text(topic.example);
     if (topic.pendingReform !== undefined) { const reform = topic.pendingReform; text(reform.title); text(reform.status);
       const values = Object.entries(reform.ifEnacted ?? {});
-      if (!values.length || values.some(([key, value]) => !['summary', 'example', 'definition', 'purpose', 'misconception', 'examUse'].includes(key) || typeof value !== 'string')) invalid();
+      if (!values.length || values.some(([key, value]) => !['summary', 'example', 'definition', 'purpose', 'applicability', 'counterexample', 'misconception', 'examUse'].includes(key) || typeof value !== 'string')) invalid();
       values.forEach(([, value]) => text(value)); }
     if (!Number.isInteger(topic.order) || topic.order < 0 || !units.has(topic.unitId)) invalid(); return topic.topicId; });
   const concepts = unique(pack.concepts, concept => { id(concept.conceptId); id(concept.conceptVersion);
