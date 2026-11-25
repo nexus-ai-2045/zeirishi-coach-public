@@ -139,6 +139,13 @@ test('簿記論の学習地図も他科目と同じツリー1つで、ブレイ�
   await page.goto('/#overview');
   await expect(page).toHaveURL(/#map$/);
   await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
+  // 旧パネルにあった練習問題は、論点の説明の中から開ける。
+  await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
+  await page.getByRole('button', { name: /^支払日と費用の期間は別（/ }).click();
+  const detail = page.getByRole('complementary', { name: '選んだ論点の説明' });
+  await detail.getByText(/^練習問題（\d+問）$/).click();
+  await detail.getByRole('button', { name: '練習問題 1 →' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
   for (const width of [1440, 900, 390]) {
     await page.goto('/#map'); await page.setViewportSize({ width, height: 900 });
     await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();

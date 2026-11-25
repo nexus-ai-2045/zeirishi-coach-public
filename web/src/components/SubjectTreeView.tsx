@@ -133,6 +133,17 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
     const linked = topicConcepts(pack, topicId);
     return linked.flatMap(item => choices.filter(choice => choice.conceptId === item.conceptId && choice.conceptVersion === item.conceptVersion).map(choice => ({ concept: item, choice })));
   };
+  /**
+   * More questions on the same topic: the map's uses-case links that are not offered as the main choice (in 簿記論, the
+   * draft practice questions). They used to be listed in a separate panel under the map; now they sit with their topic.
+   */
+  const practice = (topicId: string) => topicConcepts(pack, topicId).flatMap(item => pack.links
+    .filter(link => link.kind === 'uses-case' && link.sourceId === item.conceptId && link.sourceVersion === item.conceptVersion
+      && !choices.some(choice => choice.materialId === link.targetId))
+    .map((link, index) => ({ concept: item, choice: { subjectId: pack.subjectId, conceptId: item.conceptId, conceptVersion: item.conceptVersion,
+      materialId: link.targetId, caseVersion: link.targetVersion, label: `練習問題 ${index + 1}` } })));
+  const resultOf = (caseVersion: string) => records?.filter(record => record.caseVersion === caseVersion)
+    .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))[0]?.correct;
   const select = (topicId: string) => {
     const unitId = pack.topics.find(item => item.topicId === topicId)?.unitId;
     if (unitId) setOpen(previous => new Set(previous).add(unitId));
@@ -147,6 +158,7 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
   const stageBadge = (stage: TopicStage) => <em className={styles.stage} data-stage={stage}>{STAGE_LABELS[stage]}</em>;
   const selectedStage = topic ? stageOf(topic.topicId) : 'none';
   const selectedMaterials = topic ? materials(topic.topicId) : [];
+  const selectedPractice = topic ? practice(topic.topicId) : [];
 
   const tree = () => <ol className={styles.outline} aria-label={`${label}の全体ツリー`}>{units.map((unit, index) => {
     const topics = topicsOf(unit.unitId).filter(visible);
@@ -216,7 +228,13 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
         </div>
         <div className={styles.actions}>{selectedMaterials.length ? selectedMaterials.map(({ concept: linked, choice }) => <button key={`${linked.conceptId}:${choice.materialId}`} disabled={disabled} onClick={() => onStart(linked, choice)}>
           {selectedMaterials.length > 1 ? `問題で確かめる：${choice.label} →` : '理解を問題で確かめる →'}</button>)
-          : <span className={styles.none}>この論点の問題はまだありません</span>}</div>
+          : !selectedPractice.length && <span className={styles.none}>この論点の問題はまだありません</span>}</div>
+        {selectedPractice.length > 0 && <details className={styles.practice}><summary>練習問題（{selectedPractice.length}問）</summary>
+          <p>同じ論点の別の問題です。正解すると、この論点も「理解した」になります。</p>
+          <ul>{selectedPractice.map(({ concept: linked, choice }) => { const result = resultOf(choice.caseVersion);
+            return <li key={choice.materialId}><button disabled={disabled} onClick={() => onStart(linked, choice)}>{choice.label} →</button>
+              {result !== undefined && <em data-stage={result ? 'understood' : 'retry'}>{result ? '正解' : 'もう一度'}</em>}</li>; })}</ul>
+        </details>}
       </aside> : <aside className={styles.detail}><p className={styles.kicker}>使い方</p><h3>まず全体を眺めましょう</h3>
         <ol className={styles.howto}><li>気になる分野の見出しをタップ</li><li>論点を選ぶと、ここに「何か・なぜ大事か・具体例」が出ます</li><li>確認問題に正解すると青（理解した）、復習カードで3回続けて思い出せると緑（覚えた）になります</li></ol></aside>}
     </div>

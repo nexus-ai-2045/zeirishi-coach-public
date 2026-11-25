@@ -132,3 +132,13 @@
 .homeSteps strong { font-size: 15px; }
 .homeSteps small { grid-column: 2; font-size: 12px; color: var(--muted); line-height: 1.6; }
 @media (max-width: 760px) { .homeSteps { grid-template-columns: 1fr; } }
+
+/* Practice questions of the selected topic (folded under the main question). */
+.practice { margin-top: 12px; font-size: 14px; }
+.practice summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--teal); }
+.practice p { margin: 4px 0 8px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.practice ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.practice li { display: inline-flex; align-items: center; gap: 6px; }
+.practice button { font: inherit; font-size: 13px; min-height: 44px; padding: 6px 12px; border-radius: 9px; border: 1px solid var(--teal); background: #fff; color: var(--teal); cursor: pointer; }
+.practice button:disabled { opacity: .55; cursor: default; }
+.practice em { font-style: normal; font-size: 12px; color: var(--stage); font-weight: 700; }
