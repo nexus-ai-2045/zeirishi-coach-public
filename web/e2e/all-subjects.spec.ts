@@ -253,3 +253,18 @@ test('消費税法：未成立の1%法案は「現行の制度」と「成立し
   await current.click();
   await expect(detail).toContainText('食料品や新聞は8%');
 });
+
+test('ホームで11科目のどれからでも始められ、選んだ科目が学習地図と読み直し後も続く', async ({ page }) => {
+  await page.goto('/#home');
+  await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
+  const choose = page.getByRole('group', { name: '今日学ぶ科目を選ぶ' });
+  await expect(choose.getByRole('button')).toHaveCount(SUBJECTS.length);
+  const home = page.locator('[aria-label="いまの科目の進み具合"]');
+  await choose.getByRole('button', { name: '酒税法', exact: true }).click();
+  await expect(home.getByRole('heading', { name: '酒税法' })).toBeVisible();
+  await expect(choose.getByRole('button', { name: '酒税法', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.locator('[aria-label="いまの科目の進み具合"]').getByRole('heading', { name: '酒税法' })).toBeVisible();
+  await page.getByRole('button', { name: '酒税法の学習地図を開く →' }).click();
+  await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
+});

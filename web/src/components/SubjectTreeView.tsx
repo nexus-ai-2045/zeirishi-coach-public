@@ -79,18 +79,22 @@ function Legend() {
  * The home's summary of the chosen subject: the same bar, counts and colours as the learning map, and how many
  * review cards are due today, so the home and the map never tell different stories.
  */
-export function SubjectHomeSummary({ pack, subjectLabel, disabled, onOpenMap }: { pack: SubjectMapPack; subjectLabel: string; disabled: boolean; onOpenMap: () => void }) {
+export function SubjectHomeSummary({ pack, subjectLabel, subjects, disabled, onChooseSubject, onOpenMap }: { pack: SubjectMapPack; subjectLabel: string;
+  subjects: readonly { id: string; label: string }[]; disabled: boolean; onChooseSubject: (subjectId: string) => void; onOpenMap: () => void }) {
   const { records, progressFailed, progress, subjectCounts } = useTopicProgress(pack);
   const due = records ? dueCards(progress, localDay(new Date())).length : 0;
   return <div className={`${styles.view} ${styles.home}`}><section className={styles.homeSummary} aria-label="いまの科目の進み具合">
-    <p className={styles.kicker}>いまの科目</p>
+    <p className={styles.kicker}>今日学ぶ科目（11科目のどこからでも始められます）</p>
+    <div className={styles.homeSubjects} role="group" aria-label="今日学ぶ科目を選ぶ">
+      {subjects.map(subject => <button key={subject.id} aria-pressed={subject.id === pack.subjectId} disabled={disabled}
+        onClick={() => { if (subject.id !== pack.subjectId) onChooseSubject(subject.id); }}>{subject.label}</button>)}
+    </div>
     <h2>{subjectLabel}</h2>
     <StageBar counts={subjectCounts} label={`${subjectLabel}全体`} />
     <CountsText records={records} progressFailed={progressFailed} counts={subjectCounts} topicCount={pack.topics.length} />
     <Legend />
     <p className={styles.homeCards}>今日の復習カード：<strong>{records ? `${due}枚` : '—'}</strong>{records && !due && <span>（確認問題に正解した論点が、翌日からカードになります）</span>}</p>
     <button className={styles.homeOpen} disabled={disabled} onClick={onOpenMap}>{due ? `学習地図で今日の復習カード（${due}枚）から始める →` : `${subjectLabel}の学習地図を開く →`}</button>
-    <p className={styles.define}>科目は学習地図の左の一覧で変えられます。</p>
   </section>
   <ol className={styles.homeSteps} aria-label="学習の順番">
     <li><span className={styles.dot} data-stage="new" aria-hidden="true" /><strong>1 論点を知る</strong><small>全体ツリーで論点の位置と説明を読む</small></li>
