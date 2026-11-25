@@ -136,3 +136,42 @@ test('未成立の改正（1%法案）は、現行の本文を変えずに「成
   assert.throws(() => validateSubjectMap(withReform({ title: '法案', status: '審議中', ifEnacted: { rate: '1%' } }) as never));
   assert.doesNotThrow(() => validateSubjectMap(withReform({ title: '法案', status: '審議中', ifEnacted: { summary: '1%' } }) as never));
 });
+
+test('1%法案の成否は pending-reforms.json の outcome 1か所で切り替わり、成立・不成立のどちらでも教材と問題が矛盾しない', async () => {
+  const { REFORMS } = await import('../src/server/pending-reforms');
+  const { resolveTrees, resolveSamples } = await import('../src/server/subject-samples');
+  assert.equal(REFORMS['food-rate-1pct'].outcome, 'pending', 'いまは未成立');
+  const taxBase = (outcome: 'pending' | 'enacted' | 'rejected') =>
+    resolveTrees({ 'food-rate-1pct': outcome }).find(tree => tree.subjectId === 'consumption-tax')!.topics.find(topic => topic.key === 'tax-base')!;
+  const question = (outcome: 'pending' | 'enacted' | 'rejected') => resolveSamples({ 'food-rate-1pct': outcome }).find(item => item.id === 'shohi-reduced-rate')!;
+
+  // 審議中：本文は現行法、画面で切り替えられる版を持つ。問題は現行法。
+  assert.ok(taxBase('pending').pendingReform);
+  assert.match(taxBase('pending').summary, /食料品や新聞は8%/);
+  assert.equal(question('pending').answer, 'スーパーで買って持ち帰るお弁当');
+
+  // 成立：本文が1%の内容に置き換わり、切り替えは消える。問題の正解は新聞に変わる。
+  const enacted = taxBase('enacted');
+  assert.equal(enacted.pendingReform, undefined);
+  assert.match(enacted.summary, /2年間だけ1%/);
+  assert.match(enacted.concept.definition, /2027年4月1日から2029年3月31日/);
+  assert.match(enacted.concept.applicability, /100\/108/, '書き換えない項目は残る');
+  const enactedQuestion = question('enacted');
+  assert.match(enactedQuestion.answer, /新聞/);
+  assert.ok(enactedQuestion.wrong.includes('スーパーで買って持ち帰るお弁当'));
+  assert.equal(enactedQuestion.wrongReasons.length, 3);
+
+  // 不成立：本文は現行法のまま、「審議中」の一文だけ消える。問題は現行法。
+  const rejected = taxBase('rejected');
+  assert.equal(rejected.pendingReform, undefined);
+  assert.match(rejected.summary, /食料品や新聞は8%/);
+  assert.doesNotMatch(rejected.concept.definition, /審議|1%/);
+  assert.equal(question('rejected').answer, 'スーパーで買って持ち帰るお弁当');
+
+  // どの結果でも、問題は存在する論点を指し、選択肢は重複しない。
+  for (const outcome of ['pending', 'enacted', 'rejected'] as const) {
+    const item = question(outcome);
+    assert.equal(new Set([item.answer, ...item.wrong]).size, 4, outcome);
+    assert.equal(item.treeTopic, 'tax-base');
+  }
+});
