@@ -1,6 +1,6 @@
 'use client';
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { countStages, MEMORIZED_STEP, STAGE_LABELS, STAGE_ORDER, topicProgressMap, type PracticeRecord, type ReviewCheck, type StageCounts, type TopicStage } from '../domain/topic-progress';
+import { countStages, dueCards, localDay, MEMORIZED_STEP, STAGE_LABELS, STAGE_ORDER, topicProgressMap, type PracticeRecord, type ReviewCheck, type StageCounts, type TopicStage } from '../domain/topic-progress';
 import { ReviewCards } from './ReviewCards';
 import type { MapConcept, MapTopic, PendingReformText, SubjectMapPack } from '../domain/subject-map';
 import { conceptTopics, topicConcepts } from '../domain/subject-map';
@@ -8,7 +8,7 @@ import styles from './SubjectTreeView.module.css';
 
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
 type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; initialConceptId?: string; initialTopicId?: string | null;
-  onStart: (concept: MapConcept, material: Choice) => void; onOverview?: () => void };
+  onStart: (concept: MapConcept, material: Choice) => void };
 /** Adds a plain-word gloss in parentheses after the first use of each technical term. `seen` is shared within one panel. */
 function glossText(text: string, glossary: Record<string, string> | undefined, seen: Set<string>, className: string): ReactNode {
   if (!glossary) return text;
@@ -44,22 +44,8 @@ function StageBar({ counts, label, decorative = false }: { counts: StageCounts; 
   </span>;
 }
 
-/**
- * The learning map of one subject: a tree of fields → topics. Each topic is coloured by how far the
- * learner has got (まだ・もう一度・理解した・覚えた), and selecting one shows what it is, why it matters,
- * and which topics come before/after it.
- */
-export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart, onOverview }: Props) {
-  const units = useMemo(() => [...pack.units].sort((a, b) => a.order - b.order), [pack.units]);
-  const topicsOf = (unitId: string) => pack.topics.filter(topic => topic.unitId === unitId).sort((a, b) => a.order - b.order);
-  const conceptOf = (topicId: string) => topicConcepts(pack, topicId)[0];
-  const initialTopic = (initialTopicId ? pack.topics.find(item => item.topicId === initialTopicId) : undefined)
-    ?? (initialConceptId ? conceptTopics(pack, initialConceptId)[0] : undefined);
-  const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
-  const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : units.length <= 4 ? units.map(unit => unit.unitId) : []));
-  const [onlyFrequent, setOnlyFrequent] = useState(false);
-  /** Which version of a topic with a pending bill to show; kept across topics so the choice sticks while browsing. */
-  const [showEnacted, setShowEnacted] = useState(false);
+/** Loads the practice records and review-card checks of one subject and derives each topic's stage. Shared by the home and the map. */
+function useTopicProgress(pack: SubjectMapPack) {
   const [records, setRecords] = useState<PracticeRecord[] | null>(null);
   const [checks, setChecks] = useState<ReviewCheck[]>([]);
   const [progressFailed, setProgressFailed] = useState(false);
@@ -74,6 +60,62 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
   const progress = useMemo(() => topicProgressMap(pack, records ?? [], checks), [pack, records, checks]);
   const stageOf = (topicId: string): TopicStage => records ? progress.get(topicId)?.stage ?? 'none' : 'none';
   const subjectCounts = countStages(pack.topics.map(item => stageOf(item.topicId)));
+  return { records, setChecks, progressFailed, progress, stageOf, subjectCounts };
+}
+
+/** The progress line under the bar, in the same words on the home and the map. */
+function CountsText({ records, progressFailed, counts, topicCount }: { records: unknown; progressFailed: boolean; counts: StageCounts; topicCount: number }) {
+  return <p className={styles.counts}>{records ? <>理解した <strong>{counts.understood + counts.memorized}</strong>（うち覚えた <strong>{counts.memorized}</strong>）／ 問題のある {topicCount - counts.none} 論点
+    {counts.retry > 0 && <> ・ もう一度 {counts.retry}</>}</> : progressFailed ? '進み具合を読み込めませんでした（色は「まだ」のまま表示しています）' : '進み具合を読み込み中…'}</p>;
+}
+
+function Legend() {
+  return <ul className={styles.legend} aria-label="色の意味">
+    {(['new', 'retry', 'understood', 'memorized'] as const).map(stage => <li key={stage}><span className={styles.dot} data-stage={stage} />{STAGE_LABELS[stage]}</li>)}
+  </ul>;
+}
+
+/**
+ * The home's summary of the chosen subject: the same bar, counts and colours as the learning map, and how many
+ * review cards are due today, so the home and the map never tell different stories.
+ */
+export function SubjectHomeSummary({ pack, subjectLabel, disabled, onOpenMap }: { pack: SubjectMapPack; subjectLabel: string; disabled: boolean; onOpenMap: () => void }) {
+  const { records, progressFailed, progress, subjectCounts } = useTopicProgress(pack);
+  const due = records ? dueCards(progress, localDay(new Date())).length : 0;
+  return <div className={`${styles.view} ${styles.home}`}><section className={styles.homeSummary} aria-label="いまの科目の進み具合">
+    <p className={styles.kicker}>いまの科目</p>
+    <h2>{subjectLabel}</h2>
+    <StageBar counts={subjectCounts} label={`${subjectLabel}全体`} />
+    <CountsText records={records} progressFailed={progressFailed} counts={subjectCounts} topicCount={pack.topics.length} />
+    <Legend />
+    <p className={styles.homeCards}>今日の復習カード：<strong>{records ? `${due}枚` : '—'}</strong>{records && !due && <span>（確認問題に正解した論点が、翌日からカードになります）</span>}</p>
+    <button className={styles.homeOpen} disabled={disabled} onClick={onOpenMap}>{due ? `学習地図で今日の復習カード（${due}枚）から始める →` : `${subjectLabel}の学習地図を開く →`}</button>
+    <p className={styles.define}>科目は学習地図の左の一覧で変えられます。</p>
+  </section>
+  <ol className={styles.homeSteps} aria-label="学習の順番">
+    <li><span className={styles.dot} data-stage="new" aria-hidden="true" /><strong>1 論点を知る</strong><small>全体ツリーで論点の位置と説明を読む</small></li>
+    <li><span className={styles.dot} data-stage="understood" aria-hidden="true" /><strong>2 確認問題で確かめる</strong><small>正解すると青の「理解した」</small></li>
+    <li><span className={styles.dot} data-stage="memorized" aria-hidden="true" /><strong>3 復習カードで覚える</strong><small>1日・3日・7日後に3回続けて思い出せると緑の「覚えた」</small></li>
+  </ol></div>;
+}
+
+/**
+ * The learning map of one subject: a tree of fields → topics. Each topic is coloured by how far the
+ * learner has got (まだ・もう一度・理解した・覚えた), and selecting one shows what it is, why it matters,
+ * and which topics come before/after it.
+ */
+export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart }: Props) {
+  const units = useMemo(() => [...pack.units].sort((a, b) => a.order - b.order), [pack.units]);
+  const topicsOf = (unitId: string) => pack.topics.filter(topic => topic.unitId === unitId).sort((a, b) => a.order - b.order);
+  const conceptOf = (topicId: string) => topicConcepts(pack, topicId)[0];
+  const initialTopic = (initialTopicId ? pack.topics.find(item => item.topicId === initialTopicId) : undefined)
+    ?? (initialConceptId ? conceptTopics(pack, initialConceptId)[0] : undefined);
+  const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
+  const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : units.length <= 4 ? units.map(unit => unit.unitId) : []));
+  const [onlyFrequent, setOnlyFrequent] = useState(false);
+  /** Which version of a topic with a pending bill to show; kept across topics so the choice sticks while browsing. */
+  const [showEnacted, setShowEnacted] = useState(false);
+  const { records, setChecks, progressFailed, progress, stageOf, subjectCounts } = useTopicProgress(pack);
   const topic = pack.topics.find(item => item.topicId === selectedTopic);
   const concept = topic ? conceptOf(topic.topicId) : undefined;
   const reform = topic?.pendingReform;
@@ -136,17 +178,13 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
       <div><p className={styles.kicker}>科目の全体像と、あなたの進み具合</p><h2 data-tree-root>{label}</h2>
         <p className={styles.lead}>{units.length}分野・{pack.topics.length}論点のツリーです。分野をタップすると論点が開きます。論点を選ぶと、説明と「先に知るとよい論点」「次につながる論点」が出ます。</p></div>
       <div className={styles.controls}>
-        {onOverview && <button className={styles.overview} disabled={disabled} onClick={onOverview}>簿記の全体像をつかむ →</button>}
         <label className={styles.filter}><input type="checkbox" checked={onlyFrequent} onChange={event => setOnlyFrequent(event.target.checked)} /> ★頻出だけ（{frequentCount}論点）</label>
       </div>
     </div>
     <div className={styles.progress} aria-label="この科目の進み具合">
       <StageBar counts={subjectCounts} label={`${label}全体`} />
-      <p className={styles.counts}>{records ? <>理解した <strong>{subjectCounts.understood + subjectCounts.memorized}</strong>（うち覚えた <strong>{subjectCounts.memorized}</strong>）／ 問題のある {pack.topics.length - subjectCounts.none} 論点
-        {subjectCounts.retry > 0 && <> ・ もう一度 {subjectCounts.retry}</>}</> : progressFailed ? '進み具合を読み込めませんでした（色は「まだ」のまま表示しています）' : '進み具合を読み込み中…'}</p>
-      <ul className={styles.legend} aria-label="色の意味">
-        {(['new', 'retry', 'understood', 'memorized'] as const).map(stage => <li key={stage}><span className={styles.dot} data-stage={stage} />{STAGE_LABELS[stage]}</li>)}
-      </ul>
+      <CountsText records={records} progressFailed={progressFailed} counts={subjectCounts} topicCount={pack.topics.length} />
+      <Legend />
       <p className={styles.define}>理解した＝確認問題に正解した。覚えた＝復習カード（1日・3日・7日後）で3回続けて思い出せた。</p>
     </div>
     {records && <ReviewCards pack={pack} progress={progress} disabled={disabled} onChecked={check => setChecks(previous => [...previous, check])} onOpen={select} />}
