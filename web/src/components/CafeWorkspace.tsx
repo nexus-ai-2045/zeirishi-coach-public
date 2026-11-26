@@ -18,11 +18,8 @@ import { LearningEvidencePanel } from './LearningEvidencePanel';
 import { AiCoachPanel } from './AiCoachPanel';
 import { DiagnosticPanel } from './DiagnosticPanel';
 import { LearningCelebration, type LearningMoment } from './LearningCelebration';
-import { SubjectTreeView } from './SubjectTreeView';
+import { SubjectHomeSummary, SubjectTreeView } from './SubjectTreeView';
 import { LearningAtlas } from './LearningAtlas';
-import { BookkeepingPractice } from './BookkeepingPractice';
-import { MiniExamPanel } from './MiniExamPanel';
-import { BookkeepingTrialReview } from './BookkeepingTrialReview';
 import { BookkeepingIntro } from './BookkeepingIntro';
 import { ConceptPosition } from './ConceptPosition';
 
@@ -276,6 +273,12 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   useEffect(() => { if (online && view === 'home' && catalog) void loadResumeHint(); }, [view]);
   const focusPhase = session?.phase === 'consultation' ? 'decision' : session?.phase;
   useEffect(() => { if (view === 'case') heading.current?.focus(); }, [focusPhase, view]);
+  /** In the tree map the old 簿記-only overview is gone: an old #overview link lands on the learning map. */
+  const treeMode = !online && !!catalog?.subjectMap && !catalog.subjectMap.legacySubjectId;
+  useEffect(() => {
+    if (!treeMode || view !== 'overview') return;
+    window.history.replaceState(window.history.state, '', '#map'); routeRef.current = '#map'; setView('map');
+  }, [treeMode, view]);
   useEffect(() => {
     const onPopState = (event: PopStateEvent) => {
       const targetIndex = typeof event.state?.zcIndex === 'number' ? event.state.zcIndex : null;
@@ -350,7 +353,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     });
   }
   function startConcept(ref: ConceptRef, materialId?: string, caseVersion?: string) {
-    if (!canStartConcept(ref)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
+    if (!canStartConcept(ref) && !isMapPractice(ref, materialId, caseVersion)) { setNotice('この教材は現在の画面から開始できません。教材一覧を読み直してください。'); return; }
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId && item.conceptVersion === ref.conceptVersion) ?? [];
     if (!materialId && choices.length > 1) { setChoosingConcept(ref); return; }
     const selected = !materialId && choices.length === 1 ? choices[0] : undefined;
@@ -360,6 +363,13 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       ...((materialId || selected) ? { materialId: materialId ?? selected!.materialId } : {}),
       ...((caseVersion || selected) ? { caseVersion: caseVersion ?? selected!.caseVersion } : {}),
     });
+  }
+  /** Local tree only: a practice question picked explicitly from a topic, which the map links to that concept (any role). */
+  function isMapPractice(ref: ConceptRef, materialId?: string, caseVersion?: string) {
+    const map = catalog?.subjectMap;
+    return !online && !!materialId && !!caseVersion && !!map && map.subjectId === ref.subjectId
+      && map.links.some(link => link.kind === 'uses-case' && link.sourceId === ref.conceptId && link.sourceVersion === ref.conceptVersion
+        && link.targetId === materialId && link.targetVersion === caseVersion);
   }
   function canStartConcept(ref: ConceptRef) {
     const choices = catalog?.materialChoices?.filter(item => item.subjectId === ref.subjectId && item.conceptId === ref.conceptId
@@ -450,14 +460,16 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         {!catalog && <p role="status">学習内容を読み込んでいます…</p>}
         {catalog && view === 'home' && <section className={navigation.home} aria-label="ホーム">
           <h1>今日は、どこから始めますか？</h1>
-          <p className={styles.lead}>{catalog.subjectId === 'bookkeeping' ? '簿記' : subjectLabel}の考え方を知り、問題で試し、自分の言葉で説明します。順番を飛ばしてもかまいません。</p>
+          <p className={styles.lead}>{treeMode ? '全体ツリーで論点を知り、確認問題で理解を確かめ、復習カードで覚えます。順番を飛ばしてもかまいません。'
+            : `${catalog.subjectId === 'bookkeeping' ? '簿記' : subjectLabel}の考え方を知り、問題で試し、自分の言葉で説明します。順番を飛ばしてもかまいません。`}</p>
           {session?.status === 'active' ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>{session.prompt.title} · {labels[phaseStep(session.phase)]}</p></div><button className={styles.primary} disabled={busy} onClick={() => navigate('case', session.id)}>続きから再開</button></div>
             : resumeHint && resumeHint.caseId !== session?.id ? <div className={styles.resume}><div><strong>前回の相談の続きがあります</strong><p>保存中の相談ケース · {labels[phaseStep(resumeHint.phase)]}{resumeHint.savedAt && <> · 最終保存 <time dateTime={resumeHint.savedAt}>{new Date(resumeHint.savedAt).toLocaleString('ja-JP')}</time></>}</p></div><button className={styles.primary} disabled={busy || resumeHintChecking} onClick={() => openCase(resumeHint.caseId)}>続きから再開</button></div>
-            : <button className={styles.primary} disabled={busy} onClick={() => navigate(online || catalog.subjectId !== 'bookkeeping' ? 'map' : 'overview')}>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像を見る →' : `${subjectLabel}の学習地図を見る →`}</button>}
+            : !treeMode && <button className={styles.primary} disabled={busy} onClick={() => navigate(online || catalog.subjectId !== 'bookkeeping' ? 'map' : 'overview')}>{catalog.subjectId === 'bookkeeping' ? '簿記の全体像を見る →' : `${subjectLabel}の学習地図を見る →`}</button>}
           {resumeHintFailed && session?.status !== 'active' && <p className={styles.note}>保存中の相談を確認できませんでした。学習記録の一覧から再開できます。</p>}
-          <ol className={styles.learningRoute} aria-label="学習の順番"><li><span>1</span><strong>概念を知る</strong><small>考え方と試験論点の地図</small></li><li><span>2</span><strong>相談で試す</strong><small>資料を読み、判断する</small></li><li><span>3</span><strong>説明して振り返る</strong><small>自分の言葉と対話</small></li></ol>
+          {treeMode && catalog.subjectMap ? <SubjectHomeSummary key={`${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap} subjectLabel={subjectLabel} subjects={catalog.subjects} disabled={busy} onChooseSubject={id => { void run(() => load(id as SubjectId)); }} onOpenMap={() => navigate('map')} />
+          : <ol className={styles.learningRoute} aria-label="学習の順番"><li><span>1</span><strong>概念を知る</strong><small>考え方と試験論点の地図</small></li><li><span>2</span><strong>相談で試す</strong><small>資料を読み、判断する</small></li><li><span>3</span><strong>説明して振り返る</strong><small>自分の言葉と対話</small></li></ol>}
           <p className={styles.note}>{online ? catalog.materialNotice : '現在の教材は架空のローカル試用版です。専門審査前で、合格判定には使用しません。'}</p>
-          {(session?.status === 'active' || (resumeHint && resumeHint.caseId !== session?.id)) && <button className={styles.linkButton} disabled={busy} onClick={() => navigate('map')}>別の考え方を地図で見る</button>}
+          {!treeMode && (session?.status === 'active' || (resumeHint && resumeHint.caseId !== session?.id)) && <button className={styles.linkButton} disabled={busy} onClick={() => navigate('map')}>別の考え方を地図で見る</button>}
         </section>}
         {catalog && view === 'overview' && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>
@@ -470,7 +482,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           {view === 'map' && <><h1>学習地図</h1>
           {!online && catalog.subjectMap && !catalog.subjectMap.legacySubjectId && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
-            onOverview={catalog.subjectId === 'bookkeeping' ? () => navigate('overview') : undefined}
             onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
           {/* The learning map is the subject tree for every subject. The older atlas stays only for the online mode and the small
               legacy development fixture (legacySubjectId), whose existing E2E suite exercises it. */}
@@ -479,8 +490,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
             onOverview={() => navigate('overview')} onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
-          {!online && ['synthetic-bookkeeping-pack-v1','synthetic-bookkeeping-pack-v2'].includes(catalog.subjectMap?.version ?? '') && <BookkeepingPractice disabled={busy || dirty} onStart={(ref, materialId, caseVersion) => mutate('start', {concept:{subjectId:ref.subjectId,conceptId:ref.conceptId,conceptVersion:ref.conceptVersion},materialId,caseVersion})} />}
-          {!online && ['synthetic-bookkeeping-pack-v1','synthetic-bookkeeping-pack-v2'].includes(catalog.subjectMap?.version ?? '') && <><MiniExamPanel disabled={busy || dirty} onBusyChange={setBusy} /><BookkeepingTrialReview disabled={busy || dirty} onStart={(ref, materialId, caseVersion) => mutate('start', {concept:{subjectId:ref.subjectId,conceptId:ref.conceptId,conceptVersion:ref.conceptVersion},materialId,caseVersion})} /></>}
           {choosingConcept && <section className={styles.card} aria-label="相談ケースを選ぶ">
             <h2>この概念をどの相談で練習しますか？</h2>
             <div className={styles.actions}>{catalog.materialChoices?.filter(item => item.subjectId === choosingConcept.subjectId && item.conceptId === choosingConcept.conceptId && item.conceptVersion === choosingConcept.conceptVersion).map(item =>
@@ -488,7 +497,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
             <button disabled={busy} onClick={() => setChoosingConcept(null)}>選択を閉じる</button>
           </section>}
           {online && !catalog.subjects.some(subject => subject.available) && <p role="status" className={styles.note}>提供できる承認済み教材は現在0件です。受験予定や学習計画は登録できますが、相談学習・合格判定は準備中です。</p>}
-          <p className={styles.lead}>知っていることは飛ばして、曖昧なところをひとつずつ。<br />{online && !catalog.concepts.length ? '教材の公開後に、自信チェックや相談学習を選べます。今は受験予定を登録できます。' : '自信のチェックは任意です。そのまま相談に進めます。'}</p>
+          {!treeMode && <p className={styles.lead}>知っていることは飛ばして、曖昧なところをひとつずつ。<br />{online && !catalog.concepts.length ? '教材の公開後に、自信チェックや相談学習を選べます。今は受験予定を登録できます。' : '自信のチェックは任意です。そのまま相談に進めます。'}</p>}
           </>}
           {view === 'records' && <><h1>学習記録</h1><p className={styles.lead}>自分の申告・試用結果と、正式な学習証拠を分けて確認します。</p>
           <details className={styles.examPlan}>
@@ -501,7 +510,9 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
             <div className={styles.actions}><button disabled={busy} onClick={() => saveExamSubjects([])}>受験予定なしとして保存</button><button disabled={busy} onClick={() => saveExamSubjects(null)}>未回答に戻す</button></div>
           </details>
           </>}
-          {view === 'map' && <>
+          {/* The old self-rated confidence list (説明できる・少し怪しい・未学習) belongs to the atlas modes only; the tree uses
+              the colours from the confirmation questions and review cards instead. */}
+          {view === 'map' && !treeMode && <>
           <section className={styles.entry}><div className={styles.sectionHeading}><h2>{subjectLabel}</h2><span>自分の感覚で選べば OK</span></div>
             {!!catalog.concepts?.length && <fieldset disabled={busy} className={styles.bulkConfidence}><legend>この科目の自信をまとめて設定（対象 {catalog.concepts.length}件）</legend><div>{selfLabels.map(item => <button key={item.value} onClick={() => bulkConfidence(item.value)}>すべて「{item.label}」</button>)}<button onClick={() => bulkConfidence(null)}>この科目の自信を解除</button></div><p className={styles.note}>表示中の科目の概念だけを変更します。各行から個別に直すこともできます。</p></fieldset>}
             {catalog.concepts?.length ? catalog.concepts.slice(0, expandedSubject === catalog.subjectId ? undefined : 6).map(concept => {
@@ -517,6 +528,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           {!!catalog.concepts?.length && <div className={styles.recommendation}><h3>{catalog.recommendations.length ? 'まずは、この相談から' : '自信のある概念は、おすすめから外しました'}</h3><p>{catalog.recommendations[0]?.reason ?? '必要なら「この相談で学ぶ」から、いつでも復習できます。'}</p><p className={styles.note}>短い理解度チェックは未見問題の準備中です。自信の回答だけで習得済み・合格圏とは判定しません。</p></div>}
           <p className={styles.disclosure}>{catalog.materialNotice} {!online && caseCountNotice(subjectLabel, startableCaseCount(catalog.subjectMap, catalog.materialChoices, catalog.subjectId))}</p>
           </>}
+          {view === 'map' && treeMode && <p className={styles.disclosure}>{catalog.materialNotice} {caseCountNotice(subjectLabel, startableCaseCount(catalog.subjectMap, catalog.materialChoices, catalog.subjectId))}</p>}
           {view === 'records' && <>
           <DiagnosticPanel key={`diagnostic:${expectedLearnerId ?? 'local'}:${catalog.subjectId}`} subjectId={catalog.subjectId} concepts={catalog.concepts} expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty} onBusyChange={setBusy} />
           <LearningEvidencePanel key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}`} subjectId={catalog.subjectId} concepts={catalog.concepts} expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}

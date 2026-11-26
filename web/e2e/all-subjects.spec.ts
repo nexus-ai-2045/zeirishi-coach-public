@@ -189,6 +189,17 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   }
   await expect(tree.getByRole('button', { name: `${topic.label}（覚えた）` })).toBeVisible();
   await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
+
+  // ホームも学習地図と同じ数え方・同じ色で、同じ科目の進み具合を出す。
+  await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
+  const home = page.locator('[aria-label="いまの科目の進み具合"]');
+  await expect(home.getByRole('heading', { name: '所得税法' })).toBeVisible();
+  await expect(home).toContainText('理解した 1（うち覚えた 1）');
+  await expect(home).toContainText('今日の復習カード：0枚');
+  await home.getByRole('button', { name: '所得税法の学習地図を開く →' }).click();
+  await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
+  // 読み込み中の進み具合の差し替えが終わってから閉じる（終了時に応答が破棄されないように）。
+  await page.unrouteAll({ behavior: 'wait' });
 });
 
 test('地図を読み直しても、最後に選んだ科目のまま（別の科目の続きの相談があっても）', async ({ page }) => {
@@ -241,4 +252,19 @@ test('消費税法：未成立の1%法案は「現行の制度」と「成立し
   await tree.getByRole('button', { name: /^課税標準と税率（軽減税率）（/ }).click();
   await current.click();
   await expect(detail).toContainText('食料品や新聞は8%');
+});
+
+test('ホームで11科目のどれからでも始められ、選んだ科目が学習地図と読み直し後も続く', async ({ page }) => {
+  await page.goto('/#home');
+  await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
+  const choose = page.getByRole('group', { name: '今日学ぶ科目を選ぶ' });
+  await expect(choose.getByRole('button')).toHaveCount(SUBJECTS.length);
+  const home = page.locator('[aria-label="いまの科目の進み具合"]');
+  await choose.getByRole('button', { name: '酒税法', exact: true }).click();
+  await expect(home.getByRole('heading', { name: '酒税法' })).toBeVisible();
+  await expect(choose.getByRole('button', { name: '酒税法', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.locator('[aria-label="いまの科目の進み具合"]').getByRole('heading', { name: '酒税法' })).toBeVisible();
+  await page.getByRole('button', { name: '酒税法の学習地図を開く →' }).click();
+  await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
 });

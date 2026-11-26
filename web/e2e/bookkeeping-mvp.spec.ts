@@ -50,7 +50,8 @@ test('練習309問と独立プールを分離し、選択前に正答・採点�
   const ready=page.waitForResponse(response=>response.url().includes('/api/profile')&&response.request().method()==='GET');
   await page.goto('/#map');
   expect((await ready).status()).toBe(200);
-  await expect(page.getByRole('region',{name:'簿記論の問題演習'})).toBeVisible();
+  // 練習問題の一覧パネルは学習地図から外した（ツリー1つに統一）。問題はツリーの論点と学習記録から開く。
+  await expect(page.getByRole('region',{name:'簿記論の問題演習'})).toHaveCount(0);
   const practice = await (await page.request.get('/api/practice?pool=practice')).json();
   expect(practice.items).toHaveLength(309);
   const serialized=JSON.stringify(practice); for(const field of ['earned','errorReason','explanation','correct','targetScore']) expect(serialized).not.toContain(`"${field}"`);
@@ -79,66 +80,6 @@ test('練習309問と独立プールを分離し、選択前に正答・採点�
   await page.goto('/#map'); await page.setViewportSize({width:390,height:844});
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'/tmp/zeirishi-bookkeeping-mvp-mobile.png',fullPage:true});
-});
-
-test('開始前・終了時の6問を12分で独力提出し、結果は終了時だけ公開して保存・再開する', async ({page}) => {
-  test.setTimeout(60000);
-  await page.goto('/#map');
-  await page.getByText('開始前・終了時のミニ演習（各6問・12分）',{exact:true}).click();
-  for(const kind of ['開始前','終了時']) {
-    const started = page.waitForResponse(r=>r.url().includes('/api/mini-exam') && r.request().method()==='POST' && r.request().postDataJSON()?.action==='start');
-    await page.getByRole('button',{name:`${kind}の6問を始める`,exact:true}).click();
-    const initial=(await (await started).json()).item;
-    expect(Date.parse(initial.view.deadline)-Date.parse(initial.view.startedAt)).toBe(720000);
-    expect(initial.view.qualification).toBe('practice_only'); expect(initial.view.trialResults).toEqual([]);
-    const region=page.getByRole('region',{name:'ミニ演習の問題と結果'});
-    for(let i=0;i<6;i++) {
-      await region.getByRole('radio').first().check();
-      const saved=page.waitForResponse(r=>r.url().includes('/api/mini-exam') && r.request().postDataJSON()?.action==='submit');
-      await region.getByRole('button',{name:'ミニ演習の回答を確定',exact:true}).click();
-      const current=(await (await saved).json()).item;
-      if(i<5) {
-        expect(current.view.trialResults).toEqual([]); expect(current.view.attempts.every((a:{earned:number|null})=>a.earned===null)).toBe(true);
-        await region.getByRole('button',{name:'自信は記録しない',exact:true}).click();
-        await region.getByRole('button',{name:'次のミニ演習問題へ',exact:true}).click();
-      } else {
-        expect(current.view.status).toBe('completed'); expect(current.view.trialResults).toEqual([]);
-        expect(current.view.attempts.every((a:{earned:number|null})=>a.earned===null)).toBe(true);
-        await expect(region.getByRole('heading',{name:`${kind}のミニ演習の結果`,exact:true})).toHaveCount(0);
-        await region.getByRole('button',{name:'自信は記録しない',exact:true}).click();
-        await expect(region.getByRole('heading',{name:`${kind}のミニ演習の結果`,exact:true})).toBeVisible();
-      }
-    }
-    await page.reload();
-    await page.getByText('開始前・終了時のミニ演習（各6問・12分）',{exact:true}).click();
-    await page.getByRole('button',{name:`保存した${kind}の演習を見る`,exact:true}).click();
-    await page.getByRole('button',{name:new RegExp(`^${kind}：.*の演習を開く$`)}).first().click();
-    await expect(page.getByRole('heading',{name:`${kind}のミニ演習の結果`,exact:true})).toBeVisible();
-  }
-  const evidence=await (await page.request.get('/api/learning-evidence?subjectId=bookkeeping&examYear=2026&criterionVersion=unconfirmed')).json(); expect(evidence.mastery).toEqual([]);
-});
-
-test('ミニ演習を自信未記録で早期終了しても、再読込後に自信を確定してから結果を見る', async ({page}) => {
-  await page.goto('/#map');
-  await page.getByText('開始前・終了時のミニ演習（各6問・12分）',{exact:true}).click();
-  await page.getByRole('button',{name:'開始前の6問を始める',exact:true}).click();
-  const region=page.getByRole('region',{name:'ミニ演習の問題と結果'});
-  await region.getByRole('radio').first().check();
-  await region.getByRole('button',{name:'ミニ演習の回答を確定',exact:true}).click();
-  const finished=page.waitForResponse(r=>r.url().includes('/api/mini-exam') && r.request().postDataJSON()?.action==='finish');
-  await region.getByRole('button',{name:'ミニ演習をここまでで終了',exact:true}).click();
-  const closed=(await (await finished).json()).item;
-  expect(closed.view.status).toBe('completed'); expect(closed.view.trialResults).toEqual([]);
-  expect(closed.view.attempts[0].earned).toBeNull();
-  await expect(region.getByRole('heading',{name:'開始前のミニ演習の結果',exact:true})).toHaveCount(0);
-  await page.reload();
-  await page.getByText('開始前・終了時のミニ演習（各6問・12分）',{exact:true}).click();
-  await page.getByRole('button',{name:'保存した開始前の演習を見る',exact:true}).click();
-  await page.getByRole('button',{name:/^開始前：.*の演習を開く$/}).first().click();
-  await expect(region.getByRole('button',{name:'自信は記録しない',exact:true})).toBeVisible();
-  await region.getByRole('button',{name:'自信は記録しない',exact:true}).click();
-  await expect(region.getByRole('heading',{name:'開始前のミニ演習の結果',exact:true})).toBeVisible();
-  await expect(region.getByText(/正答：/)).toHaveCount(1);
 });
 
 test('未審査の診断を3問まで試し、復習は保存済み完了から予定だけを導く', async ({page}) => {
@@ -192,8 +133,26 @@ test('簿記論の学習地図も他科目と同じツリー1つで、ブレイ�
   for (const name of ['これまでの地図', '全体ツリー（新）', 'マップ', 'リスト']) await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
   await expect(page.getByLabel(/ブレインマップ/)).toHaveCount(0);
   await expect(view.locator('[aria-label="この科目の進み具合"]')).toContainText('理解した');
-  await view.getByRole('button', { name: '簿記の全体像をつかむ →' }).click();
-  await expect(page).toHaveURL(/#overview$/);
+  // 簿記論だけの旧「全体像」ページと、ツリーの下の旧パネル（自信の申告・ミニ演習・試用復習）はない。
+  await expect(page.getByRole('button', { name: '簿記の全体像をつかむ →' })).toHaveCount(0);
+  for (const text of ['この科目の自信をまとめて設定', '開始前・終了時のミニ演習', '簿記論の試用復習']) await expect(page.getByText(text)).toHaveCount(0);
+  await page.goto('/#overview');
+  await expect(page).toHaveURL(/#map$/);
+  await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
+  // 旧パネルにあった練習問題は、論点の説明の中から開ける。
+  await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
+  await page.getByRole('button', { name: /^支払日と費用の期間は別（/ }).click();
+  const detail = page.getByRole('complementary', { name: '選んだ論点の説明' });
+  await detail.getByText(/^練習問題（\d+問）$/).click();
+  await detail.getByRole('button', { name: '練習問題 1 →' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
+  // 確認問題（相談ケース）が無い論点でも、練習問題は開ける。
+  await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
+  await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
+  await page.getByRole('button', { name: /^取引には二つの面がある（/ }).click();
+  await detail.getByText(/^練習問題（\d+問）$/).click();
+  await detail.getByRole('button', { name: '練習問題 1 →' }).click();
+  await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
   for (const width of [1440, 900, 390]) {
     await page.goto('/#map'); await page.setViewportSize({ width, height: 900 });
     await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
