@@ -52,7 +52,6 @@ const researchSources = await Promise.all(sourceDefinitions.map(async source => 
       retrieval_ref: source.url } };
 }));
 
-// Review snapshot of canonical drafts, never an approval or learner-facing projection.
 const packet = {
   formatVersion: 'bookkeeping-review-draft-v1', sourcePolicy, preparedAt: new Date().toISOString(), status: 'unreviewed',
   notice: '専門審査・利用条件・適用年度・出荷承認は未確定。正答を含む開発・レビュー用ソースであり、学習者APIの回答前投影には含めない。',

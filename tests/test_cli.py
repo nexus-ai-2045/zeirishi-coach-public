@@ -92,13 +92,10 @@ def test_mock_calibrates_offset_speed_and_rank(capsys, coach_home, subjects_dir)
     st2 = state.load_state("boki")
     expected_after, _, prob_after = state.compute_scores(st2, boki)
     assert expected_after == pytest.approx(expected_before + 10, abs=0.01)
-    assert prob_after > prob_before      # 上位 3% の順位が効く
+    assert prob_after > prob_before
 
 
 def test_force_reinit_clears_attempts_log(capsys, coach_home, subjects_dir):
-    """PR #1 レビュー指摘 (coach.py:63): init --force は state.json だけでなく
-    attempts.jsonl / timer も初期化しないと、rebuild が捨てたはずの旧セッションを
-    再生してしまう。"""
     run(capsys, "init", "boki", "--exam-date", "2027-08-05", "--today", TODAY)
     run(capsys, "record", "boki", "--topic", "boki.sales.shohin", "--correct", "yes", "--seconds", "60",
         "--error-class", "none", "--difficulty", "3", "--today", TODAY)
@@ -113,17 +110,15 @@ def test_force_reinit_clears_attempts_log(capsys, coach_home, subjects_dir):
 
 
 def test_record_rejects_timer_for_different_topic(capsys, coach_home):
-    """PR #1 レビュー指摘 (coach.py:96): 別 topic で start した timer を record に流用しない。"""
     run(capsys, "init", "boki", "--exam-date", "2027-08-05", "--today", TODAY)
     run(capsys, "start", "boki", "--topic", "boki.sales.shohin", "--now", "2026-09-04T10:00:00")
     code, out = run(capsys, "record", "boki", "--topic", "boki.fixed.depreciation", "--correct", "yes",
                     "--error-class", "none", "--difficulty", "3", "--today", TODAY, "--now", "2026-09-04T10:03:00")
     assert code == 1 and "timer" in out
-    assert state.read_timer("boki") is not None  # 別 topic の record 失敗で消えない
+    assert state.read_timer("boki") is not None
 
 
 def test_plan_rebuild_applies_decay_first(capsys, coach_home, subjects_dir):
-    """PR #1 レビュー指摘 (coach.py:140): plan --rebuild の前に減衰を適用する。"""
     boki = subjects.load_subject("boki", subjects_dir)
     run(capsys, "init", "boki", "--exam-date", "2027-08-05", "--today", TODAY)
     run(capsys, "record", "boki", "--topic", "boki.sales.shohin", "--correct", "yes", "--seconds", "60",

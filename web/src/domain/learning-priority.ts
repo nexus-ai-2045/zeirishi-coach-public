@@ -1,10 +1,8 @@
-/** PRODUCT_SPEC §8 / §22.2. Evidence-based ranking, not a pass probability. */
 export const PRIORITY_RULE_VERSION = 'learning-priority-v1' as const;
 export type PriorityInput = {
   importance: number;
   observedExamScoreRatio: number | null;
   reviewStatus: 'unknown' | 'future' | 'today' | 'overdue';
-  // Chronological concept-specific misconception IDs, oldest first, at most five.
   recentMisconceptions: readonly (string | null)[];
   lockedDirectSuccessors: number;
   observedMinutes: number | null;

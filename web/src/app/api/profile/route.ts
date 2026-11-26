@@ -18,7 +18,6 @@ const development = createConfidenceHandler(getConfidenceService, () => process.
 const expandedDevelopment = createConfidenceHandler(getConfidenceService, () => process.env.ZEIRISHI_FIXTURE_MODE, BOOKKEEPING_TRIAL_CATALOG, TRIAL_MATERIAL_CHOICES);
 const production = createLearnerProfileHandler({ getDatabase: getProductionDatabase, catalog: APPROVED_CATALOG, materialChoices: APPROVED_MATERIAL_CHOICES });
 function handler(request: Request) {
-  // Auth wins routing so enabling both modes is rejected, never downgraded to fixture identity.
   return process.env.ZEIRISHI_SUPABASE_ENABLED === '1' ? production(request) : bookkeepingTrialEnabled() ? expandedDevelopment(request) : development(request);
 }
 export const GET = handler;

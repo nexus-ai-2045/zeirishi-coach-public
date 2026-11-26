@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""標準ライブラリだけのオフライン検査。
-
-validator.build_ledger とは別に、借方合計・貸方合計を辞書へ足す実装でも照合する。
-Q20 などは金額の加減をテスト内に直書きし、転記関数の写し忘れを見つける。
-"""
 
 from __future__ import annotations
 
@@ -45,7 +39,6 @@ HAND_TOTALS = {
 
 
 def alt_post(opening, entries):
-    """validator.build_ledger とは別の足し算。戻り値は code -> (debit_total, credit_total)。"""
     debit = {}
     credit = {}
 

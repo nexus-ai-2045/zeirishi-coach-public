@@ -25,7 +25,6 @@ export async function purgeExpiredStudy(tx: Queryable, at: Date) {
     (SELECT id FROM study_sessions WHERE status <> 'active')`);
 }
 
-/** Local server adapter. Production authentication/RLS are intentionally not supplied here. */
 export async function createStudyService(db: SchemaDatabase, now: () => Date = () => new Date()) {
   await initializeOwnerAccess(db);
   await db.exec(`
@@ -49,7 +48,6 @@ export async function createStudyService(db: SchemaDatabase, now: () => Date = (
   return createStudyServiceOnPreparedDatabase(db, now);
 }
 
-/** Uses an already prepared schema without DDL. Authentication/RLS readiness is a separate gate. */
 export function createStudyServiceOnPreparedDatabase(db: TransactionDatabase, now: () => Date = () => new Date()) {
   const clock = () => {
     const value = now();
@@ -64,7 +62,6 @@ export function createStudyServiceOnPreparedDatabase(db: TransactionDatabase, no
     return rows[0];
   };
   const transaction = async <T>(fn: (tx: Queryable, at: Date) => Promise<T | StudyError>, owner?: string): Promise<T> => {
-    // Return domain failures through the transaction so expiry cleanup commits even on rejected access.
     const outcome = await db.transaction(async tx => {
       const at = clock();
       if (owner !== undefined) await assertOwnerActive(tx, owner);
@@ -97,7 +94,6 @@ export function createStudyServiceOnPreparedDatabase(db: TransactionDatabase, no
         const id = randomUUID();
         const { rows } = await tx.query<Row>(`INSERT INTO study_sessions (id,owner_id,status,expires_at)
           VALUES ($1,$2,'active',$3) RETURNING *`, [id, userId, new Date(at.getTime() + 7 * 86_400_000).toISOString()]);
-        // Store only the session reference: replay resolves current state, never a copied draft.
         await tx.query(`INSERT INTO study_requests (owner_id,request_id,session_id,operation,fingerprint,response)
           VALUES ($1,$2,$3,'start',$4,NULL)`, [userId, requestId, id, hash({ operation: 'start' })]);
         return view(rows[0]);

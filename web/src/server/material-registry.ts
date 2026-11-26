@@ -34,12 +34,10 @@ function freezeJson<T>(value: T): T {
   if (value && typeof value === 'object') { Object.values(value).forEach(freezeJson); Object.freeze(value); }
   return value;
 }
-/** Strict canonical JSON: reject functions, getters, custom objects, cycles, holes and non-finite values. */
 function canonical(value: unknown): string { return strictCanonicalJson(value, invalid); }
 
-/** Attestation hashes bind content AND rights, identity, metadata and tax applicability. */
 export function materialReviewSha256(record: MaterialRecord): string {
-  canonical(record); // Reject non-JSON data even in fields excluded from the review payload.
+  canonical(record);
   return createHash('sha256').update(canonical({ materialId: record.materialId, version: record.version, subjectId: record.subjectId,
     concept: record.concept, authorId: record.authorId, document: record.document, sources: record.sources,
     taxYear: record.taxYear ?? null, basisDate: record.basisDate ?? null })).digest('hex');
@@ -50,7 +48,6 @@ function validateDocument(record: MaterialRecord) {
   const prompt = doc.prompt;
   keys(prompt, ['caseId', 'caseVersion', 'conceptId', 'familyId', 'developmentOnly', 'title', 'consultationTitle', 'context', 'consultation', 'task', 'facts', 'assumption', 'options']);
   id(doc.scoringVersion); id(prompt.caseId); id(prompt.familyId);
-  // Reserved development-version namespace, not a substitute for expert review.
   if (record.version.startsWith('synthetic-') || doc.scoringVersion.startsWith('synthetic-')) invalid();
   if (prompt.caseId !== record.materialId || prompt.caseVersion !== record.version || prompt.conceptId !== record.concept.conceptId || prompt.developmentOnly !== false) invalid();
   for (const value of [prompt.title, prompt.consultationTitle, prompt.context, prompt.consultation, prompt.task, prompt.assumption, doc.examTranslation]) text(value);
@@ -87,7 +84,6 @@ function validateDocument(record: MaterialRecord) {
   for (const ground of doc.aiGrounding) { keys(ground, ['sourceId', 'text']); text(ground.text); if (!record.sources.some(source => source.sourceId === ground.sourceId)) invalid(); }
 }
 
-/** These records express human review; code verifies matching evidence, not the reviewer's identity or honesty. */
 export function createMaterialRegistry(records: readonly MaterialRecord[]): readonly ActiveMaterial[] {
   if (!Array.isArray(records)) invalid();
   const snapshot = JSON.parse(canonical(records)) as MaterialRecord[];
@@ -98,9 +94,7 @@ export function createMaterialRegistry(records: readonly MaterialRecord[]): read
     if (!SUBJECTS.some(subject => subject.id === record.subjectId) || !['draft', 'expert_review', 'approved', 'active', 'retired'].includes(record.status)) invalid();
     const identity = record.materialId + '/' + record.version;
     if (seen.has(identity)) invalid(); seen.add(identity);
-    // Persisted cases are keyed by version alone: never recycle even a retired version.
     if (versions.has(record.version)) invalid(); versions.add(record.version);
-    // Unfinished drafts may carry incomplete approval/content; never expose them as live material.
     if (record.status !== 'active') continue;
     if (activeIds.has(record.materialId)) invalid(); activeIds.add(record.materialId);
     const concept = record.concept;

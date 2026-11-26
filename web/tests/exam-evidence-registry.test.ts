@@ -5,7 +5,6 @@ import { evaluateExamReadiness } from '../src/domain/exam-readiness';
 
 const owner = '11111111-1111-4111-8111-111111111111';
 const options = { expectedOwnerId: owner, asOf: '2026-09-08T00:00:00Z' };
-// Entirely fictional test data. These attestations are not human approval.
 function fixture(): ExamEvidenceDocument {
   const document: ExamEvidenceDocument = { schemaVersion: 'exam-evidence-v1', ownerId: owner,
     record: { id: 'test-1', recordVersion: 'test-v1', subjectId: 'bookkeeping', examYear: 2026,

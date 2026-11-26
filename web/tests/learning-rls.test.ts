@@ -37,7 +37,6 @@ const tables = ['owner_access', 'confidence_profiles', 'confidence_requests', 'w
 test('全学習RLSと既存サービスを隔離DB・実ロールで統合検証する', async t => {
   const db = new PGlite();
   try {
-    // Isolated Auth fixture only, never a replacement for real JWT verification.
     await db.exec(`create role anon nologin nosuperuser nobypassrls;
       create role authenticated nologin nosuperuser nobypassrls;
       create schema auth; create table auth.users(id uuid primary key);
@@ -110,7 +109,6 @@ test('全学習RLSと既存サービスを隔離DB・実ロールで統合検証
           measurementQuality: 'verified', outcome: 'met', hintsUsed: 0, aiAnswerViewed: false });
         await db.query("INSERT INTO exam_evidence_revisions VALUES ($1,'exam',1,'2026-09-01','{}',false,null)", [owner]);
         await db.query("INSERT INTO exam_evidence_requests VALUES ($1,'request','exam','fingerprint')", [owner]);
-        // Minimal rows test SQL isolation, not evidence eligibility or expert approval.
         await db.query("INSERT INTO mastery_evidence_revisions(owner_id,id,revision,updated_at,document,withdrawn,reason) VALUES ($1,'mastery',1,'2026-09-01','{}',false,null)", [owner]);
         await db.query("INSERT INTO mastery_evidence_requests VALUES ($1,'mastery-request','mastery','fingerprint')", [owner]);
       }
@@ -227,7 +225,6 @@ test('全学習RLSと既存サービスを隔離DB・実ロールで統合検証
       await db.query("insert into public.learner_access(user_id,status) values ($1,'active')", [userId]);
       const options = { catalog: [], getDatabase: () => base,
         config: () => ({ url: 'https://abcdefghijklmnopqrst.supabase.co', publishableKey: 'test-only', appOrigin: 'https://coach.example' }),
-        // Auth is injected; all role/claims/lock/RLS and business SQL below are real.
         context: () => ({ headers: new Headers(), reader: {
           getUser: async () => ({ error: false, user: { id: userId, isAnonymous: false, emailConfirmed: true } }),
           getAccess: async () => ({ userId, status: 'active' }),
@@ -266,7 +263,6 @@ test('全学習RLSと既存サービスを隔離DB・実ロールで統合検証
       assert.ok(otherRecord);
       assert.equal((await mockHandler(new Request(`https://coach.example/api/mock-exams?id=${otherRecord.id}`,
         { headers: { 'X-Zeirishi-Learner': userId } }))).status, 404);
-      // Injection is a test fixture, not publication approval of this synthetic material.
       const cafeHandler = createLearnerCafeHandler({ ...options, getMaterial: () => DEVELOPMENT_CAFE_MATERIAL });
       const input = { requestId: crypto.randomUUID(), revision: 0, reports: [], examSubjects: ['bookkeeping'] };
       const request = () => new Request('https://coach.example/api/profile', { method: 'POST',
@@ -351,7 +347,6 @@ test('全学習RLSと既存サービスを隔離DB・実ロールで統合検証
       assert.equal((await evidenceHandler(evidenceRequest())).status, 401);
       assert.equal((await cafeHandler(cafeRequest(start))).status, 401);
       await db.query("update learner_access set status='revoked',revoked_at=now() where user_id=$1", [userId]);
-      // Even an earlier active Auth-side check cannot override the fresh transaction lock.
       const revoked = await handler(request());
       assert.equal(revoked.status, 403);
       assert.deepEqual(await revoked.json(), { error: 'INVITATION_REQUIRED' });

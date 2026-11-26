@@ -11,7 +11,6 @@ const checkId = (value: unknown) => {
   if (typeof value !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(value)) throw new StudyError('INVALID_ID');
 };
 
-/** Development schema bootstrap on the shared study database. No HTTP/auth bypass is exposed. */
 export async function createConfidenceService(db: SchemaDatabase, catalog: readonly SubjectPack[], now = () => new Date()) {
   await initializeOwnerAccess(db);
   await db.exec(`CREATE TABLE IF NOT EXISTS confidence_profiles (
@@ -25,7 +24,6 @@ export async function createConfidenceService(db: SchemaDatabase, catalog: reado
   return createConfidenceServiceOnPreparedDatabase(db, catalog, now);
 }
 
-/** No schema writes; callers must prepare schema and authorization separately. */
 export function createConfidenceServiceOnPreparedDatabase(db: TransactionDatabase, catalog: readonly SubjectPack[], now = () => new Date()) {
   return {
     async get(ownerId: string): Promise<ConfidenceProfile> {
@@ -47,7 +45,6 @@ export function createConfidenceServiceOnPreparedDatabase(db: TransactionDatabas
       reports.sort((a, b) => `${a.subjectId}/${a.conceptId}`.localeCompare(`${b.subjectId}/${b.conceptId}`, 'en'));
       const hasExamSubjects = Object.hasOwn(input, 'examSubjects');
       const examSubjects = hasExamSubjects ? parseExamSubjects(input.examSubjects) : null;
-      // Omission keeps the pre-migration fingerprint; explicit null/[] are distinct mutations.
       const fingerprint = createHash('sha256').update(JSON.stringify({ revision: input.revision, reports,
         ...(hasExamSubjects ? { examSubjects } : {}),
       })).digest('hex');

@@ -1,4 +1,3 @@
-// Subject names: https://www.nta.go.jp/taxes/zeirishi/zeirishishiken/gaiyo/gaiyou.htm
 import type { SubjectMapPack } from './subject-map';
 export const SUBJECTS = [
   { id: 'bookkeeping', label: '簿記論' },
@@ -27,10 +26,8 @@ export type Concept = ConceptRef & {
 export type SubjectPack = {
   subjectId: SubjectId;
   version: string;
-  // True only after the caller's material-publication gate. Not an approval mechanism.
   active: boolean;
   concepts: readonly Concept[];
-  /** Optional, version-matched projection of this pack; never a second approval source. */
   subjectMap?: SubjectMapPack;
 };
 export type InitialRecommendation = {
@@ -51,7 +48,6 @@ function identifier(value: unknown): string {
 export function parseSubjectId(value: unknown): SubjectId {
   return SUBJECTS.some(subject => subject.id === value) ? value as SubjectId : invalid();
 }
-/** Planned exam subjects, independent of today's lesson and self-confidence. */
 export function parseExamSubjects(value: unknown): SubjectId[] | null {
   if (value === null) return null;
   if (!Array.isArray(value) || value.length > SUBJECTS.length) invalid();
@@ -77,7 +73,6 @@ export function parseConfidenceReport(value: unknown): ConfidenceReport {
 export const validateConfidenceReport = parseConfidenceReport;
 function key(ref: ConceptRef): string { return JSON.stringify([ref.subjectId, ref.conceptId, ref.conceptVersion]); }
 
-/** One active pack per subject; never infer active status from inventory or version text. */
 function activeConcepts(packs: readonly SubjectPack[], subjectId: SubjectId): { concept: Concept; packVersion: string }[] {
   parseSubjectId(subjectId);
   if (!Array.isArray(packs)) invalid();
@@ -100,7 +95,6 @@ function activeConcepts(packs: readonly SubjectPack[], subjectId: SubjectId): { 
   });
 }
 
-/** Initial, unmeasured selection only. This returns no mastery or attempt evidence. */
 export function initialRecommendations(packs: readonly SubjectPack[], reports: readonly ConfidenceReport[], subjectId: SubjectId): InitialRecommendation[] {
   if (!Array.isArray(reports)) invalid();
   const confidence = new Map<string, SelfConfidence>();
@@ -126,7 +120,6 @@ export function initialRecommendations(packs: readonly SubjectPack[], reports: r
     || (a.concept.conceptId < b.concept.conceptId ? -1 : a.concept.conceptId > b.concept.conceptId ? 1 : 0)).slice(0, 3);
 }
 
-/** Direct selection is independent of confidence and prerequisite mastery. */
 export function directSelection(packs: readonly SubjectPack[], reference: ConceptRef): Concept | null {
   const ref = parseConceptRef(reference);
   return activeConcepts(packs, ref.subjectId).find(item => key(item.concept) === key(ref))?.concept ?? null;

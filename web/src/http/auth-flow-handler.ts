@@ -14,8 +14,6 @@ function flowContext(request: Request, config: AuthConfig): FlowContext {
   return {
     headers, reader: authReader(client),
     async requestLink(email, redirectTo) {
-      // A neutral response must not reveal whether this email has an account.
-      // Delivery is not confirmed by this endpoint, including provider rejection.
       await client.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: redirectTo } });
     },
     async exchange(code) {
@@ -29,7 +27,6 @@ function flowContext(request: Request, config: AuthConfig): FlowContext {
   };
 }
 
-/** Real email delivery stays separately disabled until target and SMTP are approved. */
 export function requireEmailDelivery(env: Record<string, string | undefined> = process.env) {
   if (env.ZEIRISHI_AUTH_EMAIL_ENABLED !== '1') throw new StudyError('AUTH_EMAIL_DISABLED', 503);
 }
@@ -50,7 +47,6 @@ export function createAuthFlowHandler(action: 'request' | 'callback' | 'logout',
       let code: string | undefined;
       if (action === 'callback') {
         callbackOrigin = settings.appOrigin;
-        // Email navigation is cross-site. PKCE binds the exchange to the requesting browser.
         code = url.searchParams.get('code') ?? undefined;
         if ([...url.searchParams].length !== 1 || !code || !/^[A-Za-z0-9_-]{16,512}$/.test(code)) throw new StudyError('AUTH_LINK_INVALID', 401);
       } else {
@@ -79,13 +75,11 @@ export function createAuthFlowHandler(action: 'request' | 'callback' | 'logout',
         return Response.json({ signedOut: true, scope: 'local' }, { headers });
       }
       await current.exchange(code!);
-      // Membership is fresh, not a user-controlled or stale JWT metadata claim.
       try { await requireInvitedLearner(current.reader); }
       catch (error) {
         await current.logout();
         throw error;
       }
-      // No caller-supplied next URL. Readiness remains distinct from the fixture learning backend.
       headers.set('Location', `${settings.appOrigin}/login`);
       return new Response(null, { status: 303, headers });
     } catch (error) {

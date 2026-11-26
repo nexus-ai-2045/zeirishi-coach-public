@@ -5,7 +5,6 @@ import { APPROVED_CAFE_MATERIALS, APPROVED_CATALOG, APPROVED_PLAN_CANDIDATES,
 import { StudyError } from '../src/domain/types';
 import { attestMaterialRecord, makeMaterialRecord } from './helpers/material-fixture';
 
-// These are isolated integration fixtures, not proof of real expert review or legal permission.
 const registryError = (error: unknown) => error instanceof StudyError
   && error.code === 'INVALID_MATERIAL_REGISTRY' && error.status === 503;
 
@@ -124,7 +123,6 @@ test('同じ概念版に複数ケースを束ね、公開候補と旧単件選�
   second.document.prompt.caseVersion = second.version;
   second.document.prompt.consultationTitle = '別の相談者の相談';
   for (const result of Object.values(second.document.results)) result.caseVersion = second.version;
-  // conceptVersion remains the shared stable concept revision.
   attestMaterialRecord(second);
 
   const supply = createApprovedSupply([first, second]);

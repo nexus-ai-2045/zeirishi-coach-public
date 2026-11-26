@@ -21,7 +21,6 @@ export async function GET(request: Request) {
     const db = await getDevelopmentDatabase();
     await initializeOwnerAccess(db);
     await db.transaction(tx => assertOwnerActive(tx, owner));
-    // Only the requested pool is projected; never expose scores, explanations, or other pools' questions.
     return Response.json({ items: BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item => item.intendedUse === pool).map(item => ({...publicBookkeepingQuestion(item),conceptLabel:BOOKKEEPING_ALL_CONCEPTS.find(concept=>concept.conceptId===item.question.conceptId)?.label,caseVersion:BOOKKEEPING_TRIAL_QUESTION_MATERIALS.find(material => material.prompt().caseId === item.question.id)!.caseVersion})), developmentOnly: true });
   } catch (error) { return Response.json({ error: error instanceof StudyError ? error.code : 'INTERNAL_ERROR' }, { status: error instanceof StudyError ? error.status : 500 }); }
 }

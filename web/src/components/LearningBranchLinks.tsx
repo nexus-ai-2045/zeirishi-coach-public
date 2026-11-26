@@ -2,7 +2,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import styles from './LearningAtlas.module.css';
 
-/** Connect a card's marker to its visible children without crossing their content. */
 export function LearningBranchLinks() {
   const svg = useRef<SVGSVGElement>(null);
   const [drawing, setDrawing] = useState({ width: 1, height: 1, path: '' });

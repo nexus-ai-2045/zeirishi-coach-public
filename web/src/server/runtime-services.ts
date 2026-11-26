@@ -47,7 +47,6 @@ const runtimeGlobal = globalThis as typeof globalThis & {
   zeirishiPlanV1?: Promise<Plan>;
   zeirishiReviewCardsV1?: ReturnType<typeof createReviewCardService>;
 };
-/** All adapters share one file-backed connection. An old hot-reloaded process must restart. */
 export function getDevelopmentDatabase(): Promise<PGlite> {
   if (process.env.ZEIRISHI_FIXTURE_MODE !== '1') throw new StudyError('FIXTURE_DISABLED', 503);
   if (runtimeGlobal.zeirishiStudyService || runtimeGlobal.zeirishiStudyV2 || runtimeGlobal.zeirishiConfidenceV2 || runtimeGlobal.zeirishiCafeV2 || runtimeGlobal.zeirishiDataV3 || runtimeGlobal.zeirishiDataV4 || runtimeGlobal.zeirishiDataV7 || runtimeGlobal.zeirishiEvidenceDatabaseV2)
@@ -76,7 +75,6 @@ export function getCafeService(): Promise<Cafe> {
   return runtimeGlobal.zeirishiCafeV3 ??= getDevelopmentDatabase().then(db => createCafeService(db))
     .catch(error => { delete runtimeGlobal.zeirishiCafeV3; throw error; });
 }
-/** Local-mode review cards (forgetting-curve self checks); shares the development database. */
 export function getReviewCardService(): ReturnType<typeof createReviewCardService> {
   return runtimeGlobal.zeirishiReviewCardsV1 ??= getDevelopmentDatabase().then(db => createReviewCardService(db))
     .catch(error => { delete runtimeGlobal.zeirishiReviewCardsV1; throw error; });

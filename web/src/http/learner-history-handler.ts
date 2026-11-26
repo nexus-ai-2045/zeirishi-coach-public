@@ -4,7 +4,6 @@ import { validateHistoryRequest } from './history-handler';
 
 type Options = Omit<Parameters<typeof createLearnerContextHandler>[0], 'operation'>;
 
-/** Read-only history projection; online identity does not qualify synthetic answers for assessment. */
 export function createLearnerHistoryHandler(options: Options) {
   return createLearnerContextHandler({ ...options, operation: async (request, learner) => {
     validateHistoryRequest(request);

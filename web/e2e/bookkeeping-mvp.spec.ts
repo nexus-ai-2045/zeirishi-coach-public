@@ -4,7 +4,6 @@ import { BOOKKEEPING_TRIAL_CASES } from '../src/server/bookkeeping-trial-supply'
 const origin = 'http://127.0.0.1:3210';
 
 async function openBookkeepingMap(page: Page) {
-  // 初回の本人cookieと画面初期化を確定してから、同じ本人として案件を準備する。
   const ready = page.waitForResponse(response => new URL(response.url()).pathname === '/api/profile'
     && response.request().method() === 'GET');
   await page.goto('/#map');
@@ -50,7 +49,6 @@ test('練習309問と独立プールを分離し、選択前に正答・採点�
   const ready=page.waitForResponse(response=>response.url().includes('/api/profile')&&response.request().method()==='GET');
   await page.goto('/#map');
   expect((await ready).status()).toBe(200);
-  // 練習問題の一覧パネルは学習地図から外した（ツリー1つに統一）。問題はツリーの論点と学習記録から開く。
   await expect(page.getByRole('region',{name:'簿記論の問題演習'})).toHaveCount(0);
   const practice = await (await page.request.get('/api/practice?pool=practice')).json();
   expect(practice.items).toHaveLength(309);
@@ -133,20 +131,17 @@ test('簿記論の学習地図も他科目と同じツリー1つで、ブレイ�
   for (const name of ['これまでの地図', '全体ツリー（新）', 'マップ', 'リスト']) await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
   await expect(page.getByLabel(/ブレインマップ/)).toHaveCount(0);
   await expect(view.locator('[aria-label="この科目の進み具合"]')).toContainText('理解した');
-  // 簿記論だけの旧「全体像」ページと、ツリーの下の旧パネル（自信の申告・ミニ演習・試用復習）はない。
   await expect(page.getByRole('button', { name: '簿記の全体像をつかむ →' })).toHaveCount(0);
   for (const text of ['この科目の自信をまとめて設定', '開始前・終了時のミニ演習', '簿記論の試用復習']) await expect(page.getByText(text)).toHaveCount(0);
   await page.goto('/#overview');
   await expect(page).toHaveURL(/#map$/);
   await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
-  // 旧パネルにあった練習問題は、論点の説明の中から開ける。
   await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
   await page.getByRole('button', { name: /^支払日と費用の期間は別（/ }).click();
   const detail = page.getByRole('complementary', { name: '選んだ論点の説明' });
   await detail.getByText(/^練習問題（\d+問）$/).click();
   await detail.getByRole('button', { name: '練習問題 1 →' }).click();
   await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
-  // 確認問題（相談ケース）が無い論点でも、練習問題は開ける。
   await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
   await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
   await page.getByRole('button', { name: /^取引には二つの面がある（/ }).click();
@@ -163,7 +158,6 @@ test('簿記論の学習地図も他科目と同じツリー1つで、ブレイ�
 
 test('期限切れの別教材は地図へ戻り、保険料ケースへ無指定で開始しない', async ({page})=>{
   test.setTimeout(90000);
-  // 初回応答が遅い場合も、本人と画面の準備が終わるまで案件準備を待つ。
   await page.route('**/api/profile?subjectId=bookkeeping', async route => {
     const response = await route.fetch();
     await new Promise(resolve => setTimeout(resolve, 500));

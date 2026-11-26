@@ -7,7 +7,6 @@ import { jsonResponse, readLocalCookie, setLocalCookie } from './local-session';
 type Service = Awaited<ReturnType<typeof createCafeService>>;
 type Cards = Awaited<ReturnType<typeof createReviewCardService>>;
 const key = (value: unknown): value is string => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
-/** Parses one review-card check: { requestId, subjectId, topicId, remembered } and nothing else. */
 export function parseReviewCheck(value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new StudyError('INVALID_INPUT');
   const input = value as Record<string, unknown>;
@@ -16,10 +15,6 @@ export function parseReviewCheck(value: unknown) {
     || typeof input.remembered !== 'boolean') throw new StudyError('INVALID_INPUT');
   return { requestId: input.requestId, subjectId: input.subjectId, topicId: input.topicId, remembered: input.remembered };
 }
-/**
- * GET: the local learner's answered check questions and review-card checks, so the learning map can
- * colour each topic. POST: records one review-card check. Practice records only, never mastery evidence.
- */
 export function createPracticeProgressHandler(getService: () => Promise<Service>, getCards: () => Promise<Cards>, fixtureMode: () => string | undefined) {
   return async (request: Request) => {
     try {

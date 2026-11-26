@@ -26,10 +26,6 @@ function instant(value: string) {
 }
 const key = (ref: ConceptRef) => JSON.stringify([ref.subjectId, ref.conceptId, ref.conceptVersion]);
 
-/** A projection of the existing completed-case history, not a new schedule or mastery ledger.
- * First non-retention completion anchors a concept version; repeating practice cannot postpone it.
- * Completing a retention draft never becomes the anchor for another retention draft.
- */
 export function projectBookkeepingTrialReview(rows: readonly CompletedCase[], asOf: Date): BookkeepingTrialReview {
   if (!Number.isFinite(asOf.getTime())) throw new StudyError('INVALID_CLOCK', 500);
   const current = new Set(BOOKKEEPING_ALL_CONCEPTS.map(concept => key({ subjectId: 'bookkeeping', ...concept })));
@@ -79,8 +75,6 @@ export function projectBookkeepingTrialReview(rows: readonly CompletedCase[], as
 export function createBookkeepingTrialReviewReader(db: TransactionDatabase, now = () => new Date()) {
   return async (owner: string) => db.transaction(async tx => {
     await assertOwnerActive(tx, owner);
-    // Do not call CafeService.history(): it caps history at 20 and returns submission rather
-    // than completion time. Do not write or purge practice/progress records from this GET.
     const rows = (await tx.query<CompletedCase>(`SELECT i.case_version AS "caseVersion", a.result->>'scoringVersion' AS "scoringVersion", i.completed_at AS "completedAt"
       FROM cafe_instances i JOIN cafe_attempts a ON a.instance_id=i.id AND a.owner_id=i.owner_id
         AND a.case_version=i.case_version AND a.result->>'caseVersion'=i.case_version

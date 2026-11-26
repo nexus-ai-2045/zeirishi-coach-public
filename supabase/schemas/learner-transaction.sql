@@ -1,8 +1,3 @@
--- learner-access.sql の後に適用する宣言。外部DBへの適用・role配備は別途承認と検証が必要。
--- https://www.postgresql.org/docs/current/sql-select.html
--- https://www.postgresql.org/docs/current/sql-createfunction.html
--- 認証済み一般利用者の権限を広げず、専用サーバーロールの同一TX内で利用許可行をロックする。
--- FOR SHARE に必要な列UPDATE権限だけを制限ロールへ与え、RLS WITH CHECK(false)で実更新を拒否する。
 begin;
 
 create role zeirishi_app nologin noinherit nosuperuser nobypassrls nocreatedb nocreaterole noreplication;
@@ -66,8 +61,6 @@ begin
 end;
 $$;
 
--- 非superuserの配備実行者にはguardへのSET ROLE能力が別途必要。承認前にmembershipを自動付与しない。
--- 所有者変更に必要なCREATEは同一TX内だけ一時付与し、外から観測できる最終状態では撤回する。
 grant create on schema zeirishi_private to zeirishi_access_guard;
 alter function zeirishi_private.require_active_learner(uuid) owner to zeirishi_access_guard;
 revoke create on schema zeirishi_private from zeirishi_access_guard;

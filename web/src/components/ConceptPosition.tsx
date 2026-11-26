@@ -7,7 +7,6 @@ type Props = {
   caseVersion: string;
   conceptId: string;
   consultationTitle: string;
-  /** Shown at the start of the path; defaults to 簿記論 for the original bookkeeping screens. */
   subjectLabel?: string;
   onOpenMap?: (conceptId: string, topicId: string | null) => void;
 };

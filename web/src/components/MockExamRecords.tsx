@@ -17,7 +17,6 @@ const toDraft = ({ record }: MockExamItem): Draft => ({ subjectId: record.subjec
   unseen: record.unseen === null ? '' : record.unseen ? 'yes' : 'no' });
 class RequestError extends Error { constructor(readonly status: number, readonly code: string) { super(code); } }
 
-/** Self-reported reference records only; this component cannot mark an exam reviewed. */
 export function MockExamRecords({ disabled, expectedLearnerId, onBusyChange, onDirtyChange }: {
   disabled: boolean; expectedLearnerId?: string; onBusyChange: (busy: boolean) => void; onDirtyChange: (dirty: boolean) => void;
 }) {

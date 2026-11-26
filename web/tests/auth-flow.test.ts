@@ -101,7 +101,6 @@ test('actual SDK requests PKCE with signup disabled; rejected provider response 
   const calls: { url: string; body: Record<string, unknown> }[] = [];
   globalThis.fetch = async (input, init) => {
     calls.push({ url: String(input), body: JSON.parse(String(init?.body)) });
-    // Isolated transport stub only: no network, real credentials, user or email.
     return Response.json({ code: 'otp_disabled', msg: 'test provider rejection' }, { status: 400 });
   };
   try {

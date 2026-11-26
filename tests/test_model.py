@@ -55,8 +55,8 @@ def test_confidence_and_memo_factor():
 
 
 def test_mastery_requires_spaced_successes_and_memorization():
-    assert model.mastery(0.92, 1, "calc", 0) < model.RANK_THRESHOLDS[1]      # 1 日正答では一人前にならない
-    assert model.mastery(0.92, 3, "calc", 0) >= model.RANK_THRESHOLDS[2]     # 3 日正答で師範圏
+    assert model.mastery(0.92, 1, "calc", 0) < model.RANK_THRESHOLDS[1]
+    assert model.mastery(0.92, 3, "calc", 0) >= model.RANK_THRESHOLDS[2]
     assert model.mastery(0.92, 3, "theory", 0) < model.mastery(0.92, 3, "theory", 3)
     assert model.mastery(0.92, 3, "theory", 3) == pytest.approx(0.92)
 
@@ -90,8 +90,8 @@ def test_target_curve_reaches_target_at_final_phase_then_flat():
     assert model.target_at(0.3, 30, 60) == pytest.approx(0.6)
     assert model.target_at(0.3, 60, 60) == pytest.approx(0.9)
     assert model.target_at(0.3, 90, 60) == pytest.approx(0.9)
-    assert model.target_at(0.95, 10, 60) == pytest.approx(0.95)   # 既に目標超えなら維持
-    assert model.target_at(0.3, 5, 0) == pytest.approx(0.9)       # 直前期に入っていれば目標
+    assert model.target_at(0.95, 10, 60) == pytest.approx(0.95)
+    assert model.target_at(0.3, 5, 0) == pytest.approx(0.9)
 
 
 def test_initial_params_and_level():

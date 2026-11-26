@@ -28,7 +28,6 @@ export type AiCoachReply = {
 export type AiCoachResult = AiCoachReply & {
  mode: 'fixed' | 'ai'; label: string; reason: string; evidenceQualification: 'practice_only';
 };
-/** Adapter must cap output and disable its own retries. No owner or attempt identifier crosses this boundary; recent turns are untrusted learner-supplied context. */
 export interface AiCoachProvider {
  billingMode?: 'metered' | 'subscription';
  maximumCostMilliYen?: number;
@@ -153,13 +152,11 @@ export function createAiCoachServiceOnPreparedDatabase(db: TransactionDatabase, 
        || (subscription ? output.actualCostMilliYen !== undefined : (!Number.isSafeInteger(output.actualCostMilliYen)
          || output.actualCostMilliYen! < 0 || output.actualCostMilliYen! > maximum!))) throw new Error('invalid_response');
    } catch {
-     // Metered cost remains unknown; subscription failures do not reserve yen or block a fresh request.
      await settleWithoutReply();
      return fixed('provider_unavailable', input.purpose, input.question);
    } finally { if (timer) clearTimeout(timer); }
    try {
      return await db.transaction(async tx => {
-       // Never expose a late reply following deletion, completion, expiry, or another saved revision.
        await bound(tx,owner,caseId,input);
        if (!subscription) await tx.query('UPDATE ai_coach_budgets SET reserved_milliyen=reserved_milliyen-$2 WHERE month=$1',[reserved.month,maximum! - output.actualCostMilliYen!]);
        await tx.query("UPDATE ai_interaction_summaries SET status='completed',actual_milliyen=$3 WHERE owner_id=$1 AND request_id=$2",[owner,input.requestId,subscription ? null : output.actualCostMilliYen]);

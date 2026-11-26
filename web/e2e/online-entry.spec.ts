@@ -4,9 +4,6 @@ import { cafePrompt, gradeCafeChoice, CAFE_CASE_VERSION } from '../src/server/ca
 import type { CafeView } from '../src/server/cafe-service';
 import { createWeeklyPlan, type PlanCandidate } from '../src/domain/weekly-plan';
 
-// Browser plugin not available: the existing Playwright runner owns browser validation.
-// UI transport fixtures only. These tests prove neither real Auth/DB access nor published material.
-// The synthetic case is imported in the test process, never into a client component.
 const pointerKey = 'zc-cafe-case-v2';
 const auditKey = 'online-pointer-audit';
 const sentinel = 'local-only-resume-sentinel';
@@ -33,7 +30,6 @@ async function auditLocalPointer(page: Page) {
 
 async function expectLocalPointerUntouched(page: Page) {
   expect(await page.evaluate(key => JSON.parse(sessionStorage.getItem(key) ?? '[]'), auditKey)).toEqual([]);
-  // Property access does not itself invoke our instrumented getItem.
   expect(await page.evaluate(key => localStorage[key], pointerKey)).toBe(sentinel);
 }
 
@@ -180,7 +176,6 @@ for (const action of ['individual', 'bulk', 'exam-subjects'] as const) {
     await page.locator('summary').filter({ hasText: '模試の参考記録' }).click();
     const unsaved = page.getByLabel('主催・提供元', { exact: true });
     await unsaved.fill('保存していない別の入力');
-    // The hidden mock-exam draft must survive moving to the map for confidence changes.
     if (action !== 'exam-subjects') await openView(page, '学習地図');
     if (action === 'individual') await page.getByRole('group', { name: 'この概念の自信', exact: true }).getByRole('button', { name: '少し怪しい', exact: true }).click();
     else if (action === 'bulk') await page.getByRole('button', { name: 'すべて「少し怪しい」', exact: true }).click();
@@ -205,7 +200,6 @@ for (const action of ['individual', 'bulk', 'exam-subjects'] as const) {
     await expect.poll(() => posts.length).toBe(2);
     expect(posts[1].revision).toBe(4);
     expect(posts[1].reports).toEqual([{ subjectId: 'bookkeeping', conceptId: 'ui-versioned', conceptVersion: 'v2', selfConfidence: 'uncertain' }]);
-    // Back on records, the retained draft is shown again, not only kept in a hidden field.
     await openView(page, '学習記録');
     await expect(unsaved).toBeVisible();
     await expect(unsaved).toHaveValue('保存していない別の入力');
@@ -236,7 +230,6 @@ test('別タブの明示ログアウトは応答待ち中から旧本人の未�
   const login = await context.newPage();
   await login.goto('/login');
   await expect(login.getByRole('heading', { name: 'ログインを確認しました' })).toBeVisible();
-  // Opening the login tab with the same identity must not destroy the draft.
   await expect(provider).toHaveValue('Aliceだけの未保存入力');
   try {
     await login.getByRole('button', { name: 'このブラウザーからログアウト' }).click();
@@ -350,8 +343,6 @@ test('オンライン模試記録は本人ヘッダーを固定し、本人変�
       const body = route.request().postDataJSON();
       expect(body.record.provider).toBe('架空オンライン提供元');
       expect(body.record.score).toBe(67);
-      // This response only simulates rejection after the verified session changed.
-      // No real Auth session is switched and no server identity check is proved here.
       await route.fulfill({ status: 409, json: { error: 'AUTH_IDENTITY_CHANGED' } });
     }
     return true;
@@ -535,7 +526,6 @@ test('説明保存の認証切れで入力を残し、別タブログインを�
   await expect(login).toHaveAttribute('href', '/login');
   await expect(login).toHaveAttribute('target', '_blank');
   await expect(login).toHaveAttribute('rel', /noopener/);
-  // Advance beyond autosave debounce; authentication errors must not create a retry loop.
   await page.waitForTimeout(1500);
   expect(failedSaves).toBe(1);
   await expect(input).toHaveValue(explanation);
@@ -548,8 +538,6 @@ test('別タブでAliceからBobへ切り替わった削除409は成功と扱わ
   let deletes = 0;
   const unexpected = await mockOnline(page, async (route, path) => {
     if (path !== '/api/data') return false;
-    // The transport stands in for a verified Bob session. The stale UI must keep Alice's
-    // expected learner header; only the real server can prove the identity mismatch.
     expect(route.request().headers()['x-zeirishi-learner']).toBe(learnerId);
     expect(route.request().method()).toBe('POST');
     deletes++;
@@ -604,7 +592,6 @@ for (const refusal of [
     await expect(page.getByRole('alert', { name: '保存エラー' })).toContainText(refusal.message);
     await expect(page.getByRole('heading', { name: '学習記録', level: 1 })).toBeVisible();
     await expect(page.getByRole('button', { name: 'この相談で学ぶ →', exact: true })).toHaveCount(0);
-    // No automatic retries or fallback starts after a refused resume.
     await page.waitForTimeout(1500);
     expect(reads).toBe(1);
     expect(writes).toBe(0);
@@ -616,7 +603,6 @@ for (const refusal of [
 test('保険料以外の架空教材を表示し、教材注記は自信固定後だけ開示する（UI通信mock）', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
-  // Entirely fictional UI transport data. No real material review or publication is asserted.
   const caseId = 'ui-only-sales-return';
   const version = 'ui-only-sales-return-v1';
   const checkpoints = ['返品された売上を取り消す', '入金の処理と区別する'];
@@ -715,7 +701,6 @@ test('2番目の教材を選択して再試行しても概念とrequestIdが保�
   const consoleErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('console', message => {
-    // A single deliberate 503 transport response is expected; all other console errors fail.
     if (message.type() === 'error' && !/Failed to load resource.*503/.test(message.text())) consoleErrors.push(message.text());
   });
   const concepts = [
@@ -790,7 +775,6 @@ test('オンラインのホームは保存中の相談を本文を読まずに�
   const reads: string[] = [];
   const unexpected = await mockOnline(page, async (route, path) => {
     if (path === '/api/history') {
-      // An older submitted case and a newer unsubmitted draft: home offers only the most recent one.
       await route.fulfill({ json: { developmentOnly: false,
         items: [{ caseId: 'ui-only-older-submitted', caseVersion: CAFE_CASE_VERSION, submittedAt: '2026-09-10T00:00:00.000Z',
           status: 'active', phase: 'teach_back', confidenceFixed: true, correct: true, evidenceQualification: 'practice_only' }],
@@ -808,7 +792,6 @@ test('オンラインのホームは保存中の相談を本文を読まずに�
   await expect(resume).toBeVisible();
   await expect(page.getByText('保存中の相談ケース · 判断する', { exact: false })).toBeVisible();
   await expect(page.getByRole('button', { name: '簿記の全体像を見る →', exact: true })).toHaveCount(0);
-  // The card comes from the history projection; the case body is read only after the explicit action.
   await page.waitForLoadState('networkidle');
   expect(reads).toEqual([]);
   await resume.click();
@@ -842,7 +825,6 @@ test('オンラインのホームは戻るたびに履歴を読み直し、終�
   const unexpected = await mockOnline(page, async (route, path) => {
     if (path !== '/api/history') return false;
     historyReads++;
-    // First visit: one draft. Later visits: the draft was finished elsewhere.
     await route.fulfill({ json: { developmentOnly: false, items: [], drafts: historyReads === 1 ? [{
       caseId: 'ui-only-finished-elsewhere', caseVersion: CAFE_CASE_VERSION, phase: 'decision',
       savedAt: '2026-09-20T00:00:00.000Z', expiresAt: '2099-01-01T00:00:00.000Z' }] : [] } });

@@ -63,7 +63,7 @@ def test_record_correct_updates_topic_and_rewards(st, boki):
     assert t["due"] == "2026-09-05" and t["reps"] == 1 and t["correct"] == 1
     assert t["correct_days"] == [TODAY]
     assert r["xp"] >= state.XP_CORRECT and st["xp"] == r["xp"]
-    assert r["mastery_after"] < model.RANK_THRESHOLDS[1]   # 1 日正答では見習い止まり
+    assert r["mastery_after"] < model.RANK_THRESHOLDS[1]
     assert st["streak"] == {"days": 1, "last_study_date": TODAY}
 
 
@@ -151,9 +151,6 @@ def test_titles(st, boki):
         state.record_attempt(st, boki, "boki.sales.shohin", 1.0, 100, "none", 3, d)
     assert state.TITLE_MASTER in st["titles"]
     state.record_attempt(st, boki, "boki.cash.genkin", 0.0, 900, "time", 3, "2026-09-07")
-    # design (docs/specs §2.4): 称号「捨て問の目利き」は time 分類が 5 回連続ゼロで成立する。
-    # 論点を分散させて回す (次回復習日の指数バックオフを避けるため。state.py 側の interval
-    # 計算には手を入れない、テスト側の都合)。
     other_topics = [t["id"] for t in boki["topics"] if t["id"] != "boki.cash.genkin"]
     for i in range(state.TITLE_TIME_STREAK):
         topic = other_topics[i % len(other_topics)]
@@ -162,9 +159,6 @@ def test_titles(st, boki):
 
 
 def test_title_time_streak_does_not_require_prior_time_error(boki, coach_home):
-    """PR #1 レビュー指摘 (state.py:224): 一度も time 誤答をしていない学習者も
-    5 回連続で time 以外の解答をすれば称号を得られる (docs/specs §2.4 に「前提として
-    time 誤答が必要」という記述は無い)。"""
     s = state.init_state(boki, exam_date="2027-08-05", level=3, today=TODAY)
     topics = [t["id"] for t in boki["topics"]]
     for i in range(state.TITLE_TIME_STREAK):
@@ -198,15 +192,11 @@ def test_history_row_records_mastery_avg_start(st, boki):
     start = st["history"][0]["mastery_avg_start"]
     assert start == pytest.approx(st["history"][0]["mastery_avg"])
     state.record_attempt(st, boki, DEP, 1.0, 100, "none", 3, TODAY)
-    # 同日内の 2 回目以降の snapshot_history は行を in-place 更新するが、mastery_avg_start は
-    # その日の学習開始前の値のまま変わらない。
     assert st["history"][-1]["mastery_avg_start"] == pytest.approx(start)
     assert st["history"][-1]["mastery_avg"] > start
 
 
 def test_rank_calibration_dropped_after_score_only_mock(st, boki):
-    """PR #1 レビュー指摘 (state.py:113): 直近模試に順位が無ければ、古い順位較正を
-    引きずらない (docs/specs §7.6「順位がある直近模試がある時のみ」)。"""
     state.record_mock(st, boki, 90, 120, TODAY, rank=1, of=1000)
     _, _, prob_with_rank = state.compute_scores(st, boki)
     state.record_mock(st, boki, 10, 120, "2026-09-05", rank=None, of=None)
@@ -230,7 +220,6 @@ def test_mock_validates_score_and_rank(st, boki):
 
 
 def test_mock_updates_streak(st, boki):
-    """PR #1 レビュー指摘 (state.py:309): 模試も学習日として streak に数える。"""
     assert st["streak"]["days"] == 0
     state.record_mock(st, boki, 55, 120, TODAY)
     assert st["streak"] == {"days": 1, "last_study_date": TODAY}
@@ -239,7 +228,6 @@ def test_mock_updates_streak(st, boki):
 
 
 def test_negative_seconds_rejected(st, boki):
-    """PR #1 レビュー指摘 (state.py:285): 負の所要時間を拒否する。"""
     with pytest.raises(ValueError):
         state.record_attempt(st, boki, DEP, 1.0, -60, "none", 3, TODAY)
 

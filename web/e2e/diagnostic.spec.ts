@@ -35,7 +35,6 @@ test('実APIの診断在庫ゼロは未達にせず、記録を作らず相談�
  await expect(page.getByRole('heading', { name: 'カフェの年間保険料をどう処理する？', exact: true })).toBeVisible();
 });
 
-// Explicit synthetic material, restricted to intercepted browser responses. The deployed inventory remains empty.
 const fixture: DiagnosticQuestion = {
  id: 'screen-only-q1', version: 'screen-v1', subjectId: 'bookkeeping', conceptId: 'prepaid-expenses', conceptVersion: 'screen-v1',
  familyId: 'screen-only-family', poolId: 'screen-only-pool', poolVersion: 'screen-v1', purpose: 'diagnostic', stage: 'anchor', status: 'active',
@@ -75,7 +74,6 @@ async function mockDiagnostic(page: Page, failFirstSubmit: boolean) {
    revision++;
   }
   const item = project(); receipts.set(body.requestId, item);
-  // The first submission is accepted server-side, then its response is lost.
   if (body.action === 'submit' && failFirstSubmit && !failed) { failed = true; await route.abort('failed'); return; }
   await route.fulfill({ json: { item } });
  });

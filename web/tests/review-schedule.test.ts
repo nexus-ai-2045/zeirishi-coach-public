@@ -36,7 +36,6 @@ test('practice・AI案閲覧・旧ログ・未審査・自己申告は予定を�
 test('当該概念の正式な未達・ヒントは翌日へ戻り、同日・期限前の正答は進めない', () => {
   const state = advance(null, first);
   assert.equal(advance(state, evidence('b', '2026-09-08T11:00:00Z')).nextReviewAt, state.nextReviewAt);
-  // JST翌日でも24時間未経過なら期限前。
   assert.equal(advance(state, evidence('c', '2026-09-08T16:00:00Z')).nextReviewAt, state.nextReviewAt);
   const progressed = advance(state, evidence('d', state.nextReviewAt!));
   for (const patch of [{ outcome: 'not_met' as const }, { hintsUsed: 1 }]) {

@@ -30,7 +30,6 @@
 
 .branch[data-confirmed=true]{border-color:#359855;background:#f0faf0}.branch[data-confirmed=true]:before,.branch[data-confirmed=true]:after,.justConfirmed:before,.justConfirmed:after{border-color:#359855}.justConfirmed{border-color:#359855}.leaves>li[data-confirmed=true]:before{border-color:#359855}.leaves>li[data-confirmed=true]>.topic{background:#e5f5df}.justConfirmed .leaves{border-color:#359855}
 
-/* Keep one generation on one row, or one connected vertical trunk. */
 .tree{position:relative;isolation:isolate;padding:30px 26px}
 .connections{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:-1;max-width:none!important}
 .connections path{fill:none;stroke:#719d8b;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
@@ -53,7 +52,6 @@
 }
 @media(max-width:600px){.tree{padding:20px 13px}.branch{padding:13px 11px}.unitNode>strong{font-size:16px}}
 
-/* The inner trunk starts at the heading marker and follows visible child buttons. */
 .branchConnections{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;max-width:none!important}
 .branchConnections path{fill:none;stroke:#719d8b;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .branch[data-current=true]>.branchConnections path{stroke:#147d72}
@@ -65,7 +63,6 @@
 .related{border-left:0;margin-left:0;padding-left:9px}
 .related>div:before{display:none}
 
-/* Larger subject packs keep readable cards and route subsequent rows via the outside trunk. */
 .branches,.units{grid-template-columns:repeat(3,minmax(0,1fr));gap:44px 20px;margin-left:16px}
 .related{margin-left:12px;padding-left:14px;border-left:2px solid #b5cec2}
 .related>div:before{display:block}

@@ -17,13 +17,11 @@ test('authenticated multi-material routing binds starts, reopens stored version 
     await createCafeService(db);
     const first = makeMaterialRecord(), second = makeMaterialRecord();
     second.materialId = 'test-second'; second.version = 'test-second-v1';
-    // Two distinct consultations share one concept and its review version.
     second.document.prompt.caseId = second.materialId; second.document.prompt.caseVersion = second.version;
     second.document.prompt.conceptId = second.concept.conceptId; second.document.prompt.title = '別の教材';
     for (const result of Object.values(second.document.results)) result.caseVersion = second.version;
     attestMaterialRecord(second);
     let supply = createApprovedSupply([first, second]);
-    // Auth role and membership SQL are stubbed; storage and request replay are real isolated PGlite.
     const prepared: TransactionDatabase = { transaction: operation => db.transaction(tx => operation({ query: async <T>(sql: string, params?: unknown[]) => {
       if (sql.includes('pg_catalog.pg_roles')) return { rows: [{ name: 'zeirishi_app', superuser: false, bypass: false }] as T[] };
       if (sql.includes('set_config') || sql.includes('require_active_learner')) return { rows: [] };

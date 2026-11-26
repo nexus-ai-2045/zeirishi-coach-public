@@ -3,7 +3,6 @@ import { isAuthSessionMissingError } from '@supabase/supabase-js';
 import { StudyError } from '../domain/types';
 
 export type AuthConfig = { url: string; publishableKey: string; appOrigin: string };
-/** Explicit activation is separate from loopback fixtures; never silently promote local cookies. */
 export function readAuthConfig(env: Record<string, string | undefined> = process.env): AuthConfig {
   if (env.ZEIRISHI_SUPABASE_ENABLED !== '1') throw new StudyError('AUTH_DISABLED', 503);
   if (env.ZEIRISHI_FIXTURE_MODE === '1') throw new StudyError('AUTH_MODE_CONFLICT', 503);
@@ -18,11 +17,9 @@ export function readAuthConfig(env: Record<string, string | undefined> = process
   return { url: url.origin, publishableKey: key, appOrigin: app.origin };
 }
 
-/** Every request gets its own SDK client, cookie jar and response headers. Never global-cache it. */
 export function createAuthContext(request: Request, config: AuthConfig) {
   const raw = request.headers.get('cookie') ?? '';
   const names = raw.split(';').filter(part => part.includes('=')).map(part => part.slice(0, part.indexOf('=')).trim());
-  // The SDK parser keeps only the first duplicate, so detect ambiguity before parsing.
   if (raw.length > 32768 || new Set(names).size !== names.length) throw new StudyError('INVALID_COOKIE');
   const cookies = parseCookieHeader(raw);
   const jar = new Map(cookies.map(cookie => [cookie.name, cookie.value ?? '']));
@@ -49,7 +46,6 @@ export type VerifiedAuthReader = {
   getUser: () => Promise<{ user: { id: string; isAnonymous: boolean; emailConfirmed: boolean } | null; error: boolean }>;
   getAccess: (id: string) => Promise<{ userId: string; status: string } | null>;
 };
-/** Verified identity only; callers must separately check current membership before learning access. */
 export async function requireVerifiedLearner(reader: Pick<VerifiedAuthReader, 'getUser'>): Promise<{ userId: string }> {
   const result = await reader.getUser();
   if (result.error) throw new StudyError('AUTH_UNAVAILABLE', 503);

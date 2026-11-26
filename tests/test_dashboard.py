@@ -20,7 +20,7 @@ def st(boki, coach_home):
 
 def test_render(st, boki):
     html = dashboard.render_dashboard(report.build_report(st, boki, TODAY), st, boki)
-    assert html.count("<polyline") == 2 and "stroke-dasharray" in html     # 実績 + 目標 (点線)
+    assert html.count("<polyline") == 2 and "stroke-dasharray" in html
     assert "簿記論" in html and "合格確率" in html and "次のボス" in html
     for t in boki["topics"]:
         assert t["name"] in html

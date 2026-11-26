@@ -4,7 +4,6 @@ import { StudyError } from '../domain/types';
 import type { SchemaDatabase, TransactionDatabase } from './database';
 import { assertOwnerActive, initializeOwnerAccess, type OwnerTransaction } from './owner-access';
 
-/** Unverified personal reference only. Never convert this to trusted exam-readiness evidence. */
 export type MockExamRecord = { subjectId: SubjectId; examYear: number; provider: string; examId: string;
   completedOn: string; score: number; maxScore: number; elapsedMinutes: number | null;
   rank: { position: number; population: number } | null; unseen: boolean | null };
@@ -21,7 +20,6 @@ function exact(value: unknown, keys: readonly string[]): Record<string, unknown>
 const uuid = (value: unknown): value is string => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 function label(value: unknown): string { if (typeof value !== 'string' || !value.trim() || value.length > 200) invalid(); return value.trim(); }
 function finite(value: unknown): value is number { return typeof value === 'number' && Number.isFinite(value); }
-/** Date-only input is evaluated in Japan, not in the server host's local timezone. */
 export function parseMockExamSave(value: unknown, now = new Date()): MockExamSave {
   if (!Number.isFinite(now.getTime())) throw new StudyError('INVALID_CLOCK', 500);
   const input = exact(value, ['requestId', 'id', 'revision', 'record']);
@@ -64,7 +62,6 @@ export async function initializeMockExamSchema(db: Pick<SchemaDatabase, 'exec'>)
     FOREIGN KEY(owner_id,record_id) REFERENCES mock_exam_records(owner_id,id)
   );`);
 }
-/** Internal export may request all records; the UI list is always limited to the latest 20. */
 export async function readMockExamRecords(tx: OwnerTransaction, owner: string, all = false): Promise<MockExamItem[]> {
   return (await tx.query<MockExamItem>(`SELECT id,revision,updated_at AS "updatedAt",record,
     'self_report_only'::text AS "evidenceQualification" FROM mock_exam_records WHERE owner_id=$1
@@ -101,8 +98,6 @@ export function createMockExamServiceOnPreparedDatabase(db: TransactionDatabase,
           'SELECT fingerprint,response FROM mock_exam_requests WHERE owner_id=$1 AND request_id=$2', [owner, input.requestId])).rows[0];
         if (receipt) {
           if (receipt.fingerprint !== fingerprint) throw new StudyError('REQUEST_CONFLICT', 409);
-          // Do not reapply an old save or display its old snapshot over a newer edit.
-          // The immutable receipt retains the original operation's result for audit only.
           return readItem(tx, owner, input.id);
         }
         const previous = (await tx.query<{ revision: number }>('SELECT revision FROM mock_exam_records WHERE owner_id=$1 AND id=$2', [owner, input.id])).rows[0];

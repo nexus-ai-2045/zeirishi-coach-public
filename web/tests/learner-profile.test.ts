@@ -19,8 +19,6 @@ async function fixture() {
   const raw = await createConfidenceService(db, []);
   let userId: string | null = alice; let invited = true; let revoked = false; let acquisitions = 0;
   const headers = new Headers({ 'Set-Cookie': 'verified=refresh; HttpOnly; Secure' });
-  // SQL persistence/CAS are real isolated PGlite. Role, JWT claims and private
-  // membership guard are stubs here: this is not production PostgreSQL RLS proof.
   const prepared: TransactionDatabase = { transaction: operation => db.transaction(tx => operation({ query: async <T>(sql: string, params?: unknown[]) => {
     if (sql.includes('pg_catalog.pg_roles')) return { rows: [{ name: 'zeirishi_app', superuser: false, bypass: false }] as T[] };
     if (sql.includes('set_config')) return { rows: [] };

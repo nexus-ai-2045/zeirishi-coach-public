@@ -58,8 +58,7 @@ jobs:
         working-directory: web
         run: npm ci
 
-      # Ubuntu のミラーが一時的に 503 を返すと依存パッケージの取得に失敗するため、間をあけて3回まで試す。
-      - name: Install Playwright Chromium
+      - name: Install Playwright Chromium (retry Ubuntu mirror 503 up to 3 times)
         working-directory: web
         run: |
           for attempt in 1 2 3; do
@@ -69,8 +68,7 @@ jobs:
           done
           exit 1
 
-      # next build generates the .next/types files imported by next-env.d.ts.
-      - name: Build web app
+      - name: Build web app (generates .next/types for typecheck)
         working-directory: web
         run: npm run build
 
@@ -88,17 +86,14 @@ jobs:
           ZEIRISHI_E2E_PRODUCTION: '1'
         run: npm run test:e2e
 
-      # This is an isolated entry smoke with external Auth/DB and mail disabled.
-      - name: Run online-mode mocked E2E
+      - name: Run online-mode E2E with external Auth, DB, and mail mocked
         working-directory: web
         run: npx playwright test --config playwright.online.config.ts
 
-      # The default E2E skips the bookkeeping MVP spec; this runs it with ZEIRISHI_BOOKKEEPING_MVP=1.
-      - name: Run bookkeeping MVP E2E
+      - name: Run bookkeeping MVP E2E (ZEIRISHI_BOOKKEEPING_MVP=1)
         working-directory: web
         run: npm run test:e2e:bookkeeping
 
-      # Every subject: map heading, a frequent-topic question, one explanation, and reload keeps the subject.
       - name: Run all-subjects E2E
         working-directory: web
         run: npx playwright test --config playwright.subjects.config.ts

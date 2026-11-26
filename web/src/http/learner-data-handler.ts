@@ -10,7 +10,6 @@ export function createLearnerDataHandler(options: Options) {
     const service = createDataServiceOnPreparedDatabase(learner.database, undefined, 'online');
     if (request.method === 'GET') return service.export(learner.userId);
     parseDataDeletion(await readBody(request));
-    // Learning-data deletion does not sign out or delete the authentication account.
     return service.delete(learner.userId);
   } });
   return async (request: Request) => {

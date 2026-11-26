@@ -22,7 +22,6 @@ function missingNames(env: Record<string, string | undefined>, names: readonly s
   return names.filter(name => !env[name]?.trim());
 }
 
-/** Validate explicit hosted Auth, mail and PostgreSQL configuration without connecting or printing values. */
 export function inspectRuntimeConfiguration(env: Record<string, string | undefined>): RuntimePreflightResult {
   if (env.ZEIRISHI_FIXTURE_MODE === '1') {
     return { status: 'mode_conflict', missing: [], externalConnectionVerified: false };
@@ -43,7 +42,6 @@ export function inspectRuntimeConfiguration(env: Record<string, string | undefin
     }
     return { status: 'configuration_valid_only', missing: [], externalConnectionVerified: false };
   } catch (error) {
-    // Only retain a fixed status. Parser details can contain configuration values later.
     const status = error instanceof StudyError
       && ['AUTH_MODE_CONFLICT', 'DATABASE_MODE_CONFLICT'].includes(error.code)
       ? 'mode_conflict'

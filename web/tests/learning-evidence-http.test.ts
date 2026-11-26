@@ -16,7 +16,6 @@ function request(suffix = query, cookie = owner, method = 'GET') {
     headers: { host: 'localhost:3210', origin: 'http://localhost:3210', 'content-type': 'application/json', cookie: cookie ? `zc-user=${cookie}` : '' },
     ...(method === 'POST' ? { body: JSON.stringify({ administrator: true, ownerId: other }) } : {}) });
 }
-// Synthetic, deliberately incomplete evidence; no actual expert approval.
 function fixture(): ExamEvidenceDocument {
   const document: ExamEvidenceDocument = { schemaVersion: 'exam-evidence-v1', ownerId: other,
     record: { id: 'private-other-result', recordVersion: 'fixture-v1', subjectId: 'bookkeeping', examYear: 2026,

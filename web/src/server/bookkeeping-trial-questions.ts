@@ -3,7 +3,6 @@ import type { CafeMaterial } from './cafe-case';
 import { StudyError } from '../domain/types';
 import { BOOKKEEPING_ALL_QUESTION_DRAFTS, gradeBookkeepingDraft, type BookkeepingDraftQuestion } from './bookkeeping-question-drafts';
 
-/** Server-only adapter: unreviewed drafts stay practice_only even in independent pools. */
 export function trialQuestionMaterial(item: BookkeepingDraftQuestion): CafeMaterial {
   const q = item.question;
   const caseVersion = `synthetic-question-${q.id}-${createHash('sha256').update(JSON.stringify(item)).digest('hex').slice(0,12)}`;

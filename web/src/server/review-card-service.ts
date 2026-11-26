@@ -4,11 +4,6 @@ import { assertOwnerActive, initializeOwnerAccess } from './owner-access';
 import type { ReviewCheck } from '../domain/topic-progress';
 
 const key = (value: unknown) => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
-/**
- * Review-card self checks (覚えていた／忘れていた) for the local (Mac) mode only. Practice records, never
- * mastery evidence. The online schema deliberately has no such table, so it is created here, not with the
- * shared learning tables.
- */
 export async function createReviewCardService(db: SchemaDatabase, now: () => Date = () => new Date()) {
   await initializeOwnerAccess(db);
   await db.exec(`CREATE TABLE IF NOT EXISTS review_card_checks (

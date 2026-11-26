@@ -1,9 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Local fixture trial only. Passing these checks does not make the synthetic material an expert-reviewed MVP.
 const navName = '学習ナビゲーション';
 const caseTitle = 'カフェの年間保険料をどう処理する？';
-// Text that would reveal the verdict or the period allocation before the answer is fixed.
 const revealTexts = ['判断の理由を理解する', '判断できました', 'ここが理解のチャンスです', '当期の費用 · 4か月',
   '翌期以降に残す · 8か月', '月あたり120,000÷12＝10,000円', '当期にサービスを受けた月を数えた判断です'];
 
@@ -21,7 +19,6 @@ async function startCaseFromMap(page: Page) {
   const started = cafePost(page, 'start');
   await page.getByRole('button', { name: 'この考え方を相談で試す →', exact: true }).click();
   expect((await started).status()).toBe(200);
-  // The map lists the same consultation title; a case-only control proves the case view is open.
   await expect(page.getByRole('button', { name: '← 学習地図へ', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: caseTitle })).toBeVisible();
 }
@@ -54,7 +51,6 @@ async function reveal(page: Page) {
 }
 
 async function expectNoAnswerLeak(page: Page) {
-  // Open every visible disclosure so collapsed helper panels in the case are inspected too.
   const closed = page.locator('main details:not([open]) > summary:visible');
   for (let guard = 0; guard < 10 && await closed.count(); guard++) await closed.first().click();
   await expect(closed).toHaveCount(0);
@@ -102,7 +98,6 @@ test('初回はホームから地図・相談・説明・振り返りまで一�
   const savedDraft = cafePost(page, 'progress');
   await page.getByRole('button', { name: '下書きを保存', exact: true }).click();
   expect((await savedDraft).status()).toBe(200);
-  // Interrupt: leave through the global navigation, then come back from home.
   await nav(page).getByRole('button', { name: 'ホーム' }).click();
   await expect(page.getByText('前回の相談の続きがあります', { exact: true })).toBeVisible();
   await expect(page.getByText('前払費用 · 説明する', { exact: true })).toBeVisible();
@@ -145,7 +140,6 @@ test('ホームから保存済み相談を直接再開し、ブラウザー履�
   await expect(page.getByRole('button', { name: '続きから再開', exact: true })).toBeVisible();
   await page.getByRole('button', { name: '続きから再開', exact: true }).click();
   await expect(page.getByRole('radio', { name: '40,000円', exact: true })).toBeChecked();
-  // History moves never create a new answer or re-grade: still one saved choice, nothing submitted.
   await expect(page.getByRole('heading', { name: '判断の理由を理解する' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'この回答で進む →', exact: true })).toBeEnabled();
 });
@@ -195,7 +189,6 @@ test('4択の保存が通信失敗しても、保存状態を更新したあと�
   await expect(page.getByRole('radio', { name: '40,000円', exact: true })).toBeChecked();
   await expect(page.getByText('手元で選んだ回答はまだ保存されていません。', { exact: false })).toBeVisible();
   await expect(page.getByRole('button', { name: 'この回答で進む →', exact: true })).toBeDisabled();
-  // Still unsaved: global navigation and browser back must not drop the local choice.
   await expect(nav(page).getByRole('button', { name: 'ホーム' })).toBeDisabled();
   await page.goBack();
   await expect(page).toHaveURL(/#case\//);
@@ -270,7 +263,6 @@ test('200%拡大でもホームの主操作・ナビゲーション・地図が�
   await page.goto('/');
   await startCase(page);
   await nav(page).getByRole('button', { name: 'ホーム' }).click();
-  // CSS zoom scales px-sized copy as well; root font-size alone would not.
   await page.evaluate(() => { document.documentElement.style.zoom = '2'; });
   await fitsWidth(page);
   const resume = page.getByRole('button', { name: '続きから再開', exact: true });
@@ -301,7 +293,6 @@ test('相談開始の応答待ちにブラウザーで戻っても、遅れた�
   release();
   expect((await started).status()).toBe(200);
   await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
-  // The started case is saved and offered from home, but the learner's screen stays where they moved.
   await expect(page).toHaveURL(/#home$/);
   await expect(page.getByRole('heading', { name: '今日は、どこから始めますか？' })).toBeVisible();
   await expect(page.getByRole('button', { name: '続きから再開', exact: true })).toBeVisible();

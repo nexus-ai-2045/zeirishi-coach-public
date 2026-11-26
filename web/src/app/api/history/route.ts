@@ -8,6 +8,5 @@ export const dynamic = 'force-dynamic';
 const development = createHistoryHandler(getCafeService, () => process.env.ZEIRISHI_FIXTURE_MODE);
 const production = createLearnerHistoryHandler({ getDatabase: getProductionDatabase });
 export function GET(request: Request) {
-  // Auth mode wins, including invalid simultaneous fixture/auth activation.
   return process.env.ZEIRISHI_SUPABASE_ENABLED === '1' ? production(request) : development(request);
 }

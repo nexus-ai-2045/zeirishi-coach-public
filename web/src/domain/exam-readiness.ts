@@ -11,7 +11,6 @@ export type ExamReadinessRecord = {
   id: string; recordVersion: string; subjectId: SubjectId; examYear: number;
   kind: 'external_comprehensive' | 'original_comprehensive' | 'mini' | 'practice' | 'self_report';
   provider: string;
-  /** Trusted ingestion must normalize these global canonical IDs across providers; provider is a display label, not an identity namespace. */
   examId: string; familyId: string; completedAt: string;
   score: number; maxScore: number; criterion: ExamCriterion | null; comparisonReview: ExamComparisonReview | null;
   elapsedMinutes: number | null; timeLimitMinutes: number | null;
@@ -89,7 +88,6 @@ function validateRecord(record: ExamReadinessRecord, asOf: number) {
   }
 }
 
-/** Pure display assessment of trusted, server-bound evidence, not validation of client assertions or a pass probability. */
 export function evaluateExamReadiness(input: ExamReadinessInput): ExamReadinessResult {
   if (!input || typeof input !== 'object') invalid();
   subject(input.subjectId); year(input.examYear); identifier(input.criterionVersion); const asOf = instant(input.asOf);
@@ -98,7 +96,6 @@ export function evaluateExamReadiness(input: ExamReadinessInput): ExamReadinessR
   const ids = new Set<string>();
   for (const record of evidence) { validateRecord(record, asOf); if (ids.has(record.id)) invalid(); ids.add(record.id); }
   const comprehensive = (record: ExamReadinessRecord) => ['external_comprehensive', 'original_comprehensive'].includes(record.kind);
-  // Choose before qualification/scoring. A new failed/unknown measurement cannot be hidden by old high scores.
   const selected = evidence.filter(record => record.subjectId === input.subjectId && record.examYear === input.examYear && comprehensive(record))
     .sort((a, b) => Date.parse(b.completedAt) - Date.parse(a.completedAt) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).slice(0, 2);
   const selectedIds = selected.map(record => record.id);

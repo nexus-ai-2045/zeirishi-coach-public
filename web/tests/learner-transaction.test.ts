@@ -11,7 +11,6 @@ const revoked = '33333333-3333-4333-8333-333333333333';
 const missing = '44444444-4444-4444-8444-444444444444';
 const sqlState = (code: string) => (error: unknown) => !!error && typeof error === 'object' && 'code' in error && error.code === code;
 
-/** Auth helpers below are isolated fixtures, NOT deployable JWT validation or Supabase Auth. */
 async function setup() {
   const db = new PGlite();
   try {
@@ -56,7 +55,6 @@ test('制限されたdefiner関数は本人activeだけ許可し、匿名・ID�
     for (const role of ['anon', 'authenticated']) {
       await assert.rejects(call(db, alice, { sub: alice, is_anonymous: false }, role), sqlState('42501'));
     }
-    // Guard operation must not depend on the public schema's default PUBLIC USAGE grant.
     await db.exec('revoke usage on schema public from public');
     await call(db, alice, { sub: alice, is_anonymous: false });
     assert.equal((await db.query('select 1 from public.learner_access')).rows.length, 3);
@@ -128,7 +126,6 @@ test('FOR SHAREで取得したロックが同じTX内に残る（2接続の競�
 test('実TS wrapperから宣言SQL関数・callback・commitを通し、TX終了後のclaims残留を防ぐ', async () => {
   const db = await setup();
   try {
-    // Only this fixture supplies pre-verified identity. No real Auth provider was contacted.
     const reader = { getUser: async () => ({ error: false, user: { id: alice, isAnonymous: false, emailConfirmed: true } }) };
     const base: TransactionDatabase = { transaction: operation => db.transaction(async tx => {
       await tx.exec('set local role zeirishi_app');

@@ -1,5 +1,3 @@
-"""Web の検査が、CI から実際に呼ばれる入口へ接続されていることを検査する。"""
-
 import fnmatch
 import json
 import re

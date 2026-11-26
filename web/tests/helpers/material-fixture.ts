@@ -1,10 +1,6 @@
 import { cafePrompt, gradeCafeChoice, CAFE_CASE_VERSION } from '../../src/server/cafe-case';
 import { materialReviewSha256, type MaterialRecord } from '../../src/server/material-registry';
 
-/**
- * 架空の審査記録を持つテスト専用データ。実在の専門家審査・利用許諾・出荷承認ではない。
- * 公開教材レジストリへ転記しない。通信も行わない。
- */
 export function makeMaterialRecord(): MaterialRecord {
   const prompt = { ...cafePrompt(), caseId: 'test-only-material', caseVersion: 'test-only-v1', developmentOnly: false };
   const record: MaterialRecord = {
@@ -28,7 +24,6 @@ export function makeMaterialRecord(): MaterialRecord {
   return attestMaterialRecord(record);
 }
 
-/** 架空記録の署名対象が変わるテストだけで使用する。現実の承認を発行しない。 */
 export function attestMaterialRecord(record: MaterialRecord): MaterialRecord {
   const hash = materialReviewSha256(record);
   record.expertReview = { reviewerId: 'test-only-independent-reviewer', documentSha256: hash, reviewedAt: '2026-09-08T00:00:00.000Z' };

@@ -15,8 +15,6 @@ function request(input?: unknown, query = '') {
 function fixture(missing = false, invited = true) {
   let acquisitions = 0; let revoked: string | null = null;
   const queries: { sql: string; params?: unknown[] }[] = [];
-  // HTTP boundary unit only: SQL results are stubs. Real deletion/RLS/rollback is
-  // covered by the existing data-service and PostgreSQL integration suites.
   const database: TransactionDatabase = { transaction: operation => operation({ query: async <T>(sql: string, params?: unknown[]) => {
     queries.push({ sql, params });
     if (sql.includes('pg_catalog.pg_roles')) return { rows: [{ name: 'zeirishi_app', superuser: false, bypass: false }] as T[] };

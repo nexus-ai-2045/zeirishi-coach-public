@@ -9,7 +9,6 @@ import styles from './SubjectTreeView.module.css';
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
 type Props = { pack: SubjectMapPack; subjectLabel?: string; choices: readonly Choice[]; disabled: boolean; initialConceptId?: string; initialTopicId?: string | null;
   onStart: (concept: MapConcept, material: Choice) => void };
-/** Adds a plain-word gloss in parentheses after the first use of each technical term. `seen` is shared within one panel. */
 function glossText(text: string, glossary: Record<string, string> | undefined, seen: Set<string>, className: string): ReactNode {
   if (!glossary) return text;
   const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
@@ -35,7 +34,6 @@ const nextStep: Record<TopicStage, string> = {
   memorized: '時間をあけても3回続けて思い出せました。忘れないよう、21日ごとにカードが出ます。',
 };
 
-/** Coloured bar of topic stages (覚えた・理解した・もう一度・まだ) for a field or the whole subject. */
 function StageBar({ counts, label, decorative = false }: { counts: StageCounts; label: string; decorative?: boolean }) {
   const total = STAGE_ORDER.reduce((sum, stage) => sum + counts[stage], 0);
   const text = `${label}：問題のある${total}論点のうち、覚えた${counts.memorized}・理解した${counts.understood}・もう一度${counts.retry}・まだ${counts.new}`;
@@ -44,7 +42,6 @@ function StageBar({ counts, label, decorative = false }: { counts: StageCounts; 
   </span>;
 }
 
-/** Loads the practice records and review-card checks of one subject and derives each topic's stage. Shared by the home and the map. */
 function useTopicProgress(pack: SubjectMapPack) {
   const [records, setRecords] = useState<PracticeRecord[] | null>(null);
   const [checks, setChecks] = useState<ReviewCheck[]>([]);
@@ -63,7 +60,6 @@ function useTopicProgress(pack: SubjectMapPack) {
   return { records, setChecks, progressFailed, progress, stageOf, subjectCounts };
 }
 
-/** The progress line under the bar, in the same words on the home and the map. */
 function CountsText({ records, progressFailed, counts, topicCount }: { records: unknown; progressFailed: boolean; counts: StageCounts; topicCount: number }) {
   return <p className={styles.counts}>{records ? <>理解した <strong>{counts.understood + counts.memorized}</strong>（うち覚えた <strong>{counts.memorized}</strong>）／ 問題のある {topicCount - counts.none} 論点
     {counts.retry > 0 && <> ・ もう一度 {counts.retry}</>}</> : progressFailed ? '進み具合を読み込めませんでした（色は「まだ」のまま表示しています）' : '進み具合を読み込み中…'}</p>;
@@ -75,10 +71,6 @@ function Legend() {
   </ul>;
 }
 
-/**
- * The home's summary of the chosen subject: the same bar, counts and colours as the learning map, and how many
- * review cards are due today, so the home and the map never tell different stories.
- */
 export function SubjectHomeSummary({ pack, subjectLabel, subjects, disabled, onChooseSubject, onOpenMap }: { pack: SubjectMapPack; subjectLabel: string;
   subjects: readonly { id: string; label: string }[]; disabled: boolean; onChooseSubject: (subjectId: string) => void; onOpenMap: () => void }) {
   const { records, progressFailed, progress, subjectCounts } = useTopicProgress(pack);
@@ -103,11 +95,6 @@ export function SubjectHomeSummary({ pack, subjectLabel, subjects, disabled, onC
   </ol></div>;
 }
 
-/**
- * The learning map of one subject: a tree of fields → topics. Each topic is coloured by how far the
- * learner has got (まだ・もう一度・理解した・覚えた), and selecting one shows what it is, why it matters,
- * and which topics come before/after it.
- */
 export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initialConceptId, initialTopicId, onStart }: Props) {
   const units = useMemo(() => [...pack.units].sort((a, b) => a.order - b.order), [pack.units]);
   const topicsOf = (unitId: string) => pack.topics.filter(topic => topic.unitId === unitId).sort((a, b) => a.order - b.order);
@@ -117,14 +104,12 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
   const [selectedTopic, setSelectedTopic] = useState(initialTopic?.topicId ?? '');
   const [open, setOpen] = useState(() => new Set<string>(initialTopic ? [initialTopic.unitId] : units.length <= 4 ? units.map(unit => unit.unitId) : []));
   const [onlyFrequent, setOnlyFrequent] = useState(false);
-  /** Which version of a topic with a pending bill to show; kept across topics so the choice sticks while browsing. */
   const [showEnacted, setShowEnacted] = useState(false);
   const { records, setChecks, progressFailed, progress, stageOf, subjectCounts } = useTopicProgress(pack);
   const topic = pack.topics.find(item => item.topicId === selectedTopic);
   const concept = topic ? conceptOf(topic.topicId) : undefined;
   const reform = topic?.pendingReform;
   const enacted = Boolean(reform && showEnacted);
-  /** Text shown for the selected topic: current law, or the bill's "if enacted" version when chosen. */
   const view: PendingReformText & { summary: string } = topic ? { summary: topic.summary, ...(topic.example ? { example: topic.example } : {}), ...(enacted ? reform!.ifEnacted : {}) } : { summary: '' };
   const topicOfConcept = (conceptId: string) => pack.topics.find(item => topicConcepts(pack, item.topicId).some(linked => linked.conceptId === conceptId));
   const related = (direction: 'before' | 'after') => !concept ? [] : pack.links
@@ -137,10 +122,6 @@ export function SubjectTreeView({ pack, subjectLabel, choices, disabled, initial
     const linked = topicConcepts(pack, topicId);
     return linked.flatMap(item => choices.filter(choice => choice.conceptId === item.conceptId && choice.conceptVersion === item.conceptVersion).map(choice => ({ concept: item, choice })));
   };
-  /**
-   * More questions on the same topic: the map's uses-case links that are not offered as the main choice (in 簿記論, the
-   * draft practice questions). They used to be listed in a separate panel under the map; now they sit with their topic.
-   */
   const practice = (topicId: string) => topicConcepts(pack, topicId).flatMap(item => pack.links
     .filter(link => link.kind === 'uses-case' && link.sourceId === item.conceptId && link.sourceVersion === item.conceptVersion
       && !choices.some(choice => choice.materialId === link.targetId))

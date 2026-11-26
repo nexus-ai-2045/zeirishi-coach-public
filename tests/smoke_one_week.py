@@ -1,6 +1,3 @@
-"""7 日ぶんの学習を CLI で再現し、合格確率が動くこと・目標曲線・dashboard を確認する。
-使い方: ZEIRISHI_COACH_HOME=$TMPDIR/coach-smoke python3 tests/smoke_one_week.py
-"""
 import json
 import os
 import random

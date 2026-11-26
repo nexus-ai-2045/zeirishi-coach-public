@@ -62,7 +62,6 @@ function weekStart(at: Date) {
   day.setUTCDate(day.getUTCDate() - (day.getUTCDay() + 6) % 7);
   return day.toISOString().slice(0, 10);
 }
-/** Only real development inventory is mapped, never inferred from confidence or unseen counts. */
 function candidatesFor(catalog: readonly SubjectPack[]): PlanCandidate[] {
   const prompt = cafePrompt();
   return catalog.filter(pack => pack.active).flatMap(pack => pack.concepts.filter(concept =>
@@ -75,15 +74,12 @@ function candidatesFor(catalog: readonly SubjectPack[]): PlanCandidate[] {
         recentMisconceptions: [], lockedDirectSuccessors: 0, observedMinutes: null, designedMinutes: concept.durationMinutes },
     })));
 }
-/** Profile schema must already exist on this same DB; no external authentication or AI is implied. */
 export async function createWeeklyPlanService(db: SchemaDatabase, catalog: readonly SubjectPack[], now = () => new Date()) {
   await initializeWeeklyPlanSchema(db);
   return createWeeklyPlanServiceOnPreparedDatabase(db, catalog, now);
 }
 
-/** Uses prepared profile/plan/owner tables without schema initialization. */
 export function createWeeklyPlanServiceOnPreparedDatabase(db: TransactionDatabase, catalog: readonly SubjectPack[], now = () => new Date(), inventory?: PlanInventory) {
-  // Production inventory is explicitly supplied by the server; never manufacture it from concepts.
   const currentCandidates = () => inventory ? [...inventory.candidates] : candidatesFor(catalog);
   function clock() {
     const at = now();

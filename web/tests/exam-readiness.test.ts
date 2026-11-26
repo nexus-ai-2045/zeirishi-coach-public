@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { evaluateExamReadiness, type ExamReadinessInput, type ExamReadinessRecord as Record } from '../src/domain/exam-readiness';
 
-// 架空の専門確認・出典を含む隔離入力。本物の模試承認や合格確率の検証ではない。
 function exam(id: string, completedAt: string, patch: Partial<Record> = {}): Record {
   return { id, recordVersion: 'test-record-v1', subjectId: 'bookkeeping', examYear: 2026,
     kind: 'external_comprehensive', provider: '架空テスト提供元', examId: 'exam-' + id, familyId: 'family-' + id,
@@ -35,7 +34,6 @@ test('総合模試0回・1回は未測定、適格な異なる2回が各出典�
   assert.deepEqual(result.selectedIds, ['recent', 'old']);
   assert.deepEqual(result.holdReasons, []);
   assert.equal('passProbability' in result, false);
-  // 65%でも出典の目標60点を満たす。一律70%や満点を要求しない。
   assert.deepEqual(result.records.map(record => record.targetDifference), [5, 5]);
 });
 

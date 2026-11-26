@@ -12,7 +12,6 @@ function ownerHash(owner: string) {
   if (typeof owner !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(owner)) throw new StudyError('INVALID_ID');
   return createHash('sha256').update(`zeirishi-local-owner-v1:${owner}`).digest('hex');
 }
-/** Call inside the same transaction as all owner reads/writes; deletion takes this same lock. */
 export async function lockOwner(tx: OwnerTransaction, owner: string) {
   const hash = ownerHash(owner);
   await tx.query('INSERT INTO owner_access (owner_hash) VALUES ($1) ON CONFLICT DO NOTHING', [hash]);

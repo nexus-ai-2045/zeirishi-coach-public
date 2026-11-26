@@ -32,7 +32,6 @@ function correction(raw: ReviewCorrection): ReviewCorrection {
   }
   return { correctionId: raw.correctionId, targetEventId: raw.targetEventId, reason: raw.reason, occurredAt: raw.occurredAt };
 }
-/** The SQL log is only appended by this service. Withdrawal never rewrites original evidence. */
 export function createTrustedReviewIngestionOnPreparedDatabase(db: TransactionDatabase, now = () => new Date()) {
   async function appendRow(owner: string, eventId: string, kind: StoredEvent['kind'], payload: StoredEvent['payload']) {
     const at = now();
@@ -56,8 +55,6 @@ export function createTrustedReviewIngestionOnPreparedDatabase(db: TransactionDa
       return { eventId, duplicate: false };
     });
   }
-  // This capability is for trusted, version-bound server verification only. Never bind it to
-  // learner JSON or an HTTP "administrator" flag; the learner-facing factory has no write method.
   return {
     append(owner: string, event: ReviewScheduleEvent) {
       const normalized = advanceReviewSchedule(null, JSON.parse(canonical(event))).events[0];
@@ -74,7 +71,6 @@ function examDeadline(value: string | null | undefined, now: Date): string | nul
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new StudyError('INVALID_EXAM_DATE');
   const date = new Date(`${value}T00:00:00.000Z`);
   if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) throw new StudyError('INVALID_EXAM_DATE');
-  // Last millisecond before the confirmed exam day in Asia/Tokyo; expired dates do not adjust.
   const at = date.getTime() - 9 * 60 * 60 * 1000 - 1;
   return at > now.getTime() ? new Date(at).toISOString() : null;
 }
@@ -93,8 +89,7 @@ export function createReviewServiceOnPreparedDatabase(db: TransactionDatabase, n
         const rows = (await tx.query<StoredEvent>('SELECT * FROM review_evidence_events WHERE owner_id=$1 ORDER BY sequence', [owner])).rows
           .filter(row => Date.parse(row.payload.occurredAt) <= at.getTime());
         const withdrawn = new Set(rows.filter(row => row.kind === 'withdrawal').map(row => (row.payload as ReviewCorrection).targetEventId));
-        // Stable sorting preserves ingestion order on timestamp ties without limiting the history.
-        const evidence = rows.filter(row => row.kind === 'evidence').sort((a, b) => Date.parse(a.payload.occurredAt) - Date.parse(b.payload.occurredAt));
+        const evidence = rows.filter(row => row.kind === 'evidence').sort((a, b) => Date.parse(a.payload.occurredAt) - Date.parse(b.payload.occurredAt) || Number(a.sequence) - Number(b.sequence));
         const scopes = new Map<string, ReviewScheduleEvent[]>();
         for (const row of evidence) {
           const event = row.payload as ReviewScheduleEvent;

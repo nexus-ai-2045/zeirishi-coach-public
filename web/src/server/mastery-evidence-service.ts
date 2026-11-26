@@ -12,10 +12,6 @@ export type MasteryEvidenceRecord = { kind: 'measurement'; measurement: MasteryM
   | ({ kind: 'criterion'; prepared: boolean; disclosureHistoryComplete: boolean } & MasteryEvidenceScope)
   | { kind: 'disclosure'; subjectId: SubjectId; conceptId: string; conceptVersion: string; occurredAt: string }
   | { kind: 'disclosure_invalidation'; targetId: string; subjectId: SubjectId; conceptId: string; conceptVersion: string; occurredAt: string; reason: string };
-/** Management-only declarations: the caller authenticates the operator and verifies
- * owner, source, scoring/timer binding, reviewed criteria and disclosure completeness.
- * A string naming a verifier is an audit reference, not proof of authority.
- */
 export type MasteryEvidenceDocument = {
   schemaVersion: 'mastery-evidence-v1'; ownerId: string; id: string; record: MasteryEvidenceRecord;
   verification: { verifiedBy: string; verifiedAt: string; sourceReference: string };
@@ -39,7 +35,6 @@ export async function initializeMasteryEvidenceSchema(db: Pick<SchemaDatabase, '
   await initializeOwnerAccess(db); await db.exec(MASTERY_EVIDENCE_SCHEMA_SQL);
 }
 const columns = 'id,revision,sequence::text,updated_at AS "updatedAt",document,withdrawn,reason';
-/** Export/audit gets all revisions, in append order, while holding the shared owner lock. */
 export async function readMasteryEvidenceHistory(tx: QueryExecutor, owner: string): Promise<MasteryEvidenceItem[]> {
   return (await tx.query<MasteryEvidenceItem>(`SELECT ${columns} FROM mastery_evidence_revisions WHERE owner_id=$1 ORDER BY sequence`, [owner])).rows;
 }
@@ -135,12 +130,9 @@ function current(history: MasteryEvidenceItem[], asOf: string) {
 function evaluate(items: MasteryEvidenceItem[], query: MasteryEvidenceAssessment): MasteryAssessment {
   const criteria = items.filter(item => item.document.record.kind === 'criterion' && item.document.record.subjectId === query.subjectId
     && item.document.record.conceptId === query.conceptId);
-  // Select the latest initially registered criterion, including withdrawn
-  // criteria, so a withdrawal cannot fall back to an older version.
   const latest = criteria.at(-1);
   const record = latest?.document.record;
   const selected = record?.kind === 'criterion' && record.conceptVersion === query.conceptVersion && record.criterionVersion === query.criterionVersion;
-  // Never choose an old successful scope after the current criterion is withdrawn or ambiguous.
   const unambiguous = criteria.filter(item => !item.withdrawn).length === 1;
   const prepared = Boolean(selected && unambiguous && latest && !latest.withdrawn && record.kind === 'criterion'
     && record.prepared && record.disclosureHistoryComplete);
@@ -153,8 +145,6 @@ function evaluate(items: MasteryEvidenceItem[], query: MasteryEvidenceAssessment
       && r.measurement.conceptVersion === query.conceptVersion && r.measurement.criterionVersion === query.criterionVersion) {
       measurements.push(item.withdrawn ? { ...r.measurement, invalidated: true } : r.measurement);
     }
-    // Ordinary withdrawal or criterion rollover never erases exposure. Only a
-    // separately verified false-record invalidation excludes the referenced encounter.
     if (r.kind === 'disclosure_invalidation' && !item.withdrawn) invalidatedDisclosures.add(r.targetId);
   }
   for (const item of items) {
@@ -165,7 +155,6 @@ function evaluate(items: MasteryEvidenceItem[], query: MasteryEvidenceAssessment
   if (!prepared) result.reasons.push('現在の基準・教材準備・概念全体の開示履歴の確認が揃っていません。');
   return result;
 }
-/** Learner capability: readonly assessments; complete documents are for owner export/audit only. */
 export function createMasteryEvidenceReaderOnPreparedDatabase(db: TransactionDatabase, now = () => new Date()) {
   function asOf(value?: string) { const at = clock(now); const requested = value ?? at;
     if (strictIsoInstant(requested, invalid) > Date.parse(at)) invalid(); return new Date(requested).toISOString(); }
@@ -201,7 +190,6 @@ export function createMasteryEvidenceReaderOnPreparedDatabase(db: TransactionDat
     },
   };
 }
-/** Private management capability. Never expose this factory through a learner POST or flag. */
 export function createMasteryEvidenceServiceOnPreparedDatabase(db: TransactionDatabase, now = () => new Date()) {
   function envelope(raw: unknown, names: string[]) {
     const input = snapshot(raw) as Record<string, unknown>; keys(input, names); uuid(input.requestId);
