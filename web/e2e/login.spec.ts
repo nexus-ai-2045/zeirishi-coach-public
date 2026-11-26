@@ -43,7 +43,6 @@ test('未設定のログイン画面はメール送信せず準備中を案内�
 });
 
 test('メール要求失敗は入力保持・自動再送なし・明示再試行だけで受け付ける', async ({ page }) => {
-  // UI transport fixtures only; neither auth provider nor SMTP is contacted.
   await page.route('**/api/auth/session', route => route.fulfill({ status: 401, json: { error: 'AUTH_REQUIRED' } }));
   let sends = 0;
   await page.route('**/api/auth/request', route => {
@@ -87,7 +86,6 @@ test('失効した会員もログアウトでき、認証成功だけでは学�
   await expect(page.getByText('このブラウザーからログアウトしました。', { exact: true })).toBeVisible();
   await expect(page.getByLabel('招待されたメールアドレス')).toHaveValue('');
   expect(logoutCalls).toBe(1);
-  // Simulate a successful external login; repeated session reads never change identity by themselves.
   authState = 'authenticated';
   await page.getByRole('button', { name: 'ログイン状態を再確認' }).click();
   await expect(page.getByRole('heading', { name: 'ログインを確認しました' })).toBeVisible();
@@ -108,7 +106,6 @@ test('メール停止と認証障害は区別し、停止後に再送しない',
   await page.goto('/login');
   await expect(page.getByRole('heading', { name: '認証サービスを確認できません' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'ログインリンクを送信する' })).toBeDisabled();
-  // The provider recovers explicitly, independently of foreground/pageshow revalidation counts.
   authUnavailable = false;
   await page.getByRole('button', { name: 'ログイン状態を再確認' }).click();
   await expect(page.getByRole('button', { name: 'ログインリンクを送信する' })).toBeEnabled();

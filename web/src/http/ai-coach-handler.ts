@@ -27,7 +27,6 @@ export function createAiCoachHandler(getService: () => Promise<ReturnType<typeof
 export function createLearnerAiCoachHandler(options: Omit<Parameters<typeof createLearnerContextHandler>[0], 'operation'>) {
   return createLearnerContextHandler({ ...options, operation: async (request, learner) => {
     const parsed = await input(request);
-    // No provider is enabled here. Contract, pricing and quality approval are separate gates.
     return createAiCoachServiceOnPreparedDatabase(learner.database).request(learner.userId, parsed.caseId, parsed.request);
   } });
 }

@@ -6,7 +6,6 @@ import { bookkeepingConceptVersion } from './bookkeeping-question-drafts';
 
 const authoredDraft = { status: 'draft' as const, sourceId: 'authored-local', applicableYear: null };
 
-/** Original local drafts. Neither these concepts nor their cases have expert approval. */
 export const BOOKKEEPING_CORE_CONCEPTS: MapConcept[] = [
   {
     conceptId: 'cash-is-not-profit', conceptVersion: bookkeepingConceptVersion('cash-is-not-profit'), label: 'お金と利益は別',
@@ -112,7 +111,6 @@ function draftMaterial(draft: CaseDraft): CafeMaterial {
   };
 }
 
-/** Four original synthetic consultations, separate from the existing annual-insurance case. */
 export const BOOKKEEPING_CASE_DRAFTS: CafeMaterial[] = [
   {
     caseId: 'bakery-equipment', conceptId: 'cash-is-not-profit', familyId: 'synthetic-bakery-borrow-equipment',

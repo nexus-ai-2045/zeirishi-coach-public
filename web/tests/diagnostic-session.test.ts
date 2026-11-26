@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { createDiagnosticEngine, type DiagnosticQuestion, type DiagnosticSeed, type DiagnosticCommand } from '../src/domain/diagnostic-session';
 
 const at = (seconds: number) => new Date(Date.parse('2026-01-02T00:00:00Z') + seconds * 1000).toISOString();
-// Synthetic, isolated catalog. Not real approved material or a human review receipt.
 function question(index: number, patch: Partial<DiagnosticQuestion> = {}): DiagnosticQuestion {
   return { id: `q${String(index).padStart(2, '0')}`, version: 'v1', subjectId: 'bookkeeping', conceptId: 'period', conceptVersion: 'v1', familyId: `family-${index}`,
     poolId: 'diagnostic-only', poolVersion: 'v1', purpose: 'diagnostic', stage: index < 3 ? 'anchor' : index < 9 ? 'boundary' : 'transfer',

@@ -72,7 +72,6 @@ export function AuthPanel({ initialNotice }: { initialNotice?: string }) {
         if (data.authenticated !== true || typeof data.userId !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(data.userId)) throw new Error('UNCONFIRMED_SESSION');
         if (learnerId && learnerId !== data.userId) { setShowWorkspace(false); setEmail(''); }
         setLearnerId(data.userId);
-        // Authentication permits profile access, not a claim that learning materials are ready.
         setState('authenticated'); setNotice('');
       } else if (action === 'request') {
         if (response.status !== 202 || data.accepted !== true) throw new Error('UNCONFIRMED_REQUEST');
@@ -90,7 +89,6 @@ export function AuthPanel({ initialNotice }: { initialNotice?: string }) {
         : '認証状態を確認できませんでした。状態の再確認を試してください。');
     } finally {
       if (epoch === generation.current) { lock.current = false; setPending(false); activeRequest.current = null; }
-      // Other tabs must also recheck when the logout response is lost or rejected.
       if (action === 'logout') notifySessionChange('revalidate', true);
     }
   }
@@ -104,7 +102,6 @@ export function AuthPanel({ initialNotice }: { initialNotice?: string }) {
     window.addEventListener('focus', foreground);
     window.addEventListener('pageshow', foreground);
     document.addEventListener('visibilitychange', visibility);
-    // A successful callback lands on /login; notify open workspaces before reading its new session.
     if (window.location.pathname === '/login') notifySessionChange('revalidate', true);
     void operationRef.current('session');
     return () => {

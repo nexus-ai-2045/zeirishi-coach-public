@@ -4,7 +4,6 @@ import { randomUUID } from 'node:crypto';
 import { authReader, createAuthContext, readAuthConfig, requireInvitedLearner, type VerifiedAuthReader } from '../src/server/supabase-auth';
 import { createAuthSessionHandler } from '../src/http/auth-session-handler';
 
-// Test-only values, never connected to a provider and never written to an environment file.
 const env = { ZEIRISHI_SUPABASE_ENABLED: '1', SUPABASE_URL: 'https://abcdefghijklmnopqrst.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_test_only_not_a_credential', ZEIRISHI_APP_ORIGIN: 'https://coach.example' };
 const config = () => readAuthConfig(env);

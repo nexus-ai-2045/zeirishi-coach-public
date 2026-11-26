@@ -10,7 +10,6 @@ const explains = (sourceId: string, targetId: string): MapLink => ({
   basis: '架空の導入例の編集上の接続。専門審査前。', status,
 });
 
-/** Local-only synthetic map. Existing material catalog owns case availability and approval. */
 export const DEVELOPMENT_BOOKKEEPING_MAP: SubjectMapPack = validateSubjectMap({
   subjectId: 'bookkeeping', legacySubjectId: 'boki', version, status,
   units: [

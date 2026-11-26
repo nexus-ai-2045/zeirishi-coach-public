@@ -1,7 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Browser plugin not available: use the repository's Playwright runner.
-// Local development DB only. Self-reported examples do not establish reviewed exam readiness.
 const api = '/api/mock-exams';
 const summary = (page: Page) => page.locator('summary').filter({ hasText: '模試の参考記録' });
 async function openRecords(page: Page) {
@@ -146,15 +144,12 @@ test('模試の未保存入力は相談との往復で残り、本人データ�
   await nav.getByRole('button', { name: '学習地図' }).click();
   await expect(page.getByText('学習記録の「模試の参考記録」に未保存の入力があります。', { exact: false })).toBeVisible();
   await page.getByRole('button', { name: 'この相談で学ぶ →', exact: true }).click();
-  // The map also lists this consultation title, so wait for a case-only control before using history.
   await expect(page.getByRole('button', { name: '← 学習地図へ', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'カフェの年間保険料をどう処理する？', exact: true })).toBeVisible();
-  // Browser history back to the map, then back to records, must not drop the hidden draft.
   await page.goBack();
   await expect(page.getByRole('heading', { name: '学習地図', level: 1 })).toBeVisible();
   await page.goBack();
   await expect(page.getByRole('heading', { name: '学習記録', level: 1 })).toBeVisible();
-  // The details may remain open. Reopen only when the retained form is hidden.
   if (!await page.getByLabel('得点', { exact: true }).isVisible()) await summary(page).click();
   await expect(page.getByLabel('得点', { exact: true })).toHaveValue('67');
   await expect(page.getByLabel('主催・提供元', { exact: true })).toHaveValue('架空E2E提供元');

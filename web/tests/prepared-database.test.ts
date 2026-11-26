@@ -19,7 +19,6 @@ test('prepared services reuse learning SQL without schema mutation and preserve 
   const local = new PGlite();
   await local.waitReady;
   try {
-    // Only development bootstrap prepares this isolated database. No external migration.
     await createStudyService(local);
     await createCafeService(local);
     await createConfidenceService(local, DEVELOPMENT_CATALOG);

@@ -33,7 +33,6 @@ test('retired confidence versions do not block saving exam subjects and active r
     const payload = profilePayload(await current.get(owner), 'bookkeeping', updated, false);
     assert.deepEqual(payload.profile.reports, [reports[1]]);
     assert.equal(payload.profile.revision, 1);
-    // A GET must not mutate persisted history; the next explicit save removes retired reports.
     assert.deepEqual((await current.get(owner)).reports, reports);
     const saved = await current.save(owner, { requestId: randomUUID(), revision: payload.profile.revision,
       reports: payload.profile.reports, examSubjects: ['income-tax'] });

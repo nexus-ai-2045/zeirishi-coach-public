@@ -26,7 +26,7 @@ def test_menu_shape(st, boki):
     assert [q["name"] for q in menu["quests"]] == ["復習", "弱点", "挑戦"]
     ids = [i["topic"] for i in menu["items"]]
     assert len(ids) == len(set(ids)) and sum(len(q["items"]) for q in menu["quests"]) == 10
-    assert all(i["memo_target"] is None for i in menu["items"])   # 簿記論は計算のみ
+    assert all(i["memo_target"] is None for i in menu["items"])
 
 
 def test_due_topics_first_and_fading(st, boki):
@@ -58,7 +58,7 @@ def test_challenge_picks_mid_mastery_high_weight(st, boki):
         t["p"], t["correct_days"] = 0.2, []
     for tid in ("boki.sales.shohin", "boki.fixed.depreciation"):
         st["topics"][tid]["p"] = 0.8
-        st["topics"][tid]["correct_days"] = ["2026-09-01", "2026-09-02"]     # mastery = 0.8*(0.4+0.4) = 0.64
+        st["topics"][tid]["correct_days"] = ["2026-09-01", "2026-09-02"]
     challenge = {i["topic"] for i in scheduler.build_menu(st, boki, TODAY, n=10)["quests"][2]["items"]}
     assert challenge == {"boki.sales.shohin", "boki.fixed.depreciation"}
 

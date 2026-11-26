@@ -1,4 +1,3 @@
-"""report: 合格確率・目標との差・単元別習得度・学習効率・ゲーム状態。"""
 from __future__ import annotations
 
 from . import model
@@ -13,9 +12,6 @@ def level_for_xp(xp: int) -> int:
 
 def build_report(st, subject, today) -> dict:
     state_mod.apply_decay(st, subject, today)
-    # 忘却を適用した後の値を history に記録する: dashboard の実績線が、直近の attempt/mock
-    # の日付で止まったまま (減衰前の高い確率) にならないようにする
-    # (PR #1 レビュー指摘 report.py:16)。
     state_mod.snapshot_history(st, subject, today)
     expected, sd, prob = state_mod.compute_scores(st, subject)
     days_to_exam = state_mod.days_between(today, st["exam_date"])
@@ -42,18 +38,12 @@ def build_report(st, subject, today) -> dict:
     minutes_7d = sum(h["minutes"] for h in recent)
     efficiency = None
     if recent and minutes_7d > 0:
-        # recent[0]["mastery_avg_start"] は「その日の学習が始まる前」の mastery_avg
-        # (state.snapshot_history が行を新規作成する時に記録する)。同日 1 問だけの場合でも
-        # 正しく増分が取れる。旧データ (mastery_avg_start が無い state.json) は従来どおり
-        # recent[0]["mastery_avg"] を起点にする。
         base = recent[0].get("mastery_avg_start", recent[0]["mastery_avg"])
         efficiency = round((recent[-1]["mastery_avg"] - base) / minutes_7d, 5)
 
     target = state_mod.target_prob_today(st, today)
     return {"subject": st["subject"], "subject_name": subject["name"], "date": today, "exam_date": st["exam_date"],
             "days_to_exam": days_to_exam, "final_phase": 0 <= days_to_exam <= state_mod.FINAL_PHASE_DAYS,
-            # pass_prob / target_pass_prob は round しない: 学習初期は 1e-7 台まで小さくなり得るため、
-            # 4 桁丸めだと「0 より大きい」という不変条件 (state.snapshot_history と同じ理由) が壊れる。
             "pass_prob": prob, "target_pass_prob": target,
             "on_track": prob + ON_TRACK_TOLERANCE >= target, "next_milestone": next_ms,
             "expected_score": round(expected, 1), "sd": round(sd, 2), "passing_line": subject["exam"]["passing_line"],

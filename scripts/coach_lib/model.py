@@ -1,4 +1,3 @@
-"""学習モデル (純粋関数のみ)。"""
 from __future__ import annotations
 
 import math

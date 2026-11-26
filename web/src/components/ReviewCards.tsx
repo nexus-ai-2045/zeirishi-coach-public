@@ -8,10 +8,6 @@ type Props = { pack: SubjectMapPack; progress: ReadonlyMap<string, TopicProgress
   onChecked: (check: ReviewCheck) => void; onOpen: (topicId: string) => void };
 const shortDay = (day: string) => { const [, month, date] = day.split('-').map(Number); return `${month}月${date}日`; };
 
-/**
- * Today's review cards, one at a time (forgetting curve: 1 → 3 → 7 → 21 days). Front: the topic name;
- * back: its one-line summary and example. The learner says whether they remembered it.
- */
 export function ReviewCards({ pack, progress, disabled, onChecked, onOpen }: Props) {
   const today = localDay(new Date());
   const due = dueCards(progress, today);

@@ -7,7 +7,6 @@ import { assertOwnerActive, initializeOwnerAccess } from './owner-access';
 import { strictCanonicalJson } from './strict-canonical-json';
 import { BOOKKEEPING_INDEPENDENT_DRAFTS } from './bookkeeping-question-drafts';
 
-/** Human-reviewed diagnostic material is not yet available. Fixtures must be explicitly injected. */
 export const APPROVED_DIAGNOSTIC_QUESTIONS: readonly DiagnosticQuestion[] = Object.freeze([]);
 export type DiagnosticRecord = { id: string; revision: number; updatedAt: string; view: ReturnType<ReturnType<typeof createDiagnosticEngine>['view']> };
 type Row = { id: string; revision: number; updated_at: string; state: DiagnosticSession };
@@ -48,8 +47,6 @@ export async function initializeDiagnosticSchema(db: Pick<SchemaDatabase, 'exec'
 async function rows(tx: QueryExecutor, owner: string) { return (await tx.query<Row>('SELECT id,revision,updated_at,state FROM diagnostic_sessions WHERE owner_id=$1 ORDER BY updated_at,id', [owner])).rows; }
 function seenFamiliesForSubject(history: Row[], subjectId: SubjectId, at: string, project: (row: Row, at: string) => DiagnosticRecord) {
   return [...new Set(history.filter(row => row.state.seed.subjectId === subjectId)
-    // Aggregate observed attempts, not the session seed. Older rows may have
-    // copied the pre-fix cross-subject aggregate into that seed.
     .flatMap(row => project(row, at).view.attempts.map(attempt => attempt.familyId)))].sort();
 }
 function publicRecord(row: Row, engine: ReturnType<typeof createDiagnosticEngine>, at: string): DiagnosticRecord {
@@ -57,15 +54,12 @@ function publicRecord(row: Row, engine: ReturnType<typeof createDiagnosticEngine
   try { view = engine.view(row.state, at); }
   catch (error) {
     if (!(error instanceof StudyError) || error.code !== 'INVALID_DIAGNOSTIC') throw error;
-    // Persisted catalog is trusted internal history. Use it only to project old observations;
-    // never continue an obsolete session or reveal its pending question.
     const archived = createDiagnosticEngine(JSON.parse(row.state.catalog), { practiceOnly: row.state.practiceOnly === true, ...row.state.trialSettings }).view(row.state, at);
     view = { ...archived, status: 'unavailable', currentQuestion: null,
       reasons: [...archived.reasons, '教材の版が変更されたため、この確認は再開できません。過去の回答記録です。'] };
   }
   return { id: row.id, revision: row.revision, updatedAt: row.updated_at, view };
 }
-/** Export uses the public projection, never the state catalog containing answer keys. Caller holds owner lock. */
 export async function readDiagnosticRecords(tx: QueryExecutor, owner: string, catalog = APPROVED_DIAGNOSTIC_QUESTIONS, at = new Date().toISOString()): Promise<DiagnosticRecord[]> {
   const engine = createDiagnosticEngine(catalog);
   return (await rows(tx, owner)).map(row => publicRecord(row, engine, at));
@@ -126,7 +120,6 @@ export function createDiagnosticServiceOnPreparedDatabase(db: TransactionDatabas
   };
 }
 
-/** 固定したローカル原稿だけを使う6問のミニ演習。正式模試・習熟記録へ接続しない。 */
 export function createBookkeepingMiniExamServiceOnPreparedDatabase(db: TransactionDatabase, kind: 'before' | 'after', now = () => new Date()) {
   if (kind !== 'before' && kind !== 'after') invalid();
   const purpose = kind === 'before' ? 'before_evaluation' : 'after_evaluation';
@@ -152,7 +145,6 @@ export function createBookkeepingMiniExamServiceOnPreparedDatabase(db: Transacti
         await get(owner, input.sessionId);
       }
       const record = await service.save(owner, input);
-      // request IDs are shared by the existing journal: a retry may belong to the other fixed pool.
       if (!belongs(record)) throw new StudyError('REQUEST_CONFLICT', 409);
       return record;
     },

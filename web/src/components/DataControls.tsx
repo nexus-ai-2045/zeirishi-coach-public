@@ -36,8 +36,7 @@ export function DataControls({ disabled, onBusyChange, mode = 'local', onDeleted
           onDeleted?.();
           return;
         }
-        // Only remove the resume pointer after the server confirms deletion.
-        try { localStorage.removeItem('zc-cafe-case-v2'); } catch { /* Reload still clears in-memory learner data. */ }
+        try { localStorage.removeItem('zc-cafe-case-v2'); } catch {}
         window.location.reload();
         return;
       }

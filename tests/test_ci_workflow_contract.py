@@ -1,5 +1,3 @@
-"""CI の検証結果回収入口が弱体化していないことを検査する。"""
-
 from pathlib import Path
 
 import yaml

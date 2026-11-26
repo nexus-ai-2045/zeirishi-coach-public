@@ -15,7 +15,6 @@ export async function GET(request: Request) {
     return jsonResponse({ error: 'INVALID_DIAGNOSTIC' }, 400);
   }
   url.searchParams.delete('kind');
-  // Only the fixed before/after selector is public. Timing, limits and purpose are server-owned.
   const internal = new Request(url, request);
   return createDiagnosticHandler(async () => createBookkeepingMiniExamServiceOnPreparedDatabase(await getLearningEvidenceDatabase(), kind),
     () => process.env.ZEIRISHI_FIXTURE_MODE)(internal);

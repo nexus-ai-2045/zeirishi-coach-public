@@ -1,12 +1,3 @@
-/** PRODUCT_SPEC §22.2 / §23.2. This is a schedule, not a mastery/pass judgement.
- * All evidence labels must originate in a trusted server's version-bound verification;
- * accepting these flags from an HTTP client would bypass the evidence boundary.
- * Interpretations: intervals are elapsed 24-hour days; same-day checks use Asia/Tokyo.
- * An early successful review keeps its existing due time. An eligible failure/hint
- * resets to one day even on the same date. Practice/AI-viewed/unverified events never
- * reset or advance. Actual exam-date adjustments and evidence withdrawal/rebuild are
- * separate operations; this reducer does not shorten any retention requirement.
- */
 export const REVIEW_RULES_VERSION = 'review-1-3-7-21-v1' as const;
 export type ReviewIntervalDays = 1 | 3 | 7 | 21;
 export type ReviewScheduleEvent = {
@@ -36,7 +27,6 @@ export type ReviewScheduleState = {
   intervalDays: ReviewIntervalDays | null;
   nextReviewAt: string | null;
   lastAdjustedAt: string | null;
-  /** Versioned event snapshots permit deterministic replay and conflicting-ID detection. */
   events: ReviewScheduleEvent[];
 };
 export class ReviewScheduleError extends Error {
@@ -64,7 +54,6 @@ function identifier(value: unknown): string {
 function oneOf<T extends string>(value: unknown, allowed: readonly T[]): T {
   return typeof value === 'string' && allowed.includes(value as T) ? value as T : invalid();
 }
-/** Explicit timezone required; reject impossible calendar dates instead of Date's rollover. */
 function iso(value: unknown): string {
   if (typeof value !== 'string') invalid();
   const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.exec(value);
@@ -101,7 +90,6 @@ function event(value: unknown): ReviewScheduleEvent {
   };
 }
 const tokyoDay = (at: string) => new Date(Date.parse(at) + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
-/** Mutates only the private replay accumulator, never caller-owned state. */
 function append(state: ReviewScheduleState | null, input: ReviewScheduleEvent,
   seen: Map<string, ReviewScheduleEvent>): ReviewScheduleState {
   if (state && (state.subjectId !== input.subjectId || state.conceptId !== input.conceptId
@@ -133,7 +121,6 @@ function append(state: ReviewScheduleState | null, input: ReviewScheduleEvent,
   next.nextReviewAt = new Date(Date.parse(input.occurredAt) + next.intervalDays * DAY).toISOString();
   return next;
 }
-/** Replay one concept's ordered evidence once, in linear time; no caller state is mutated. */
 export function replayReviewSchedule(events: readonly ReviewScheduleEvent[]): ReviewScheduleState | null {
   if (!Array.isArray(events)) invalid();
   let state: ReviewScheduleState | null = null;
@@ -141,7 +128,6 @@ export function replayReviewSchedule(events: readonly ReviewScheduleEvent[]): Re
   for (const item of events) state = append(state, event(item), seen);
   return state;
 }
-/** Validate the derived state by replay: malformed or manually promoted schedules fail closed. */
 export function advanceReviewSchedule(state: ReviewScheduleState | null, input: ReviewScheduleEvent): ReviewScheduleState {
   const normalized = event(input);
   let verified: ReviewScheduleState | null = null;
@@ -155,6 +141,5 @@ export function advanceReviewSchedule(state: ReviewScheduleState | null, input: 
       if (JSON.stringify(verified![key]) !== JSON.stringify(expected)) throw new ReviewScheduleError('INVALID_REVIEW_STATE');
     }
   }
-  // Replay is linear in history length; the accumulator and event snapshots are private.
   return append(verified, normalized, seen);
 }

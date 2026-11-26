@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""青葉雑貨店の複式簿記練習フィクスチャをオフラインで検査する。
-
-合成・未承認の教材用。専門家監修済みではない。
-現行税法、税率、法的助言、公式試験問題は扱わない。
-依存パッケージは使わない。ネットワーク通信もしない。
-
-合格条件は仕訳の借方合計＝貸方合計だけでは足りない。
-期首残高に期待仕訳を転記した結果が、期待元帳（借方合計・貸方合計・差引）
-および残高試算表と一致することを求める。
-"""
 
 from __future__ import annotations
 
@@ -66,7 +55,6 @@ def is_nonneg_int(value: Any) -> bool:
 
 
 def strict_money_message(label: str, value: Any, positive: bool) -> Optional[str]:
-    """bool は int のサブクラスなので、ここで明示的に拒否する。float も変換しない。"""
     if isinstance(value, bool):
         return f"{label}: bool を金額として扱わない（falseを0円にしない） ({value!r})"
     if isinstance(value, float) or not isinstance(value, int):
@@ -159,7 +147,6 @@ def check_schema_instance(
     root: Mapping[str, Any],
     errors: List[str],
 ) -> None:
-    """schemaの type / required / additionalProperties だけを再帰検査する。bool は integer にしない。"""
     node = resolve_schema_node(node, root)
     if not isinstance(node, dict):
         return
@@ -233,7 +220,6 @@ def build_ledger(
     opening: Sequence[Mapping[str, Any]],
     entries: Sequence[Mapping[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """期首を片側の合計へ載せ、仕訳を加算して元帳行を作る。"""
     totals: Dict[str, List[int]] = {}
 
     def touch(code: str) -> None:
@@ -284,7 +270,6 @@ def build_ledger(
 
 
 def build_trial_balance(ledger: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
-    """残高試算表。差引ゼロの勘定は行に含めない。"""
     rows: List[Dict[str, Any]] = []
     total_debit = 0
     total_credit = 0
@@ -799,13 +784,6 @@ def grade_attempt(
     accounts: Mapping[str, Mapping[str, Any]],
     attempt_entries: Sequence[Mapping[str, Any]],
 ) -> Dict[str, Any]:
-    """学習者の仕訳を、期待仕訳と期待元帳・試算表の両方で採点する。
-
-    金額は厳密な正の整数円だけを受け付ける。float や bool は変換しない。
-    Python では bool が int のサブクラスなので、entry_no=True は 1 として扱わない。
-    schema が許可したプロパティ以外は不合格。不正な形は例外にせず errors で返す。
-    memo の文言差だけでは落とさない。借方合計＝貸方合計だけでは合格にしない。
-    """
     errors: List[str] = []
     try:
         schema = load_json(ROOT / "schema.json")

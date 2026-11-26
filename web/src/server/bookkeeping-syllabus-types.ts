@@ -1,8 +1,6 @@
-/** Original editorial drafts; source scope and formal approval are separate. */
 export type SyllabusExercise = {
   use: 'practice' | 'diagnostic' | 'evaluation' | 'retention';
   family: string; prompt: string; answer: string; wrong: [string, string, string]; explanation: string;
-  /** Why each wrong option fails, in the same order as `wrong`. Falls back to `explanation`. */
   wrongReasons?: [string, string, string];
 };
 export type SyllabusLesson = {

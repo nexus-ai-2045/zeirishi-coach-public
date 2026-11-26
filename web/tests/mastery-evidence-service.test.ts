@@ -11,7 +11,6 @@ const owner = '11111111-1111-4111-8111-111111111111';
 const other = '22222222-2222-4222-8222-222222222222';
 const at = '2026-09-01T00:00:00.000Z';
 const scope = { subjectId: 'bookkeeping' as const, conceptId: 'concept', conceptVersion: 'v1', criterionVersion: 'criterion-v1' };
-// Synthetic management declarations only, never real expert/timer verification.
 function document(id: string, record: MasteryEvidenceRecord): MasteryEvidenceDocument {
   return { schemaVersion: 'mastery-evidence-v1', ownerId: owner, id, record,
     verification: { verifiedBy: 'fixture-verifier', verifiedAt: '2026-08-01T00:00:00.000Z', sourceReference: 'synthetic-fixture' } };

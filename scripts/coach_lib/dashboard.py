@@ -1,4 +1,3 @@
-"""学習 dashboard (自己完結 HTML)。"""
 from __future__ import annotations
 
 import html

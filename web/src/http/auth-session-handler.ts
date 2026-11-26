@@ -7,7 +7,6 @@ function sessionContext(request: Request, config: AuthConfig): SessionContext {
   return { reader: authReader(current.client), headers: current.headers };
 }
 
-/** Identity readiness only; this endpoint does not verify DB deployment or approved material availability. */
 export function createAuthSessionHandler(config: () => AuthConfig = readAuthConfig,
   context: (request: Request, config: AuthConfig) => SessionContext = sessionContext) {
   return async (request: Request): Promise<Response> => {

@@ -10,9 +10,6 @@ const revoked = '33333333-3333-4333-8333-333333333333';
 const uninvited = '44444444-4444-4444-8444-444444444444';
 const sqlState = (code: string) => (error: unknown) => !!error && typeof error === 'object' && 'code' in error && error.code === code;
 
-/** Isolated Postgres-semantics fixture only: this does not emulate Auth/JWT signature verification,
- * token revocation, PostgREST, or production Supabase. Never install these helpers in a service DB.
- */
 async function setup() {
   const db = new PGlite();
   try {
@@ -45,7 +42,6 @@ async function setup() {
   } catch (error) { await db.close(); throw error; }
 }
 async function withClaims<T>(db: PGlite, role: 'anon' | 'authenticated', claims: unknown, action: () => Promise<T>) {
-  // role is a closed test-fixture union; claims substitute server-validated request context only here.
   await db.exec(`set role ${role}`);
   try {
     await db.query("select set_config('request.jwt.claims',$1,false)", [JSON.stringify(claims)]);

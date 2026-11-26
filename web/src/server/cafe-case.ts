@@ -1,7 +1,6 @@
 import { StudyError } from '../domain/types';
 import type { ConceptRef } from '../domain/onboarding';
 
-/** Synthetic content, not an approved pack. Never import this module into client components. */
 export const CAFE_CASE_VERSION = 'synthetic-cafe-prepaid-v2';
 export const CAFE_SCORING_VERSION = 'synthetic-cafe-choice-v1';
 const choices = [
@@ -26,12 +25,10 @@ export function cafePrompt() {
       { label: '決算日', value: '3月31日' },
     ],
     assumption: '月割りで配分する会計の練習です。税務上の特例は扱いません。開発用教材・専門審査前。',
-    // Public projection deliberately omits correctness, weights and explanations.
     options: choices.map(({ id, label }) => ({ id, label })),
   };
 }
 
-/** Caller must load the version from the owned instance, not trust a client-supplied version. */
 export function gradeCafeChoice(caseVersion: string, optionId: unknown) {
   if (caseVersion !== CAFE_CASE_VERSION) throw new StudyError('CASE_VERSION_CONFLICT', 409);
   const selected = choices.find(option => option.id === optionId);
@@ -53,7 +50,6 @@ export function gradeCafeChoice(caseVersion: string, optionId: unknown) {
   };
 }
 
-/** Public shape excludes answer keys; material approval remains a separate supply boundary. */
 export type CafePrompt = Omit<ReturnType<typeof cafePrompt>, 'caseVersion' | 'options'> & {
   caseVersion: string; options: Array<{ id: string; label: string }>;
 };
@@ -63,7 +59,6 @@ export type CafeResult = Omit<ReturnType<typeof gradeCafeChoice>, 'scoringVersio
 };
 export type CafeMaterial = {
   caseVersion: string; scoringVersion: string;
-  /** Stable learning-concept identity, independent of this case's version. */
   concept?: ConceptRef;
   prompt: () => CafePrompt;
   grade: (caseVersion: string, optionId: string) => CafeResult;

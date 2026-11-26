@@ -1464,8 +1464,6 @@ const independentSeeds: Seed[] = [
   }
 ];
 
-// Fixed server-only answer positions are assigned once during authoring, independently
-// of the public ID. Never randomize them at runtime: saved answers bind to this version.
 const draftAnswerPositions: Readonly<Record<string, number>> = {
   "bk-practice-cash-is-not-profit-1": 3,
   "bk-practice-cash-is-not-profit-2": 0,
@@ -1597,7 +1595,6 @@ const syllabusQuestions: BookkeepingDraftQuestion[] = BOOKKEEPING_SYLLABUS_LESSO
   const conceptId = syllabusConceptId(lesson);
   const id = `bk-${use}-${conceptId}-${index+1}`;
   const digest = createHash('sha256').update(JSON.stringify([id,seed,'answer-layout-v2'])).digest('hex');
-  // Only the first 12 hex digits are public. Keep answer placement outside that projection.
   const position = Number.parseInt(digest.slice(12,14),16)%4;
   const answers = [...seed.wrong]; answers.splice(position,0,seed.answer);
   if (answers.length !== 4 || new Set(answers).size !== 4) throw new Error('INVALID_SYLLABUS_QUESTION');

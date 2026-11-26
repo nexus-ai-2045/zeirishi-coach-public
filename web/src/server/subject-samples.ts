@@ -16,28 +16,18 @@ import inhabitantTaxTree from './subject-trees/inhabitant-tax.json' with { type:
 import enterpriseTaxTree from './subject-trees/enterprise-tax.json' with { type: 'json' };
 import fixedAssetTaxTree from './subject-trees/fixed-asset-tax.json' with { type: 'json' };
 
-/**
- * Check questions for the ten subjects other than bookkeeping: at least one per frequently tested
- * (★) tree topic. AI-authored drafts, not expert-reviewed; practice only.
- */
 type SampleConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; examUse: string };
-/**
- * A question either carries its own concept text (older samples) or points at a whole-subject tree topic
- * with `treeTopic` and borrows that topic's concept text, so one explanation lives in one place.
- */
 export type SubjectSample = {
   id: string; subjectId: Exclude<SubjectId, 'bookkeeping'>; topic: string | null; title: string; treeTopic?: string;
   prompt: string; answer: string; wrong: [string, string, string]; wrongReasons: [string, string, string]; explanation: string;
 } & Partial<SampleConceptFields>;
 type SubjectSampleSource = SubjectSample & { pendingReform?: ReformSource<Partial<SubjectSample>> };
 export const SUBJECT_SAMPLE_BASIS = samples.basis as Record<Exclude<SubjectId, 'bookkeeping'>, string>;
-/** Questions with any bill-dependent text resolved by `pending-reforms.json`. */
 export const resolveSamples = (outcomes?: ReformOutcomes) => (samples.items as SubjectSampleSource[]).map(item => resolveItemReform(item, outcomes) as SubjectSample);
 export const SUBJECT_SAMPLES = resolveSamples();
 export const SUBJECT_SAMPLE_SUBJECTS = SUBJECTS.filter(subject => subject.id !== 'bookkeeping');
 
 type ConceptFields = { definition: string; purpose: string; applicability: string; counterexample: string; misconception: string; materialCue: string; examUse: string };
-/** Whole-subject tree: field → topic, one concept per topic, with prerequisite links. AI-authored, not expert-reviewed. */
 export type SubjectTree = {
   subjectId: Exclude<SubjectId, 'bookkeeping'>; version: string; note: string;
   units: { unitId: string; label: string }[];
@@ -48,7 +38,6 @@ export type SubjectTree = {
 type SubjectTreeSource = Omit<SubjectTree, 'topics'> & { topics: (Omit<SubjectTree['topics'][number], 'pendingReform'> & { pendingReform?: ReformSource<PendingReformText> })[] };
 const TREE_SOURCES = [financialStatementsTree, incomeTaxTree, corporationTaxTree, consumptionTaxTree, inheritanceTaxTree,
   liquorTaxTree, nationalTaxCollectionTree, inhabitantTaxTree, enterpriseTaxTree, fixedAssetTaxTree] as SubjectTreeSource[];
-/** Whole-subject trees with any bill-dependent text resolved by `pending-reforms.json`. */
 export const resolveTrees = (outcomes?: ReformOutcomes): SubjectTree[] => TREE_SOURCES.map(tree => ({ ...tree, topics: tree.topics.map(topic => resolveTopicReform(topic, outcomes)) }));
 export const SUBJECT_TREES = resolveTrees();
 const treeFor = (subjectId: SubjectId) => SUBJECT_TREES.find(tree => tree.subjectId === subjectId);
@@ -57,7 +46,6 @@ const label = (subjectId: SubjectId) => SUBJECTS.find(subject => subject.id === 
 const treeConceptId = (key: string) => `tree-${key}`;
 const treeConceptVersion = (topic: SubjectTree['topics'][number]) => `synthetic-tree-concept-${hash([topic.key, topic.label, topic.concept])}`;
 const treeTopicOf = (item: SubjectSample) => treeFor(item.subjectId)?.topics.find(topic => item.treeTopic ? topic.key === item.treeTopic : topic.sampleId === item.id);
-/** Concept text for a question: its own fields, or the tree topic's when it points at one. */
 export function sampleConcept(item: SubjectSample): SampleConceptFields {
   if (!item.treeTopic) {
     const { definition, purpose, applicability, counterexample, misconception, examUse } = item as SubjectSample & SampleConceptFields;
@@ -71,7 +59,6 @@ export const sampleConceptId = (item: SubjectSample) => { const topic = treeTopi
 const conceptVersion = (item: SubjectSample) => { const topic = treeTopicOf(item); return topic ? treeConceptVersion(topic)
   : `synthetic-sample-concept-${hash([item.id, ...Object.values(sampleConcept(item))])}`; };
 
-/** Deterministic option order so the correct answer is not always first. */
 function options(item: SubjectSample) {
   const all = [{ text: item.answer, wrongIndex: -1 }, ...item.wrong.map((text, wrongIndex) => ({ text, wrongIndex }))];
   const shift = parseInt(hash(item.id).slice(0, 2), 16) % 4;

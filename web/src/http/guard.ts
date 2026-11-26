@@ -4,7 +4,6 @@ const hosts = new Set(['localhost:3210', '127.0.0.1:3210']);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function validId(value: string | undefined): value is string { return !!value && uuid.test(value); }
 
-/** Host checks are defense in depth, not authentication. Bind the server to loopback. */
 export function guardRequest(request: Request, fixtureMode: string | undefined) {
   if (fixtureMode !== '1') throw new StudyError('FIXTURE_DISABLED', 503);
   const host = request.headers.get('host');

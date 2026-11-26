@@ -16,7 +16,6 @@ const BOOKKEEPING_DIAGNOSTIC_DRAFTS = FULL_DIAGNOSTIC.filter(item=>concepts.incl
 const BOOKKEEPING_EVALUATION_DRAFTS = FULL_EVALUATION.filter(item=>concepts.includes(item.question.conceptId));
 const BOOKKEEPING_RETENTION_DRAFTS = FULL_RETENTION.filter(item=>concepts.includes(item.question.conceptId));
 const poolCounts = { practice: 60, diagnostic: 18, evaluation: 6, retention: 12, mini_a: 6, mini_b: 6 };
-// Numeric variants within one operation count as one family.
 const coverage = {
   'cash-is-not-profit': { practical: ['borrow', 'credit-sale'], mixed: 'cash-profit-bridge', scenes: ['個人商店', '卸売店'] },
   'double-entry': { practical: ['asset-liability', 'asset-exchange'], mixed: 'error-detection', scenes: ['個人商店', 'パン工房'] },

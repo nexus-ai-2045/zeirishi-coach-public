@@ -47,7 +47,6 @@ test('default fixture remains identical and another injected material uses only 
     assert.equal(result.result?.correct, true); assert.equal(result.result?.scoringVersion, 'test-score-v3');
     assert.equal(result.result?.evidenceQualification, 'practice_only');
     assert.deepEqual((await service.submit(owner, started.id, input)).result, result.result);
-    // History is independent of the currently injected material; reopen still rejects versions.
     assert.equal((await original.history(owner))[0].caseVersion, 'test-material-v3');
     await assert.rejects(original.get(owner, started.id), /CASE_VERSION_CONFLICT/);
     started.prompt.options[0].id = 'tampered';

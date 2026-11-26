@@ -22,8 +22,6 @@ test('verified history retains owner isolation, hidden-result gate and 20-item b
     const b = await service.start(bob, randomUUID());
     await service.submit(bob, b.id, { requestId: randomUUID(), optionId: 'h4r9' });
     await service.confidence(bob, b.id, { requestId: randomUUID(), confidence: null });
-    // Prepared service SQL is real in isolated PGlite. Role/JWT/private guard are
-    // adapter stubs, not evidence of production PostgreSQL RLS enforcement.
     const prepared: TransactionDatabase = { transaction: operation => db.transaction(tx => operation({ query: async <T>(sql: string, params?: unknown[]) => {
       if (sql.includes('pg_catalog.pg_roles')) return { rows: [{ name: 'zeirishi_app', superuser: false, bypass: false }] as T[] };
       if (sql.includes('set_config') || sql.includes('require_active_learner')) return { rows: [] };

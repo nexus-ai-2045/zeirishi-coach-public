@@ -1,4 +1,3 @@
-"""学習 state の永続化、マクロ計画、timer、1 問ごとの更新 (BKT・忘却・XP・称号)。"""
 from __future__ import annotations
 
 import json
@@ -17,7 +16,7 @@ COMBO_STEP, COMBO_CAP = 2, 10
 SPEED_PENALTY, SPEED_RECOVERY, SPEED_MIN = 0.05, 0.01, 0.5
 FINAL_PHASE_DAYS = 30
 TITLE_FIRST, TITLE_MASTER, TITLE_VETERAN, TITLE_STREAK, TITLE_TIME = "初陣", "師範への道", "百戦錬磨", "皆勤", "捨て問の目利き"
-TITLE_TIME_STREAK = 5  # docs/specs §2.4: time 分類が 5 回連続ゼロ
+TITLE_TIME_STREAK = 5
 MOCK_SCORE_MIN, MOCK_SCORE_MAX = 0.0, 100.0
 
 
@@ -45,7 +44,6 @@ def state_dir(subject_id: str) -> Path:
     return state_root() / subject_id
 
 
-# ---------- init / persist ----------
 
 def init_state(subject, exam_date, level=None, mock_score=None, today=None, profile=None) -> dict:
     today = today or today_iso()
@@ -94,7 +92,6 @@ def append_log(st: dict, row: dict) -> None:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-# ---------- scores ----------
 
 def weights_of(subject: dict) -> dict[str, float]:
     return {t["id"]: float(t["weight"]) for t in subject["topics"]}
@@ -112,8 +109,6 @@ def compute_scores(st: dict, subject: dict) -> tuple[float, float, float]:
     expected = model.expected_score(topic_m, weights, st["calibration_offset"])
     sd = model.score_sd(st["speed"], [m["score"] for m in st["mock_scores"]])
     score_prob = model.pass_probability(expected, sd, subject["exam"]["passing_line"])
-    # 棚卸し §7.6「順位がある直近模試がある時のみ」: 直近模試 (mock_scores の最後) に
-    # 順位が無ければ、古い模試の順位較正を引きずらない (PR #1 レビュー指摘 state.py:113)。
     last_mock = st["mock_scores"][-1] if st["mock_scores"] else None
     rank_prob = (model.rank_probability(last_mock["percentile"], pass_percentile(subject))
                  if last_mock and last_mock.get("percentile") is not None else None)
@@ -126,15 +121,9 @@ def snapshot_history(st, subject, today, minutes_delta=0.0) -> dict:
     if st["history"] and st["history"][-1]["date"] == today:
         row = st["history"][-1]
     else:
-        # mastery_avg_start: この日の学習が始まる前の mastery_avg。前の行が無ければ (=初回)
-        # 現在値をそのまま使う (まだ何も学習していない状態を表すため、これが正しい起点になる)。
-        # 以後、同日内の snapshot_history 呼び出しは上の分岐 (行の in-place 更新) を通るので
-        # ここで一度書いた値は当日中は上書きされない。
         start = st["history"][-1]["mastery_avg"] if st["history"] else round(m_avg, 4)
         row = {"date": today, "minutes": 0.0, "mastery_avg_start": start}
         st["history"].append(row)
-    # pass_prob は round(...,4) しない: 学習初期は 1e-7 台まで小さくなり得るため、
-    # 4 桁丸めだと「0 より大きい」という不変条件 (棚卸し §7.6 の合格確率は連続値) が壊れる。
     row.update({"pass_prob": prob, "expected": round(expected, 2), "mastery_avg": round(m_avg, 4)})
     row["minutes"] = round(row["minutes"] + minutes_delta, 2)
     return row
@@ -156,7 +145,6 @@ def apply_decay(st, subject, today) -> int:
     return changed
 
 
-# ---------- macro plan ----------
 
 def build_plan(st, subject, today) -> dict:
     final_start = add_days(st["exam_date"], -FINAL_PHASE_DAYS)
@@ -184,7 +172,6 @@ def target_prob_today(st, today) -> float:
     return model.target_at(plan["start_prob"], days_between(plan["created"], today), days_until_final)
 
 
-# ---------- timer ----------
 
 def _timer_path(subject_id: str) -> Path:
     return state_dir(subject_id) / "timer.json"
@@ -212,7 +199,6 @@ def elapsed_seconds(timer, now) -> int:
     return int((datetime.fromisoformat(now) - datetime.fromisoformat(timer["started_at"])).total_seconds())
 
 
-# ---------- record ----------
 
 def _update_streak(st, today):
     last = st["streak"]["last_study_date"]
@@ -296,7 +282,6 @@ def record_attempt(st, subject, topic_id, score, seconds, error_class, difficult
             "mastery_before": round(m_before, 4), "mastery_after": round(m_after, 4), "correct": correct}
 
 
-# ---------- mock / rebuild ----------
 
 MOCK_CALIBRATION_WINDOW = 3
 
@@ -334,7 +319,6 @@ def record_mock(st, subject, score, minutes, today, rank=None, of=None) -> dict:
 
 
 def rebuild_state(subject) -> dict:
-    """attempts.jsonl (正本) を init_args から再生する。ログ追記を止めるため一時 root に書く。"""
     sid = subject["subject"]
     current = load_state(sid)
     log_path = state_dir(sid) / "attempts.jsonl"

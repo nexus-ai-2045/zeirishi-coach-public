@@ -2,7 +2,6 @@ import { expect, test, type Page } from '@playwright/test';
 import { SUBJECTS } from '../src/domain/onboarding';
 import { topicConcepts, type SubjectMapPack } from '../src/domain/subject-map';
 
-// 11科目それぞれで「科目を選ぶ → 地図の見出しがその科目名 → ★頻出の確認問題を解く → 解説は1回だけ → 再読み込みでも科目が保たれる」を確かめる。
 const origin = 'http://127.0.0.1:3210';
 type Choice = { subjectId: string; conceptId: string; conceptVersion: string; materialId: string; caseVersion: string; label: string };
 
@@ -21,13 +20,11 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   test.setTimeout(60000);
   await openSubject(page, subject.label);
 
-  // 学習地図はどの科目も同じツリー1つで、見出しが選んだ科目名になる。
   await expect(page.getByRole('list', { name: `${subject.label}の全体ツリー` })).toBeVisible();
   await expect(page.locator('[data-tree-root]')).toHaveText(subject.label);
   await expect(page.getByLabel(/ブレインマップ/)).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'これまでの地図' })).toHaveCount(0);
 
-  // ★頻出の論点につながる確認問題を1問選ぶ。
   const profile = await (await page.request.get(`/api/profile?subjectId=${subject.id}`)).json() as { subjectMap: SubjectMapPack; materialChoices: Choice[] };
   const frequent = profile.subjectMap.topics.filter(topic => topic.frequency === 'high');
   const pool = frequent.length ? frequent : profile.subjectMap.topics;
@@ -40,7 +37,6 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   expect(created.status()).toBe(200);
   const { session } = await created.json();
 
-  // 問題を開くと、ページを読み直しても科目名が保たれる。
   await page.goto(`/#case/${session.id}`);
   await expect(page.locator('main')).toHaveAttribute('aria-busy', 'false');
   await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
@@ -55,7 +51,6 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   if (await skip.count()) await skip.click();
   await expect(page.getByRole('heading', { name: '判断の理由を理解する' })).toBeVisible();
 
-  // 解説は画面に1回だけ出る。
   const saved = await (await page.request.get(`/api/cafe?caseId=${encodeURIComponent(session.id)}`)).json();
   const explanation: string = saved.session.result.explanation;
   expect(explanation.length).toBeGreaterThan(10);
@@ -69,7 +64,6 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
   await expect(page.getByRole('heading', { name: '学習地図' })).toBeVisible();
   await expect(page.getByRole('list', { name: `${subject.label}の全体ツリー` })).toBeVisible();
 
-  // 別の科目に切り替えてから学習記録で開き直しても、問題の科目に戻る。
   if (subject.id !== 'bookkeeping') {
     await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
     await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
@@ -77,7 +71,6 @@ for (const subject of SUBJECTS) test(`${subject.label}：地図の見出し・�
     await page.getByRole('button', { name: /この記録を開く|この記録から再開|この相談を再開/ }).first().click();
     await expect(page.getByText(`${subject.label} · 相談ケース`)).toBeVisible();
 
-    // ホームの「続きから再開」から戻っても同じ。
     await page.getByRole('button', { name: '← 学習地図へ' }).first().click();
     await page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /簿記論/ }).click();
     await expect(page.getByRole('list', { name: '簿記論の全体ツリー' })).toBeVisible();
@@ -113,7 +106,6 @@ test('問題の科目を探している間に別の科目を選んでも、選�
     concept: { subjectId: 'bookkeeping', conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, materialId: choice.materialId, caseVersion: choice.caseVersion } });
   expect(created.status()).toBe(200);
   await openSubject(page, '固定資産税');
-  // 簿記論の一覧だけ遅らせ、科目探しが終わる前に利用者が酒税法を選ぶ。
   await page.route(url => url.pathname === '/api/profile' && url.searchParams.get('subjectId') === 'bookkeeping',
     async route => { await new Promise(resolve => setTimeout(resolve, 4000)); await route.continue().catch(() => undefined); });
   await page.getByRole('button', { name: '学習記録', exact: true }).first().click();
@@ -135,11 +127,9 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   const choice = profile.materialChoices.find(item => item.conceptId === concept.conceptId)!;
   const unit = profile.subjectMap.units.find(item => item.unitId === topic.unitId)!;
   const tree = page.getByRole('list', { name: '所得税法の全体ツリー' });
-  // 同じ #map への移動では読み直されないため、ページを読み直してから科目を選び直す。
   const reopen = async () => { await page.reload(); await openSubject(page, '所得税法'); };
   await expect(tree.getByRole('button', { name: `${topic.label}（まだ）` })).toBeVisible();
 
-  // 確認問題を解く：まず不正解 → 「もう一度」、次に正解 → 「理解した」。
   async function solve(correct: boolean) {
     const created = await page.request.post('/api/cafe', { headers: { Origin: origin }, data: { action: 'start', requestId: crypto.randomUUID(),
       concept: { subjectId: choice.subjectId, conceptId: choice.conceptId, conceptVersion: choice.conceptVersion }, materialId: choice.materialId, caseVersion: choice.caseVersion } });
@@ -166,8 +156,6 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   await understood.click();
   await expect(page.getByRole('complementary', { name: '選んだ論点の説明' })).toContainText('いまの復習：0 / 3回');
 
-  // 翌日・3日後・7日後のカードで続けて「覚えていた」→「覚えた」（緑）。サーバーの記録時刻も同じ日付で進める。
-  // サーバーは本当の現在時刻で記録するため、読み込み時だけ記録時刻を画面の時計（進めた日付）に置き換える。
   let now = Date.now();
   const checkedAt: string[] = [];
   await page.route('**/api/practice-progress', async route => {
@@ -190,7 +178,6 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   await expect(tree.getByRole('button', { name: `${topic.label}（覚えた）` })).toBeVisible();
   await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
 
-  // ホームも学習地図と同じ数え方・同じ色で、同じ科目の進み具合を出す。
   await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
   const home = page.locator('[aria-label="いまの科目の進み具合"]');
   await expect(home.getByRole('heading', { name: '所得税法' })).toBeVisible();
@@ -198,13 +185,11 @@ test('確認問題の正誤で論点・分野・科目の色が変わり、翌�
   await expect(home).toContainText('今日の復習カード：0枚');
   await home.getByRole('button', { name: '所得税法の学習地図を開く →' }).click();
   await expect(page.locator('[aria-label="この科目の進み具合"]')).toContainText('うち覚えた 1');
-  // 読み込み中の進み具合の差し替えが終わってから閉じる（終了時に応答が破棄されないように）。
   await page.unrouteAll({ behavior: 'wait' });
 });
 
 test('地図を読み直しても、最後に選んだ科目のまま（別の科目の続きの相談があっても）', async ({ page }) => {
   test.setTimeout(60000);
-  // 簿記論の相談を始めて「続き」を残してから、酒税法に切り替える。
   await openSubject(page, '簿記論');
   await page.getByRole('list', { name: '簿記論の全体ツリー' }).getByRole('button', { name: /記録・利益・期間配分の基礎/ }).click();
   await page.getByRole('button', { name: /^支払日と費用の期間は別（/ }).click();
@@ -219,7 +204,6 @@ test('地図を読み直しても、最後に選んだ科目のまま（別の�
     await expect(page.getByRole('list', { name: '酒税法の全体ツリー' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: '科目', exact: true }).getByRole('button', { name: /酒税法/ })).toHaveAttribute('aria-current', 'page');
   }
-  // 続きの相談を開けば、その相談の科目（簿記論）に切り替わる。
   await page.getByRole('button', { name: 'ホーム', exact: true }).first().click();
   await page.getByRole('button', { name: '続きから再開' }).click();
   await expect(page.getByText('簿記論 · 相談ケース')).toBeVisible();
@@ -235,20 +219,16 @@ test('消費税法：未成立の1%法案は「現行の制度」と「成立し
   const detail = page.getByRole('complementary', { name: '選んだ論点の説明' });
   const current = detail.getByRole('button', { name: '現行の制度' });
   const enacted = detail.getByRole('button', { name: '成立した場合（未確定）' });
-  // 最初は現行の法律の内容。
   await expect(current).toHaveAttribute('aria-pressed', 'true');
   await expect(detail).toContainText('食料品や新聞は8%');
   await expect(detail).not.toContainText('2027年4月1日から2029年3月31日');
-  // 切り替えると、成立した場合の内容と「未確定」の表示になる。
   await enacted.click();
   await expect(enacted).toHaveAttribute('aria-pressed', 'true');
   await expect(detail).toContainText('食料品は2027年4月から2年間だけ1%');
   await expect(detail).toContainText('2027年4月1日から2029年3月31日');
   await expect(detail).toContainText('まだ決まっていません');
-  // ほかの論点には切り替えボタンが出ない。
   await tree.getByRole('button', { name: /^非課税・免税・不課税の区分（/ }).click();
   await expect(detail.getByRole('button', { name: '成立した場合（未確定）' })).toHaveCount(0);
-  // 戻すと現行に戻る。
   await tree.getByRole('button', { name: /^課税標準と税率（軽減税率）（/ }).click();
   await current.click();
   await expect(detail).toContainText('食料品や新聞は8%');

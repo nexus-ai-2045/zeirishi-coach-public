@@ -39,7 +39,6 @@ export async function purgeExpiredCafe(tx: Tx, at: Date) {
   await tx.query("DELETE FROM cafe_progress WHERE instance_id IN (SELECT id FROM cafe_instances WHERE status<>'active')");
 }
 
-/** Isolated server-side development fixture; no production identity, AI calls or legacy migration. */
 export async function createCafeService(db: SchemaDatabase, now: () => Date = () => new Date()) {
   await initializeOwnerAccess(db);
   await db.exec(`
@@ -72,8 +71,6 @@ export async function createCafeService(db: SchemaDatabase, now: () => Date = ()
   return createCafeServiceOnPreparedDatabase(db, now);
 }
 
-/** Same fixture business logic on an already prepared schema; this does not approve material for production. */
-/** Resolve only a verified owner's persisted version; never trust a client-provided case version. */
 export async function readOwnedCafeVersion(db: TransactionDatabase, owner: string, caseId: string): Promise<string> {
   validId(owner); validId(caseId);
   return db.transaction(async tx => {
@@ -93,7 +90,6 @@ export function createCafeServiceOnPreparedDatabase(db: TransactionDatabase, now
     || !Array.isArray(source.options) || Array.from(source.options).some(option => !option || typeof option.id !== 'string' || typeof option.label !== 'string')
     || !Array.isArray(source.facts) || Array.from(source.facts).some(fact => !fact || typeof fact.label !== 'string' || typeof fact.value !== 'string'))
     throw new StudyError('INVALID_MATERIAL', 503);
-  // Explicit public projection at every nested level: material authoring data may contain answers.
   const prompt: CafePrompt = {
     caseId: source.caseId, caseVersion: source.caseVersion, conceptId: source.conceptId, familyId: source.familyId,
     developmentOnly: source.developmentOnly, title: source.title, consultationTitle: source.consultationTitle,
@@ -181,7 +177,6 @@ export function createCafeServiceOnPreparedDatabase(db: TransactionDatabase, now
         return result.rows;
       }, owner);
     },
-    /** Every answer whose feedback was shown (confidence fixed), oldest first, for topic progress on the map. */
     async practiceRecords(owner: string): Promise<{ caseVersion: string; submittedAt: string; correct: boolean }[]> {
       validId(owner);
       return transact(async tx => {

@@ -21,7 +21,6 @@ test('draft list exposes only owned unsubmitted active pointers and never extend
     at = new Date('2026-09-09T00:00:00Z');
     assert.deepEqual(await service.drafts(alice), drafts);
     assert.equal((await service.get(alice, second.id)).expiresAt, saved.expiresAt);
-    // Recreating a prepared service does not depend on an in-memory resume pointer.
     assert.deepEqual(await createCafeServiceOnPreparedDatabase(db, () => at).drafts(alice), drafts);
     await service.submit(alice, second.id, { requestId: randomUUID(), optionId: 'h4r9' });
     assert.deepEqual((await service.drafts(alice)).map(item => item.caseId), [first.id]);

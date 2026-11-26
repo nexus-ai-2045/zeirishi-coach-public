@@ -13,12 +13,6 @@ export type MasteryMeasurement = {
   confidence: 'low' | 'normal' | 'high' | null; confidenceFixedBeforeResult: boolean;
   invalidated: boolean;
 };
-/** Trusted, single-owner server projection, never learner-supplied JSON. The caller
- * verifies owner/session/timer, reviewed criteria, current material validity and
- * completeness of this concept's disclosure history. reviewed_rules explanation
- * means a structured principle question; free-text explanation needs expert_review.
- * This function validates facts; it does not grant these authorities.
- */
 export type MasteryAssessmentInput = {
   subjectId: SubjectId; conceptId: string; conceptVersion: string;
   criterion: { prepared: boolean; version: string | null }; disclosures: readonly string[];
@@ -54,8 +48,6 @@ const day = 86_400_000;
 const formal = (m: MasteryMeasurement) => m.sourceKind === 'formal' && m.reviewStatus === 'approved' && m.measurementQuality === 'verified'
   && ['reviewed_rules', 'expert_review'].includes(m.scoringAuthority);
 const inTime = (m: MasteryMeasurement) => m.elapsedMinutes !== null && m.timeLimitMinutes !== null && m.elapsedMinutes <= m.timeLimitMinutes;
-// Never choose arbitrary IDs at the five-record boundary. Omit an ambiguous
-// timestamp group and retain only strictly newer evidence, with actual coverage.
 function recentFive(values: MasteryMeasurement[], metric: (item: MasteryMeasurement) => number, onTie: () => void) {
   const sorted = [...values].sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt) || metric(a) - metric(b));
   let end = 0;
@@ -95,7 +87,6 @@ export function assessMastery(input: MasteryAssessmentInput): MasteryAssessment 
     if (prior && JSON.stringify(prior) !== JSON.stringify(measurement)) invalid();
     if (!prior && Date.parse(measurement.occurredAt) <= at) seen.set(measurement.measurementId, measurement);
   }
-  // A registered version alone does not make its criterion ready for assessment.
   const values = (input.criterion.prepared && input.criterion.version !== null ? [...seen.values()] : [])
     .sort((a, b) => Date.parse(a.occurredAt) - Date.parse(b.occurredAt) || a.measurementId.localeCompare(b.measurementId));
   const scorable = values.filter(item => !item.invalidated && item.sourceKind === 'formal' && item.reviewStatus === 'approved' && item.measurementQuality === 'verified'
@@ -118,8 +109,6 @@ export function assessMastery(input: MasteryAssessmentInput): MasteryAssessment 
   let lastEvidence: MasteryMeasurement[] = [];
   const applicationCases = new Set<string>(), recoveryCases = new Set<string>();
   const qualifyingMeasurementIds: string[] = [];
-  // In time order, only the earliest two distinct families are needed to find
-  // a different-family predecessor. Keep a separate pair for mixed questions.
   const earliest: MasteryMeasurement[] = [], earliestMixed: MasteryMeasurement[] = [];
   const remember = (list: MasteryMeasurement[], item: MasteryMeasurement) => {
     if (list.length < 2 && !list.some(prior => prior.familyId === item.familyId)) list.push(item);
@@ -142,15 +131,12 @@ export function assessMastery(input: MasteryAssessmentInput): MasteryAssessment 
       return { item, failed, qualifies: met && independentTimed };
     });
     const clockEvents = events.filter(event => event.failed || event.qualifies);
-    // Ties have no temporal order. Require every possible latest predecessor
-    // to be a different problem, and no concurrent clock-advancing non-retention.
     const retentionEstablished = examConfirmed && lastEvidence.length > 0 && clockEvents.length > 0
       && [...recovery].every(kind => kind === 'retention')
       && clockEvents.every(event => event.qualifies && event.item.evidenceKind === 'retention'
         && lastEvidence.every(prior => time - Date.parse(prior.occurredAt) >= 21 * day
           && event.item.caseId !== prior.caseId && event.item.familyId !== prior.familyId));
     if (clockEvents.length) maintained = retentionEstablished;
-    // Process failures last so a simultaneous success cannot recover them.
     for (const { item, failed, qualifies } of [...events.filter(event => !event.failed), ...events.filter(event => event.failed)]) {
       if (failed) {
         recovery.add(item.evidenceKind); maintained = false;
@@ -183,7 +169,6 @@ export function assessMastery(input: MasteryAssessmentInput): MasteryAssessment 
     }
     if (retentionEstablished) recovery.delete('retention');
     if (explanation && applicationCases.size >= 2 && pairFound) examConfirmed = true;
-    // Preserve all possible latest problems, not whichever ID happened to sort last.
     if (clockEvents.length) lastEvidence = clockEvents.map(event => event.item);
   }
   let needsRecheck = recovery.size > 0;

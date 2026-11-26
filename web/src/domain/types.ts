@@ -21,7 +21,6 @@ export class StudyError extends Error {
 
 export const emptyAnswer = (): Answer => ({ insurance: '', equipment: '', explanation: '' });
 
-/** Bound input before normalization; drafts can be incomplete, submissions cannot. */
 export function validateAnswer(value: unknown, submission = false): Answer {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new StudyError('INVALID_ANSWER');
   const answer = value as Record<string, unknown>;

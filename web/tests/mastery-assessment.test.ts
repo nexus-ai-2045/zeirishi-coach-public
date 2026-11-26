@@ -103,7 +103,7 @@ test('直近5件の同時刻境界は群ごと除外し、ID変更でも全評�
   assert.equal(empty.scores.explanation.score, null);
   assert.equal(empty.scores.calibration.score, null);
   assert.equal(empty.scores.overall.coverage, 0);
-  assert.equal(empty.needsRecheck, true); // Score exclusion never drops negative evidence.
+  assert.equal(empty.needsRecheck, true);
   assert.deepEqual(withoutIds(tied), withoutIds(rename(tied)));
   const newer = m('newer', { occurredAt: '2026-01-02T00:00:00Z', confidence: 'high', confidenceFixedBeforeResult: true });
   const events = [...tied, newer];
@@ -146,7 +146,7 @@ test('他種類の未達では適用の再確認ケースと試験の再確認�
     m('app-second', { evidenceKind: 'application', caseId: 'case-b', occurredAt: '2026-01-04T00:00:00Z' }),
     m('exam-first', { evidenceKind: 'exam', familyId: 'fam-a', mixedConceptIds: ['concept','other'], occurredAt: '2026-01-05T00:00:00Z' }),
     m('exam-second', { evidenceKind: 'exam', familyId: 'fam-b', occurredAt: '2026-01-07T00:00:00Z' })];
-  assert.equal(input(events.slice(0,4)).needsRecheck, true); // The exam still needs its pair.
+  assert.equal(input(events.slice(0,4)).needsRecheck, true);
   assert.equal(input(events).needsRecheck, false);
   const reversed = [m('exam-fail', { evidenceKind: 'exam', outcome: 'not_met', score: 5 }),
     m('exam-first', { evidenceKind: 'exam', familyId: 'fam-a', mixedConceptIds: ['concept','other'], occurredAt: '2026-01-02T00:00:00Z' }),

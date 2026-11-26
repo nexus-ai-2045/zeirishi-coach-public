@@ -30,7 +30,6 @@ export function createDataHandler(getService: () => Promise<Service>, fixtureMod
         return response;
       }
       parseDataDeletion(await readBody(request));
-      // A missing cookie cannot prove which data was deleted. Never turn missing identity into success.
       if (!owner) throw new StudyError('USER_REQUIRED', 401);
       const result = await (await getService()).delete(owner);
       const response = jsonResponse(result);

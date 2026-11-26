@@ -30,8 +30,6 @@ export function parseProfileSubject(request: Request) {
 
 export function profilePayload(profile: ConfidenceProfile, subjectId: ReturnType<typeof parseSubjectId>, catalog: readonly SubjectPack[], developmentOnly: boolean,
   approvedMaterials: ReadonlySet<string> = new Set()) {
-  // The editor resubmits the whole profile, including subjects not currently visible.
-  // Retired versions must not poison that save or silently acquire a new version's confidence.
   const editableProfile = { ...profile, reports: profile.reports.filter(report => catalog.some(pack => pack.active &&
     pack.subjectId === report.subjectId && pack.concepts.some(concept => concept.conceptId === report.conceptId && concept.conceptVersion === report.conceptVersion))) };
   const matchingPacks = catalog.filter(pack => pack.active && pack.subjectId === subjectId);
@@ -54,7 +52,6 @@ export function profilePayload(profile: ConfidenceProfile, subjectId: ReturnType
   };
 }
 
-/** Loopback development profile only. No production identity, mastery or AI connection. */
 export function createConfidenceHandler(getService: () => Promise<Service>, fixtureMode: () => string | undefined, catalog: readonly SubjectPack[],
   materialChoices: readonly MaterialChoice[] = []) {
   return async (request: Request) => {

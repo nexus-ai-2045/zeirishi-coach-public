@@ -6,7 +6,6 @@ import { jsonResponse as json, readLocalCookie as cookie, setLocalCookie as setC
 
 type Service = Awaited<ReturnType<typeof createStudyService>>;
 
-/** Local pseudonymous cookie only; not production identity or authorization infrastructure. */
 export function createStudyHandler(getService: () => Promise<Service>, fixtureMode: () => string | undefined) {
   return async (request: Request) => {
     try {

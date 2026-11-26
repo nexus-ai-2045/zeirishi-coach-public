@@ -9,7 +9,6 @@ const syllabusSources: MaterialSource[] = [{sourceId:'nta-bookkeeping-scope-2026
   {sourceId:'asbj-standards-index-2026',termsUrl:'https://www.asb-j.jp/jp/accounting_standards.html',checkedAt:'2026-10-07',
   attribution:'企業会計基準委員会・基準一覧（原稿の参照入口）',permissionNote:'一覧の公表状況を確認した。全基準本文の適用年度・採点根拠・利用条件の専門確認は未完了。',
   rights:{acquisition:'unknown',storage:'unknown',reproduction:'unknown',modification:'unknown',redistribution:'unknown',aiInput:'unknown'}}];
-/** Registry review candidates only. Draft status cannot be used as supply or approval. */
 export const BOOKKEEPING_MATERIAL_RECORD_DRAFTS: readonly MaterialRecord[] = BOOKKEEPING_TRIAL_MATERIALS.map(material => {
   const prompt=material.prompt(); const correct=prompt.options.map(option=>material.grade(material.caseVersion,option.id)).find(result=>result.correct)!;
   return {materialId:prompt.caseId,version:material.caseVersion,subjectId:'bookkeeping',authorId:'codex-draft',status:'draft',

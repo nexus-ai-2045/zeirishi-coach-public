@@ -4,7 +4,6 @@ import styles from './LearningAtlas.module.css';
 
 type Connection = { path: string; state: string };
 
-/** Decorative connections follow card geometry; learning state stays with the cards. */
 export function LearningTree({ children }: { children: ReactNode }) {
   const host = useRef<HTMLDivElement>(null);
   const [drawing, setDrawing] = useState({ width: 1, height: 1, connections: [] as Connection[] });

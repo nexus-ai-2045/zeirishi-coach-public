@@ -20,7 +20,6 @@ test('診断保存は在庫ゼロを補完せず、本人別・CAS・冪等・�
     assert.deepEqual(unavailable.view.attempts,[]);
     assert.equal((await db.query('SELECT * FROM diagnostic_sessions')).rows.length,0);
     assert.equal((await db.query('SELECT * FROM diagnostic_requests')).rows.length,0);
-    // Catalog-version binding is deliberately fail-closed; use a distinct owner for fixtures.
     const service=createDiagnosticServiceOnPreparedDatabase(db,questions,()=>at);
     const first=await service.save('alice',start('start-one'));
     assert.deepEqual(await service.save('alice',start('start-one')),first);

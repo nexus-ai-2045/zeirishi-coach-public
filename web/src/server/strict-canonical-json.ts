@@ -1,4 +1,3 @@
-/** Strict JSON normalization shared by review payloads. Caller owns the domain error. */
 export function strictCanonicalJson(value: unknown, invalid: () => never, parents = new Set<object>(), depth = 0): string {
   if (depth > 40) invalid();
   if (value === null || typeof value === 'boolean' || typeof value === 'string') return JSON.stringify(value);

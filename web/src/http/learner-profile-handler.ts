@@ -9,7 +9,6 @@ import { readBody } from './guard';
 type MaterialChoice = ConceptRef & { materialId: string; caseVersion: string; label: string };
 type Options = Omit<Parameters<typeof createLearnerContextHandler>[0], 'operation'> & { catalog: readonly SubjectPack[]; materialChoices?: readonly MaterialChoice[] };
 
-/** No route or catalog defaults. Authenticated request-scoped service over an already prepared database. */
 export function createLearnerProfileHandler({ catalog, materialChoices = [], ...context }: Options) {
   return createLearnerContextHandler({ ...context, operation: async (request, learner) => {
     try {

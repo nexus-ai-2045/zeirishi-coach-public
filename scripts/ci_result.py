@@ -1,5 +1,3 @@
-"""既存CIのjob結果を回収する。製品の提供可否は判定しない。"""
-
 import json
 import os
 import re
@@ -7,7 +5,6 @@ from pathlib import Path
 
 
 def collect(needs, context):
-    """GitHub needsの欠測・取消を含め、明示的な全成功だけを通す。"""
     jobs = {}
     for name in ("cli", "web"):
         value = needs.get(name) if isinstance(needs, dict) else None
@@ -41,7 +38,6 @@ def main():
     print(json.dumps(receipt, ensure_ascii=False, sort_keys=True))
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
-        # GitHubの固定メタデータだけを表示する。外部入力本文や秘密値は記録しない。
         lines = ["## リポジトリ検証結果", f"判定: {receipt['status']}",
                  "", "| 検証 | 結果 |", "|---|---|"]
         lines += [f"| {name} | {result} |" for name, result in receipt["jobs"].items()]

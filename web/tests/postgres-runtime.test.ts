@@ -29,7 +29,6 @@ test('database config requires explicit activation, matching project, dedicated 
 test('pooler login suffix binds the selected Supabase project', () => {
   const pooler = { ...settings, ZEIRISHI_DATABASE_HOST: 'aws-0-ap-northeast-1.pooler.supabase.com', ZEIRISHI_DATABASE_USER: `zeirishi_runtime.${ref}`, ZEIRISHI_DATABASE_PORT: '6543' };
   assert.equal(readDatabaseConfig(pooler).port, 6543);
-  // Real hosts have one label before pooler.supabase.com, not arbitrary lookalike suffixes.
   assert.throws(() => readDatabaseConfig({ ...pooler, ZEIRISHI_DATABASE_USER: 'zeirishi_runtime.other' }));
 });
 test('new connection admission rejects admin or guard-capable credentials', async () => {
@@ -55,8 +54,6 @@ test('admission SQL detects indirect privilege membership using real isolated Po
       create role zeirishi_access_guard nologin noinherit;
       create role zeirishi_runtime nologin noinherit nosuperuser nobypassrls nocreatedb nocreaterole noreplication;
       grant zeirishi_app to zeirishi_runtime with inherit false, set true;`);
-      // Prepare each graph as the fixture owner before dropping session authority.
-      // A fresh database avoids assuming RESET restores a pooled/embedded session's owner.
       if (extraMembership) await db.exec(`create role fixture_extra_privilege nologin;
       grant fixture_extra_privilege to zeirishi_app;`);
       const check = readDatabaseConfig(settings).onConnect!;

@@ -25,8 +25,6 @@ type ExportCafe = { id: string; caseVersion: string; status: CafeView['status'];
   optionId: string | null; explanation: string; attemptId: string | null; submittedAt: string | null;
   confidence: CafeView['confidence']; confidenceFixed: boolean; result: CafeView['result'] };
 
-/** Existing adapters must initialize their schemas on this same database before construction. */
-/** True when the local-only review-card table exists and this role may use it (the online schema has neither). */
 async function hasReviewCards(tx: QueryExecutor, privilege: 'SELECT' | 'DELETE') {
   return (await tx.query<{ ok: boolean }>(`SELECT to_regclass('review_card_checks') IS NOT NULL
     AND has_table_privilege('review_card_checks', $1) AS ok`, [privilege])).rows[0]?.ok === true;
@@ -43,7 +41,6 @@ export async function createDataService(db: SchemaDatabase, now: () => Date = ()
   return createDataServiceOnPreparedDatabase(db, now);
 }
 
-/** All study/cafe/profile/plan/owner tables must exist; no DDL or external connection is performed. */
 export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now: () => Date = () => new Date(), scope: 'local' | 'online' = 'local') {
   if (scope !== 'local' && scope !== 'online') throw new StudyError('INVALID_DATA_SCOPE', 500);
   const developmentOnly = scope === 'local';
@@ -68,7 +65,6 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
           a.submitted_at AS "submittedAt",s.fixture_version AS "fixtureVersion",s.scoring_version AS "scoringVersion"
           FROM study_sessions s LEFT JOIN study_attempts a ON a.session_id=s.id AND a.owner_id=s.owner_id
           WHERE s.owner_id=$1 ORDER BY s.id`, [owner])).rows;
-        // Project only already-disclosed grading. Never export raw receipts or the hidden attempt result.
         const cafeCases = (await tx.query<ExportCafe>(`SELECT i.id,i.case_version AS "caseVersion",i.status,
           CASE WHEN i.status<>'active' THEN i.status ELSE COALESCE(p.phase,i.draft_phase,'consultation') END AS phase,
           i.revision,COALESCE(p.revision,0) AS "progressRevision",COALESCE(p.saved_at,i.saved_at) AS "savedAt",
@@ -81,7 +77,6 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
           LEFT JOIN cafe_confidence c ON c.attempt_id=a.id
           LEFT JOIN cafe_progress p ON p.instance_id=i.id AND p.owner_id=i.owner_id
           WHERE i.owner_id=$1 ORDER BY i.id`, [owner])).rows;
-        // Review cards exist only in the local mode's database (see review-card-service.ts).
         const reviewCards = developmentOnly && await hasReviewCards(tx, 'SELECT')
           ? (await tx.query<{ subjectId: string; topicId: string; checkedAt: string; remembered: boolean }>(`SELECT subject_id AS "subjectId",
             topic_id AS "topicId",checked_at AS "checkedAt",remembered FROM review_card_checks WHERE owner_id=$1 ORDER BY checked_at,request_id`, [owner])).rows
@@ -101,11 +96,9 @@ export function createDataServiceOnPreparedDatabase(db: TransactionDatabase, now
         const identity = await lockOwner(tx, owner);
         if (identity.revokedAt === null) {
           const at = clock();
-          // Review cards exist only in the local mode's database; the online schema has no such table or grant.
           if (await hasReviewCards(tx, 'DELETE')) await tx.query('DELETE FROM review_card_checks WHERE owner_id=$1', [owner]);
           await tx.query(`DELETE FROM cafe_confidence WHERE attempt_id IN
             (SELECT id FROM cafe_attempts WHERE owner_id=$1)`, [owner]);
-          // Static table names only, ordered by existing foreign keys. All changes commit together.
           for (const table of ['mastery_evidence_requests', 'mastery_evidence_revisions', 'diagnostic_requests', 'diagnostic_sessions', 'ai_interaction_summaries', 'exam_evidence_requests', 'exam_evidence_revisions', 'review_evidence_events', 'mock_exam_requests', 'mock_exam_records', 'weekly_plan_requests', 'weekly_plans', 'cafe_requests', 'cafe_progress', 'cafe_attempts', 'cafe_instances',
             'study_requests', 'study_attempts', 'study_sessions', 'confidence_requests', 'confidence_profiles']) {
             await tx.query(`DELETE FROM ${table} WHERE owner_id=$1`, [owner]);

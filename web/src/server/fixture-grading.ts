@@ -1,6 +1,5 @@
 import type { Answer, SessionView } from '../domain/types';
 
-/** Synthetic development fixture only; never an approved subject pack. Keep server-side. */
 export function gradeFixture(answer: Answer, at: Date): NonNullable<SessionView['result']> {
   const dueAt = new Date(at.getTime() + 86_400_000).toISOString();
   const definitions = [

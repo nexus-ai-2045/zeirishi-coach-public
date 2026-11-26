@@ -1,19 +1,10 @@
--- 学習データの権限宣言の正本。既存サービスの15表DDLと learner-access.sql、
--- learner-transaction.sql の後に適用する。テーブル定義・migration はここで複製しない。
--- https://supabase.com/docs/guides/database/postgres/row-level-security
--- 配備前提: 専用DBであり public の CREATE 撤回が他アプリを壊さないことを確認する。
--- 共有DBへ無条件に適用しない。実Supabase適用、migration生成、複数接続競合検証は別工程。
--- zeirishi_app は検証済み本人情報を設定する信頼済みサーバー専用。一般利用者へ接続資格や
--- role membership を渡さない。RLS自体がJWTの署名を検証する仕組みではない。
 begin;
 
--- PUBLICから継承されるCREATEも撤回し、学習処理にDDL権限を与えない。
 revoke create on schema public from public, anon, authenticated, zeirishi_app, zeirishi_access_guard;
 revoke create on schema zeirishi_private from public, anon, authenticated, zeirishi_app, zeirishi_access_guard;
 grant usage on schema public, auth, zeirishi_private to zeirishi_app;
 grant execute on function auth.uid(), auth.jwt() to zeirishi_app;
 
--- 利用権限の読取りだけを追加する。app自身によるactive化は許可しない。
 grant select on table public.learner_access to zeirishi_app;
 create policy learner_access_app_select_own
   on public.learner_access for select to zeirishi_app
@@ -23,8 +14,6 @@ create policy learner_access_app_select_own
     and (select auth.jwt() -> 'is_anonymous') = 'false'::jsonb
   );
 
--- SECURITY INVOKERを維持し、現在の利用許可をRLS下で読む。JWT内の過去の許可状態は使わない。
--- 失効との直列化は、同一TX先頭のrequire_active_learnerのFOR SHAREロックが担当する。
 create function zeirishi_private.is_active_learner()
   returns boolean
   language sql
@@ -45,7 +34,6 @@ revoke all privileges on function zeirishi_private.is_active_learner()
   from public, anon, authenticated, zeirishi_access_guard;
 grant execute on function zeirishi_private.is_active_learner() to zeirishi_app;
 
--- 未提出答案・未開示採点があるため、Data APIのauthenticatedにも直接SELECTを与えない。
 
 alter table public.owner_access enable row level security;
 alter table public.owner_access force row level security;
@@ -125,8 +113,6 @@ revoke all privileges on table public.weekly_plan_requests
   from public, anon, authenticated, zeirishi_access_guard, zeirishi_app;
 grant select, insert, delete on table public.weekly_plan_requests to zeirishi_app;
 
--- 親子の参照先も本人に限定する。FKの存在確認はRLSを迂回するためowner_idだけでは不足する。
--- 親方向のみ参照し、policyの循環を作らない。USINGとWITH CHECKを同じ条件にする。
 
 create policy owner_access_app_own_active
   on public.owner_access for all to zeirishi_app
@@ -299,7 +285,6 @@ create policy mock_exam_records_app_own_active
   using ((select zeirishi_private.is_active_learner()) and owner_id = (select auth.uid())::text)
   with check ((select zeirishi_private.is_active_learner()) and owner_id = (select auth.uid())::text);
 
--- receiptの親も同じ本人の記録に限定する。別人の親の存在を利用しない。
 create policy mock_exam_requests_app_own_active
   on public.mock_exam_requests for all to zeirishi_app
   using (

@@ -24,7 +24,6 @@ async function read(request: Request, db: TransactionDatabase, owner: string) {
   const assessment = await createExamEvidenceReaderOnPreparedDatabase(db).evaluate(owner, { ...query, asOf: new Date().toISOString() });
   const review = await createReviewServiceOnPreparedDatabase(db).get(owner);
   const mastery = await createMasteryEvidenceReaderOnPreparedDatabase(db).evaluateSubject(owner, query.subjectId);
-  // Do not expose complete evidence payloads, administrative attestations or revision logs.
   return { assessment, mastery: mastery.map(item => ({ subjectId: item.subjectId, conceptId: item.conceptId,
     conceptVersion: item.conceptVersion, criterionVersion: item.criterionVersion, status: item.status,
     needsRecheck: item.needsRecheck, reasons: item.reasons })), review: { evidenceCount: review.evidenceCount, correctionCount: review.correctionCount,

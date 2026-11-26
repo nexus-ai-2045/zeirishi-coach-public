@@ -3,8 +3,6 @@ import { StudyError } from './types';
 import { strictIsoInstant } from './strict-iso-instant';
 import { strictCanonicalJson } from '../server/strict-canonical-json';
 
-/** Trusted server catalog only. These fields check a supplied review record, not human expertise.
- * Never serialize the options' scores/reasons to a learner before answer acceptance. */
 export type DiagnosticQuestion = ConceptRef & {
   id: string; version: string; familyId: string; poolId: string; poolVersion: string;
   purpose: 'diagnostic' | 'practice' | 'before_evaluation' | 'after_evaluation';
@@ -66,10 +64,7 @@ function validCommand(command: DiagnosticCommand) {
     if (new Set(command.seenFamilies).size !== command.seenFamilies.length) invalid();
   }
 }
-/** Pure replayable model. Storage must bind seed/journal to the verified owner and persist
- * presented families across new sessions. No public question pool or ingestion is created. */
 export function createDiagnosticEngine(rawQuestions: readonly DiagnosticQuestion[], options: DiagnosticEngineOptions = {}) {
-  // A trusted server opt-in, never a learner command or a substituted review record.
   if (Object.keys(options).some(key => !['practiceOnly', 'purpose', 'questionLimit', 'durationSeconds', 'stageFilter'].includes(key)) || (options.practiceOnly !== undefined && typeof options.practiceOnly !== 'boolean')) invalid();
   const practiceOnly = options.practiceOnly === true;
   const configuredTrial = Object.keys(options).some(key => key !== 'practiceOnly');
@@ -108,7 +103,6 @@ export function createDiagnosticEngine(rawQuestions: readonly DiagnosticQuestion
         || (practiceOnly && q.status === 'draft' && q.review === null))
       && !foreignFamilies.has(`${q.subjectId}:${q.familyId}`) && !foreignPools.has(q.poolId) && !state.seenFamilies.includes(q.familyId)
       && (trialSettings?.stageFilter === false || seed.mode === 'short' || q.stage === stage)).sort((a, b) => {
-        // Balance concept coverage, then revisit observed misses; never infer an ability score.
         const attempts = (q: DiagnosticQuestion) => state.attempts.filter(item => item.conceptId === q.conceptId && item.conceptVersion === q.conceptVersion);
         const aa = attempts(a), bb = attempts(b);
         return aa.length - bb.length || Number(bb.some(item => item.earned !== null && item.earned < item.targetScore))
@@ -184,7 +178,7 @@ export function createDiagnosticEngine(rawQuestions: readonly DiagnosticQuestion
       if (prior) {
         const { at: _a, ...first } = prior, { at: _b, ...retry } = command;
         if (strictCanonicalJson(first, invalid) !== strictCanonicalJson(retry, invalid)) fail('DIAGNOSTIC_REQUEST_CONFLICT');
-        return session; // Receipt survives deadline; no regrading or overwriting subsequent answers.
+        return session;
       }
       apply(session.seed, state, command);
       if (session.events.length >= 100) fail('DIAGNOSTIC_EVENT_LIMIT');
@@ -198,9 +192,6 @@ export function createDiagnosticEngine(rawQuestions: readonly DiagnosticQuestion
       if (practiceOnly) reasons.unshift('原稿試用です。専門審査前のため、正式診断・習熟の証拠には使えません。');
       if (session.seed.mode === 'short') reasons.push('短い確認は試験速度・科目合格の証拠には使いません。');
       if (accepted.length < (trialSettings?.questionLimit ?? (session.seed.mode === 'short' ? 3 : 8))) reasons.push('回答済みの問題が少なく、未出題領域は未確認です。');
-      // Only a detailed session whose final `present` exhausted the eligible unseen
-      // inventory is stock-limited. A learner's early finish and the eight-minute
-      // deadline have separate states/events; short checks do not use the 8-question bar.
       const inventoryExhausted = session.seed.mode === 'detailed' && state.status === 'completed'
         && state.attempts.length < (trialSettings?.questionLimit ?? 12) && session.events.at(-1)?.type === 'present';
       if (inventoryExhausted) reasons.push('暫定診断（在庫不足）です。未見の診断問題がなくなったため、測定できた範囲だけを表示しています。');

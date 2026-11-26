@@ -6,8 +6,6 @@ import { strictIsoInstant } from '../domain/strict-iso-instant';
 export type ExamEvidenceDocument = {
   schemaVersion: 'exam-evidence-v1'; ownerId: string; record: ExamReadinessRecord;
   provenance: { sourceUrl: string; sourceReference: string; importedBy: string; importedAt: string };
-  /** Import-document confirmation of owner/provenance/result, NOT the separate
-   * exam-comparability expert review stored in record.comparisonReview. */
   attestation: { reviewerId: string; reviewedAt: string; payloadSha256: string };
 };
 export class ExamEvidenceInputError extends Error {
@@ -38,17 +36,12 @@ function recordKeys(record: unknown) {
   if (!Array.isArray(record.timeAllocation)) invalid();
   record.timeAllocation.forEach(section => keys(section, ['sectionId', 'minutes']));
 }
-/** Computes an integrity digest, not a signature or a human approval. */
 export function examEvidencePayloadSha256(document: ExamEvidenceDocument): string {
   const snapshot = JSON.parse(strictCanonicalJson(document, invalid)) as ExamEvidenceDocument;
   keys(snapshot, ['schemaVersion', 'ownerId', 'record', 'provenance', 'attestation']);
   const { attestation: _attestation, ...payload } = snapshot;
   return createHash('sha256').update(strictCanonicalJson(payload, invalid)).digest('hex');
 }
-/** Only trusted management ingestion may supply attestations. This does not authenticate
- * the importer/reviewer or establish expertise, permission, truth, or eligibility.
- * It grants no database permissions; general learner writes must not use this to
- * authorize INSERT/UPDATE of trusted evidence. */
 export function verifyExamEvidenceDocument(value: unknown, options: { expectedOwnerId: string; asOf: string }): ExamEvidenceDocument {
   const document = JSON.parse(strictCanonicalJson(value, invalid)) as ExamEvidenceDocument;
   keys(document, ['schemaVersion', 'ownerId', 'record', 'provenance', 'attestation']);
@@ -68,7 +61,6 @@ export function verifyExamEvidenceDocument(value: unknown, options: { expectedOw
   const reviewedAt = strictIsoInstant(document.attestation.reviewedAt, invalid);
   if (importedAt > asOf || reviewedAt > asOf || importedAt < completedAt || reviewedAt < completedAt) invalid();
   try {
-    // A valid but incomplete measurement is retained; held is not invalid.
     const record = document.record;
     evaluateExamReadiness({ subjectId: record.subjectId, examYear: record.examYear,
       criterionVersion: record.criterion?.version ?? 'unconfirmed', asOf: options.asOf, records: [record] });

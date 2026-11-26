@@ -6,13 +6,10 @@ import type { CafeMaterial } from './cafe-case';
 import { StudyError } from '../domain/types';
 import { createMaterialRegistry, type MaterialRecord } from './material-registry';
 
-/** 登録の正本。人間の専門審査・利用権・出荷承認前の原稿を有効化しない。利用可能な承認済み教材は現在0件。簿記論の原稿はdraftで保持する。 */
 export const MATERIAL_RECORDS: readonly MaterialRecord[] = Object.freeze([...BOOKKEEPING_MATERIAL_RECORD_DRAFTS]);
 
-/** Minimal safe picker projection; never includes question options, scores, or reviewer/rights data. */
 export type ApprovedMaterialChoice = ConceptRef & { materialId: string; caseVersion: string; label: string };
 
-/** One supply source for profile, planning and consultation; this is not a human approval service. */
 export function createApprovedSupply(records: readonly MaterialRecord[]) {
   const entries = [...createMaterialRegistry(records)].sort((a, b) =>
     a.record.subjectId.localeCompare(b.record.subjectId, 'en')

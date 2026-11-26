@@ -3,7 +3,6 @@ import { learningPriority, type PriorityInput } from './learning-priority';
 
 export const WEEKLY_PLAN_VERSION = 'weekly-plan-v1' as const;
 export type PlanBucket = 'weak' | 'review' | 'new';
-/** Server-selected inventory only. Client input cannot establish evidence eligibility. */
 export type PlanCandidate = ConceptRef & {
   id: string; label: string; familyId: string; minutes: number; bucket: PlanBucket;
   caseVersion?: string;
@@ -28,7 +27,6 @@ const shares = { weak: 0.6, review: 0.25, new: 0.15 };
 const id = (value: unknown) => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(value);
 function invalid(): never { throw new Error('INVALID_WEEKLY_PLAN'); }
 
-/** A bounded week is recalculated from current inventory, never from accumulated overdue tasks. */
 export function createWeeklyPlan(input: WeeklyPlanInput): WeeklyPlan {
   if (!input || !Number.isSafeInteger(input.weeklyMinutes) || input.weeklyMinutes < 0 || input.weeklyMinutes > 10080
     || typeof input.weekStart !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(input.weekStart)) invalid();
@@ -82,20 +80,16 @@ export function createWeeklyPlan(input: WeeklyPlanInput): WeeklyPlan {
     result.allocatedMinutes += c.minutes;
     result.remainingMinutes -= c.minutes;
   };
-  // A rotating first subject prevents the same subject taking every short week's minimum slot.
   const week = Math.floor((date.getTime() - Date.UTC(1970, 0, 5)) / (7 * 86400000));
   const offset = ((week % subjects.length) + subjects.length) % subjects.length;
   const ordered = [...subjects.slice(offset), ...subjects.slice(0, offset)];
   for (const subject of ordered) {
     const stock = candidates.filter(c => c.subjectId === subject);
-    // Protect every subject's minimum before spending remaining time on higher priorities.
     const next = stock.filter(fits).sort((a, b) => a.minutes - b.minutes || compare(a, b))[0];
     if (next) take(next, '受験予定科目の週1枠を優先。');
     else if (stock.length === 0) result.unavailableSubjects.push(subject);
     else result.deferredSubjects.push(subject);
   }
-  // Allocate remaining time by the largest remaining share; transfer unavailable shares.
-  // Sessions are indivisible, so exact percentages are targets, not fabricated precision.
   while (true) {
     const available = candidates.filter(fits);
     if (!available.length) break;

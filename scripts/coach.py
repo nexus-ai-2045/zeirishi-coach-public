@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""zeirishi-coach CLI。ロジックは coach_lib/。ここは引数解釈と入出力だけ。"""
 from __future__ import annotations
 
 import argparse
@@ -10,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from coach_lib import dashboard, report, scheduler, state, subjects  # noqa: E402
+from coach_lib import dashboard, report, scheduler, state, subjects
 
 
 def _out(data):
@@ -62,8 +61,6 @@ def cmd_init(a):
     profile = {k: v for k, v in {"weekly_hours": a.weekly_hours, "school": a.school, "note": a.note}.items() if v is not None}
     st = state.init_state(subject, exam_date=a.exam_date, level=a.level, mock_score=a.mock_score, today=a.today, profile=profile)
     if path.exists() and a.force:
-        # attempts.jsonl は rebuild の正本 (docs/specs §3.2)。捨てたはずの旧セッションを
-        # 残すと、再初期化後の記録と混ざって再生される (PR #1 レビュー指摘 coach.py:63)。
         for name in ("attempts.jsonl", "timer.json"):
             p = state.state_dir(a.subject) / name
             if p.exists():
@@ -109,8 +106,6 @@ def cmd_record(a):
     state.clear_timer(a.subject)
     state.save_state(st)
     expected, _sd, prob = state.compute_scores(st, subject)
-    # pass_prob は round しない: state.snapshot_history / report.build_report と同じ理由で、
-    # 学習初期は 1e-7 台まで小さくなり得るため 4 桁丸めだと「0 より大きい」不変条件が壊れる。
     _out({"reward": reward, "seconds": seconds, "score": score, "pass_prob": prob,
           "expected_score": round(expected, 1), "xp_total": st["xp"], "streak_days": st["streak"]["days"], "combo": st["combo"]})
     return 0
@@ -148,8 +143,6 @@ def cmd_plan(a):
     subject, st = _load(a.subject)
     if a.rebuild:
         today = a.today or state.today_iso()
-        # 直前の学習日から間が空いていると忘却が反映されないまま計画を引き直してしまう
-        # (PR #1 レビュー指摘 coach.py:140)。
         state.apply_decay(st, subject, today)
         st["plan"] = state.build_plan(st, subject, today)
         state.save_state(st)

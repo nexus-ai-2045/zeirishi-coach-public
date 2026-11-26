@@ -2,8 +2,6 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-// 専門レビュー用パケットは大きいので、中身を変えずに行の境目で断片に分けて置く。
-// 断片を manifest.json の順につなぐと、元の JSON とバイト単位で一致する。
 export const REVIEW_PACKET_DIR = 'docs/materials/bookkeeping-review-packet';
 export const PART_MAX_BYTES = 1_000_000;
 

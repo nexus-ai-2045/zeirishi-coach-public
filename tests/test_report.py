@@ -51,32 +51,24 @@ def test_efficiency(st, boki):
     assert report.build_report(st, boki, TODAY)["efficiency_7d"] is None
     state.record_attempt(st, boki, "boki.sales.shohin", 1.0, 600, "none", 3, TODAY)
     r = report.build_report(st, boki, TODAY)
-    # state.snapshot_history は同日内なら history[-1] を in-place で上書きするが、その日の行を
-    # 新規作成する時点で「学習前」の mastery_avg を mastery_avg_start として記録している (init_state
-    # 時点で 1 回 snapshot_history が呼ばれ、その時はまだ何も解いていないため)。よって同日 1 問でも
-    # 増分が復元でき、efficiency_7d は 0 より大きくなる。
     assert r["minutes_7d"] == pytest.approx(10.0) and r["efficiency_7d"] > 0
 
     state.record_attempt(st, boki, "boki.fixed.depreciation", 1.0, 600, "none", 3, "2026-09-05")
     r2 = report.build_report(st, boki, "2026-09-05")
-    # 2 日目以降は history に別の日の行が増えるため、当日の増分が計測できる。
     assert r2["minutes_7d"] == pytest.approx(20.0) and r2["efficiency_7d"] > 0
 
 
 def test_efficiency_window_excludes_eighth_day(st, boki):
-    """PR #1 レビュー指摘 (report.py:38): 7 日前ちょうどの実績は暦日 7 日 (8 日分) を
-    数えてしまうので除外する。"""
     state.record_attempt(st, boki, "boki.sales.shohin", 1.0, 600, "none", 3, TODAY)
     later = state.add_days(TODAY, 7)
     r = report.build_report(st, boki, later)
     recent_dates = [h["date"] for h in st["history"] if 0 <= state.days_between(h["date"], later) <= 7]
-    assert TODAY in recent_dates  # 素朴な <=7 判定なら含まれてしまう日
+    assert TODAY in recent_dates
     assert r["minutes_7d"] == pytest.approx(0.0)
     assert r["efficiency_7d"] is None
 
 
 def test_report_snapshots_decayed_value_for_dashboard(st, boki):
-    """PR #1 レビュー指摘 (report.py:16): dashboard 描画前に減衰を history へ記録する。"""
     state.record_attempt(st, boki, "boki.sales.shohin", 1.0, 100, "none", 3, TODAY)
     later = state.add_days(TODAY, 30)
     r = report.build_report(st, boki, later)

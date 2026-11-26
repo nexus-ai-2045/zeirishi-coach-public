@@ -34,7 +34,6 @@ export async function initializeExamEvidenceSchema(db: Pick<SchemaDatabase, 'exe
     PRIMARY KEY(owner_id,request_id)
   );`);
 }
-/** Audit/export must read every revision. Caller holds the owner lock. */
 export async function readExamEvidenceHistory(tx: QueryExecutor, owner: string): Promise<ExamEvidenceItem[]> {
   return (await tx.query<ExamEvidenceItem>(`SELECT id,revision,updated_at AS "updatedAt",document,withdrawn,reason
     FROM exam_evidence_revisions WHERE owner_id=$1 ORDER BY id,revision`, [owner])).rows;
@@ -47,7 +46,6 @@ function identity(document: ExamEvidenceDocument) {
   const r = document.record;
   return JSON.stringify([r.id, r.subjectId, r.examYear, r.examId, r.familyId, Date.parse(r.completedAt), r.kind]);
 }
-/** Read capability only; management methods must never be included in a learner HTTP service. */
 export function createExamEvidenceReaderOnPreparedDatabase(db: TransactionDatabase, now = () => new Date()) {
   return {
     async list(owner: string) { return db.transaction(async tx => { await assertOwnerActive(tx, owner); return readExamEvidenceHistory(tx, owner); }); },
@@ -60,8 +58,6 @@ export function createExamEvidenceReaderOnPreparedDatabase(db: TransactionDataba
         const visible = new Map<string, ExamEvidenceItem>();
         for (const item of history) if (Date.parse(item.updatedAt) <= asOf) visible.set(item.id, item);
         const items = [...visible.values()];
-        // Withdrawal remains in chronological selection and exposure history. Never fall back
-        // to an older high score, nor erase an encounter from novelty checks.
         const records = items.map(item => item.withdrawn ? { ...item.document.record,
           measurementQuality: { scoreVerified: false, timingVerified: false, coverageVerified: false } } : item.document.record);
         const result = evaluateExamReadiness({ ...input, records });
@@ -71,7 +67,6 @@ export function createExamEvidenceReaderOnPreparedDatabase(db: TransactionDataba
     },
   };
 }
-/** Trusted management capability only. Document integrity is not operator authentication or expert approval. */
 export function createExamEvidenceServiceOnPreparedDatabase(db: TransactionDatabase, now = () => new Date()) {
   async function append(owner: string, requestId: string, revision: number, id: string, at: string,
     fingerprint: string, document: ExamEvidenceDocument | null, reason: string | null): Promise<ExamEvidenceItem> {

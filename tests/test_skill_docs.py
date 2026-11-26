@@ -13,7 +13,6 @@ REVIEW_PACKET_DIR = "docs/materials/bookkeeping-review-packet"
 
 
 def _read_review_packet():
-    """断片を manifest.json の順につなぎ、各断片と全体の SHA-256 を確かめてから JSON として読む。"""
     folder = COACH_ROOT / REVIEW_PACKET_DIR
     manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["formatVersion"] == "split-text-v1"

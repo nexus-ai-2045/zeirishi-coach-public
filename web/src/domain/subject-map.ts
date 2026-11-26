@@ -3,14 +3,8 @@ import { parseSubjectId, type SubjectId } from './onboarding';
 export type MapReviewStatus = 'draft' | 'expert_review' | 'approved' | 'active';
 export type MapUnit = { unitId: string; label: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null };
 export type MapTopic = { topicId: string; unitId: string; label: string; summary: string; order: number; status: MapReviewStatus; sourceId: string; applicableYear: number | null;
-  /** Rough exam frequency, a draft estimate for study order; never a mastery or pass signal. */
   frequency?: 'high' | 'mid' | 'low';
-  /** A familiar, concrete example in plain words (draft). */
   example?: string;
-  /**
-   * A reform that is still a bill (not enacted). The topic text stays on current law; this holds the
-   * "if enacted" version so the learner can switch between the two. Remove once the outcome is known.
-   */
   pendingReform?: PendingReform };
 export type PendingReformText = { summary?: string; example?: string; definition?: string; purpose?: string; applicability?: string; counterexample?: string; misconception?: string; examUse?: string };
 export type PendingReform = { title: string; status: string; ifEnacted: PendingReformText };
@@ -26,10 +20,8 @@ export type MapLink = {
 };
 export type SubjectMapPack = {
   subjectId: SubjectId; version: string; status: MapReviewStatus;
-  /** Explicit legacy subject namespace only. Legacy topic IDs require reviewed one-by-one mapping. */
   legacySubjectId?: 'boki';
   units: MapUnit[]; topics: MapTopic[]; concepts: MapConcept[]; links: MapLink[];
-  /** Plain-word glosses for technical terms, shown in parentheses on first use (draft). */
   glossary?: Record<string, string>;
 };
 
@@ -51,7 +43,6 @@ function unique<K>(items: readonly K[], key: (item: K) => string): Map<string, K
   return entries;
 }
 
-/** Only the subject namespace is mapped. boki.* unit/topic IDs are not silently converted. */
 export function mapLegacySubjectId(value: string): SubjectId {
   if (value !== 'boki') invalid();
   return 'bookkeeping';
@@ -59,9 +50,7 @@ export function mapLegacySubjectId(value: string): SubjectId {
 
 export type SubjectMapValidation = {
   published?: boolean;
-  /** From the existing reviewed material registry, keyed by subject, primary concept and material version. */
   approvedMaterials?: ReadonlySet<string>;
-  /** From an independently reviewed question inventory, with the same scoped key. */
   approvedQuestions?: ReadonlySet<string>;
 };
 
@@ -69,7 +58,6 @@ export function subjectMapTargetKey(subjectId: SubjectId, conceptId: string, con
   return JSON.stringify([subjectId, conceptId, conceptVersion, targetId, targetVersion]);
 }
 
-/** Validates a read-only projection; it does not create mastery evidence or approve source content. */
 export function validateSubjectMap(pack: SubjectMapPack, options: SubjectMapValidation = {}): SubjectMapPack {
   if (!pack || typeof pack !== 'object') invalid();
   try { parseSubjectId(pack.subjectId); } catch { invalid(); }

@@ -1,5 +1,4 @@
 #!/bin/sh
-# Current-login local preview only. launchd owns its lifetime; no login/startup installation.
 set -eu
 preview_script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 preview_web_dir=$(CDPATH= cd -- "$preview_script_dir/.." && pwd)

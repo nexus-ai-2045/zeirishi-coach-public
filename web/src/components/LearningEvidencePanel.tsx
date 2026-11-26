@@ -26,7 +26,6 @@ const holdLabels: Record<string, string> = {
   'criterion-source-kind-mismatch': '評価基準の出所が一致していません。',
 };
 
-/** On-demand only: this must not delay the primary learning screen. */
 export function LearningEvidencePanel({ subjectId, concepts, expectedLearnerId, disabled, canStartConcept, onChooseConcept }: {
   subjectId: SubjectId; concepts: readonly Concept[]; expectedLearnerId?: string; disabled: boolean;
   canStartConcept: (ref: ConceptRef) => boolean; onChooseConcept: (ref: ConceptRef) => void;

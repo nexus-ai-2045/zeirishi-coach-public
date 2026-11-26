@@ -1,8 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 
-// Browser plugin not available: use the repository's existing Playwright runner.
-// Flow: consultation + materials -> choice + optional confidence -> feedback -> teach-back -> completion.
 async function cafeAction(page: Page, action: string, button: string | RegExp) {
   const response = page.waitForResponse(response => response.url().endsWith('/api/cafe')
     && response.request().method() === 'POST'
@@ -27,7 +25,6 @@ async function startDecision(page: Page) {
   await expect(page.getByRole('heading', { name: 'カフェの年間保険料をどう処理する？' })).toBeVisible();
   await expect(page.getByRole('list', { name: '学習の流れ' }).getByRole('listitem').first()).toHaveAttribute('data-state', 'current');
   await expect(page.getByText('帳簿には全部「保険料」で入れてあります。', { exact: false })).toBeVisible();
-  // The consultation step shows one decision at a time: no options until the learner moves on.
   await expect(page.getByRole('group', { name: '回答を選んでください' })).toHaveCount(0);
   await cafeAction(page, 'save', '資料を見て判断する →');
   await expect(page.getByRole('heading', { name: '資料から判断してみよう' })).toBeVisible();
@@ -266,7 +263,6 @@ test('別タブとの保存競合は比較中に自動上書きせず、手元�
   await expect(comparison).toContainText(serverExplanation);
   await expect(comparison).toContainText(localExplanation);
   await expect(input).toHaveValue(localExplanation);
-  // Deliberately cross the 1.2s autosave boundary: merely viewing a comparison must not write B.
   await page.waitForTimeout(1600);
   const caseId = await page.evaluate(() => localStorage.getItem('zc-cafe-case-v2'));
   expect(caseId).toBeTruthy();
@@ -282,7 +278,6 @@ test('別タブとの保存競合は比較中に自動上書きせず、手元�
 
 test('200%拡大でも四択をキーボードで選び、解説に進める', async ({ page }) => {
   await startDecision(page);
-  // CSS zoom scales every rendered element, including px-sized copy; root font-size alone does not.
   await page.evaluate(() => { document.documentElement.style.zoom = '2'; });
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByRole('radio', { name: '120,000円', exact: true }).focus();

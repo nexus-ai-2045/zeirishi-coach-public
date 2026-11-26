@@ -1,4 +1,3 @@
-"""科目ごとの論点 tree (references/subjects/<id>.json) の load と lint。"""
 from __future__ import annotations
 
 import json

@@ -4,7 +4,6 @@ import { StudyError } from '../domain/types';
 import { readAuthConfig } from './supabase-auth';
 import { createPostgresDatabase } from './postgres-database';
 
-/** Explicit fields prevent connection-string sslmode/options from weakening TLS or role limits. */
 export function readDatabaseConfig(env: Record<string, string | undefined> = process.env): PoolConfig {
   if (env.ZEIRISHI_DATABASE_ENABLED !== '1') throw new StudyError('DATABASE_DISABLED', 503);
   const auth = readAuthConfig(env);
@@ -31,7 +30,6 @@ export function readDatabaseConfig(env: Record<string, string | undefined> = pro
     max: 4, min: 0, connectionTimeoutMillis: 5000, idleTimeoutMillis: 10000, maxLifetimeSeconds: 300,
     query_timeout: 20000, statement_timeout: 15000, lock_timeout: 5000, idle_in_transaction_session_timeout: 10000,
     async onConnect(client) {
-      // Do not use administrator credentials then hide their privileges with SET ROLE.
       const row = (await client.query<{ name: string; safe: boolean; app: boolean; guard: boolean; restricted: boolean }>(
         `SELECT rolname AS name, NOT (rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole OR rolreplication OR rolinherit) AS safe,
           (pg_has_role(session_user,'zeirishi_app','SET')
@@ -46,11 +44,9 @@ export function readDatabaseConfig(env: Record<string, string | undefined> = pro
   };
 }
 
-/** Lazy pool: construction does not connect. Explicit deployment configuration is required. */
 export function createPostgresRuntime(env: Record<string, string | undefined> = process.env) {
   const pool = new Pool(readDatabaseConfig(env));
   let idleErrors = 0;
-  // node-postgres otherwise throws unhandled idle errors; retain only non-sensitive counters.
   pool.on('error', () => { idleErrors++; });
   return {
     database: createPostgresDatabase(pool, { learnerRole: true }),

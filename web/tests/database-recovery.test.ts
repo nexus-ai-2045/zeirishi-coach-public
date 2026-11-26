@@ -14,8 +14,6 @@ const owner = '11111111-1111-4111-8111-111111111111';
 const revokedOwner = '22222222-2222-4222-8222-222222222222';
 const otherOwner = '33333333-3333-4333-8333-333333333333';
 
-// Only rows created inside this synthetic in-memory drill are inspected. No user export
-// is imported, no local learner directory is opened, and no external database is contacted.
 async function allRows(db: PGlite) {
   const tables = (await db.query<{ tablename: string }>(
     "SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename")).rows;
@@ -37,7 +35,6 @@ test('合成DB snapshotを空インスタンスへ復旧し答案・版・正式
   let source: PGlite | undefined = new PGlite();
   let restored: PGlite | undefined;
   try {
-    // Reuse the existing explicitly synthetic material and service schema initializers.
     const record = makeMaterialRecord();
     const [{ material }] = createMaterialRegistry([record]);
     await createCafeService(source, now);
@@ -57,8 +54,6 @@ test('合成DB snapshotを空インスタンスへ復旧し答案・版・正式
       record: { kind: 'criterion', ...scope, prepared: true, disclosureHistoryComplete: true },
       verification: { verifiedBy: 'drill-only-verifier', verifiedAt: '2026-09-09T00:00:00.000Z', sourceReference: 'synthetic-recovery-drill' } };
     await management.save(owner, { requestId: randomUUID(), revision: 0, document });
-    // These are fabricated trusted-input fixtures, not a promotion of the cafe answer
-    // or a claim that an expert has reviewed real learning evidence.
     const evidence: MasteryEvidenceDocument = { ...document, id: 'drill-evidence', record: { kind: 'measurement', measurement: {
       ...scope, measurementId: 'drill-evidence', caseId: 'drill-structured-check', caseVersion: 'drill-check-v1', familyId: 'drill-family',
       occurredAt: '2026-09-08T00:00:00.000Z', evidenceKind: 'explanation', outcome: 'met', score: 8, maxScore: 10, targetScore: 6,
@@ -84,19 +79,15 @@ test('合成DB snapshotを空インスタンスへ復旧し答案・版・正式
     assert.deepEqual(expectedHistory.filter(item => item.id === evidence.id).map(item => item.revision), [1, 2]);
     const expectedAssessment = await management.evaluateSubject(owner, record.subjectId);
     const expectedRows = await allRows(source);
-    // Installed PGlite dumpDataDir/loadDataDir APIs: native DB image, not export JSON.
     const snapshot = await source.dumpDataDir();
     assert.ok(snapshot.size > 0);
 
-    // Deliberately demonstrate the gap: later edits/revocations are absent from this image.
-    // A production recovery needs a separate post-snapshot deletion/revocation procedure.
     await cafe.saveProgress(owner, start.id, { requestId: randomUUID(), revision: saved.progressRevision,
       phase: 'teach_back', explanation: 'スナップショット後の合成更新。復旧対象には含まれない。' });
     await revoke(source, owner);
     await assert.rejects(cafe.get(owner, start.id), /OWNER_REVOKED/);
     await source.close(); source = undefined;
 
-    // New in-memory database, with no schema bootstrap or reseeding after load.
     restored = new PGlite({ loadDataDir: snapshot });
     await restored.waitReady;
     assert.deepEqual(await allRows(restored), expectedRows);
@@ -110,7 +101,7 @@ test('合成DB snapshotを空インスタンスへ復旧し答案・版・正式
     assert.equal(restoredAnswer.attemptId, saved.attemptId);
     assert.deepEqual(await reader.list(owner), expectedHistory);
     assert.deepEqual(await reader.evaluateSubject(owner, record.subjectId), expectedAssessment);
-    assert.equal((await restoredManagement.save(owner, correctionRequest)).revision, 2); // Receipt also survived.
+    assert.equal((await restoredManagement.save(owner, correctionRequest)).revision, 2);
     assert.deepEqual(await reader.list(owner), expectedHistory);
 
     await assert.rejects(restoredCafe.get(otherOwner, start.id), /NOT_FOUND/);

@@ -42,7 +42,6 @@ function routeHash(view: AppView, caseId?: string | null) {
   return view === 'case' && caseId ? `#case/${encodeURIComponent(caseId)}` : `#${view}`;
 }
 type ResumeHint = { caseId: string; phase: CafePhase; savedAt: string | null };
-/** Online home resume uses the server history projection only; the case itself opens on an explicit action. */
 function pickResumeHint(items: CafeHistoryItem[], drafts: CafeDraftItem[]): ResumeHint | null {
   const submitted = items.find(item => item.status === 'active');
   const candidates: ResumeHint[] = [
@@ -53,7 +52,6 @@ function pickResumeHint(items: CafeHistoryItem[], drafts: CafeDraftItem[]): Resu
   return candidates.sort((a, b) => time(b.savedAt) - time(a.savedAt))[0] ?? null;
 }
 const storageKey = 'zc-cafe-case-v2';
-/** Local mode only: the subject last shown, so reloading the map keeps it instead of falling back to 簿記論. */
 const subjectKey = 'zc-subject-v1';
 const savedSubject = (): SubjectId | null => {
   try { const value = localStorage.getItem(subjectKey); return SUBJECTS.some(subject => subject.id === value) ? value as SubjectId : null; }
@@ -134,7 +132,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   const heading = useRef<HTMLHeadingElement>(null);
   const routeRef = useRef('#home');
   const historyIndex = useRef(0);
-  // Bumped on every view change; a late response may update data but must not move the learner's screen.
   const routeGeneration = useRef(0);
   const dirtyRef = useRef(false);
   const explanationDirty = !!session && explanation !== session.explanation && session.phase === 'teach_back';
@@ -178,7 +175,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const catalogRef = useRef(catalog);
   catalogRef.current = catalog;
-  // Bumped by every explicit subject load and when the shown case changes, so a stale subject search never overwrites it.
   const subjectSearch = useRef(0);
   async function loadCatalog(subject: SubjectId = 'bookkeeping') {
     subjectSearch.current += 1;
@@ -188,8 +184,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     return next;
   }
   async function load(subject: SubjectId = 'bookkeeping') { await loadCatalog(subject); }
-  /** Local trial: a resumed case may belong to another subject; load that subject's catalog so labels and the map match. */
-  // A subject owns a case when its map links to it (covers practice questions that are not listed as choices) or lists it as a choice.
   const ownsCase = (owner: Catalog, caseId: string) => owner.materialChoices?.some(item => item.materialId === caseId)
     || owner.subjectMap?.links.some(link => link.kind === 'uses-case' && link.targetId === caseId) === true;
   async function loadSubjectOf(next: CafeView, current: Catalog | null = catalogRef.current) {
@@ -238,7 +232,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           await loadSubjectOf(restored, initial).catch(() => undefined);
           if (generation === routeGeneration.current) setView('case');
         } catch (cause) {
-          // Authentication problems keep the case URL and show the sign-in guidance instead of a generic fallback.
           if (cause instanceof Error && ['AUTH_REQUIRED', 'AUTH_IDENTITY_CHANGED', 'INVITATION_REQUIRED'].includes(cause.message)) throw cause;
           if (generation === routeGeneration.current) {
             window.history.replaceState({ zcIndex: historyIndex.current }, '', '#home'); routeRef.current = '#home'; setView('home');
@@ -248,32 +241,28 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
         return;
       }
       setView(route.view === 'case' ? 'home' : route.view);
-      if (online) return; // Never read another identity's local fixture resume pointer.
+      if (online) return;
       let id: string | null = null;
-      try { id = localStorage.getItem(storageKey); } catch { /* Optional resume pointer only. */ }
+      try { id = localStorage.getItem(storageKey); } catch {}
       if (id) {
         let restored: CafeView | null = null;
         try { restored = (await request<{ session: CafeView }>(`/api/cafe?caseId=${encodeURIComponent(id)}`)).session; accept(restored); }
         catch { setNotice('前回の相談は再開できませんでした。新しく学習を始められます。'); }
-        // A subject the learner chose last time wins over the resume pointer's subject; opening the case still switches.
         if (restored && !remembered) await loadSubjectOf(restored, initial).catch(() => undefined);
       }
     });
   }, []);
   useEffect(() => {
     if (online || !catalog) return;
-    try { localStorage.setItem(subjectKey, catalog.subjectId); } catch { /* Optional convenience only. */ }
+    try { localStorage.setItem(subjectKey, catalog.subjectId); } catch {}
   }, [online, catalog?.subjectId]);
-  // Local trial: whichever path opened a case (history, Home resume, browser back), show it with its own subject's catalog.
   useEffect(() => {
     if (view === 'case' && session && catalog) void loadSubjectOf(session, catalog).catch(() => undefined);
     return () => { subjectSearch.current += 1; };
   }, [view, session?.id, catalog?.subjectId]);
-  // Online home re-reads the history projection on every visit so a completed case is not offered again.
   useEffect(() => { if (online && view === 'home' && catalog) void loadResumeHint(); }, [view]);
   const focusPhase = session?.phase === 'consultation' ? 'decision' : session?.phase;
   useEffect(() => { if (view === 'case') heading.current?.focus(); }, [focusPhase, view]);
-  /** In the tree map the old 簿記-only overview is gone: an old #overview link lands on the learning map. */
   const treeMode = !online && !!catalog?.subjectMap && !catalog.subjectMap.legacySubjectId;
   useEffect(() => {
     if (!treeMode || view !== 'overview') return;
@@ -285,7 +274,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       const route = readRoute();
       if (targetIndex === historyIndex.current && routeHash(route.view, route.caseId) === routeRef.current) return;
       const caseId = route.view === 'case' ? route.caseId : null;
-      // Unsaved input blocks history moves; a case cannot be loaded while another request holds the lock.
       if (dirtyRef.current || (caseId && lock.current)) {
         if (targetIndex !== null && targetIndex !== historyIndex.current) window.history.go(historyIndex.current - targetIndex);
         else window.history.replaceState({ zcIndex:historyIndex.current }, '', routeRef.current);
@@ -345,7 +333,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
     const confidence = { action: 'confidence', requestId: crypto.randomUUID(), caseId: session.id, confidence: answerConfidence || null };
     let submitted = false;
     void run(async () => {
-      // Keep both request IDs across retries, including a lost response after commit.
       if (!submitted) { await request('/api/cafe', submit); submitted = true; }
       const updated = (await request<{ session: CafeView }>('/api/cafe', confidence)).session;
       accept(updated); celebrate(submit.requestId, 'insight', updated.result?.correct);
@@ -364,7 +351,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
       ...((caseVersion || selected) ? { caseVersion: caseVersion ?? selected!.caseVersion } : {}),
     });
   }
-  /** Local tree only: a practice question picked explicitly from a topic, which the map links to that concept (any role). */
   function isMapPractice(ref: ConceptRef, materialId?: string, caseVersion?: string) {
     const map = catalog?.subjectMap;
     return !online && !!materialId && !!caseVersion && !!map && map.subjectId === ref.subjectId
@@ -401,9 +387,7 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
   }
   const lesson = view === 'case' && session;
   const result = session?.result;
-  /** Points shown under the explanation, without repeating the explanation text itself. */
   const feedbackPoints = result ? result.checkpoints.filter(item => item !== result.explanation) : [];
-  /** The diagram already lists the points, so the bullet list is shown only when the diagram is not. */
   const showReasonDiagram = !!session && session.prompt.caseId !== 'cafe-prepaid' && feedbackPoints.length >= 2;
   const subjectLabel = catalog?.subjects.find(item => item.id === catalog.subjectId)?.label ?? '';
   if (deleted) return <main className={styles.main}><h1>学習データを削除しました</h1><p>アカウントとバックアップは削除していません。削除済みデータへの再保存は停止しています。</p><a href="/login">ログイン状態を確認する</a></main>;
@@ -435,7 +419,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           <button disabled={busy} onClick={() => void run(async () => { if (view !== 'case') await load(catalog?.subjectId); else if (session) {
             const latest = (await request<{ session: CafeView }>(`/api/cafe?caseId=${session.id}`)).session;
             if (session.phase === 'teach_back') { setConflictView(latest); return; }
-            // Keep an unsaved choice; only an explicit save may send it with the refreshed revision.
             const localChoice = session.phase === 'decision' ? choice : null;
             accept(latest);
             if (localChoice && latest.status === 'active' && latest.phase === 'decision' && localChoice !== latest.optionId) {
@@ -483,8 +466,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
           {!online && catalog.subjectMap && !catalog.subjectMap.legacySubjectId && <SubjectTreeView key={`${catalog.subjectId}:${catalog.subjectMap.version}:${mapFocus?.conceptId ?? ''}:${mapFocus?.topicId ?? ''}`} pack={catalog.subjectMap} subjectLabel={subjectLabel || undefined} choices={catalog.materialChoices ?? []} disabled={busy || dirty}
             initialConceptId={mapFocus?.conceptId} initialTopicId={mapFocus?.topicId}
             onStart={(concept, choice) => startConcept({ subjectId: catalog.subjectId, conceptId: concept.conceptId, conceptVersion: concept.conceptVersion }, choice.materialId, choice.caseVersion)} />}
-          {/* The learning map is the subject tree for every subject. The older atlas stays only for the online mode and the small
-              legacy development fixture (legacySubjectId), whose existing E2E suite exercises it. */}
           {catalog.subjectMap && (online || !!catalog.subjectMap.legacySubjectId) && <LearningAtlas reducedEffects={reducedEffects} key={`${expectedLearnerId ?? 'local'}:${catalog.subjectId}:${catalog.subjectMap.version}`} pack={catalog.subjectMap}
             choices={catalog.materialChoices ?? []} reports={catalog.profile.reports} session={session} online={online}
             expectedLearnerId={online ? expectedLearnerId : undefined} disabled={busy || dirty}
@@ -510,8 +491,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
             <div className={styles.actions}><button disabled={busy} onClick={() => saveExamSubjects([])}>受験予定なしとして保存</button><button disabled={busy} onClick={() => saveExamSubjects(null)}>未回答に戻す</button></div>
           </details>
           </>}
-          {/* The old self-rated confidence list (説明できる・少し怪しい・未学習) belongs to the atlas modes only; the tree uses
-              the colours from the confirmation questions and review cards instead. */}
           {view === 'map' && !treeMode && <>
           <section className={styles.entry}><div className={styles.sectionHeading}><h2>{subjectLabel}</h2><span>自分の感覚で選べば OK</span></div>
             {!!catalog.concepts?.length && <fieldset disabled={busy} className={styles.bulkConfidence}><legend>この科目の自信をまとめて設定（対象 {catalog.concepts.length}件）</legend><div>{selfLabels.map(item => <button key={item.value} onClick={() => bulkConfidence(item.value)}>すべて「{item.label}」</button>)}<button onClick={() => bulkConfidence(null)}>この科目の自信を解除</button></div><p className={styles.note}>表示中の科目の概念だけを変更します。各行から個別に直すこともできます。</p></fieldset>}
@@ -548,7 +527,6 @@ export function CafeWorkspace({ mode = 'local', expectedLearnerId }: { mode?: 'l
             else if (canStartConcept(ref)) startConcept(ref, materialId, caseVersion);
             else setNotice('この教材は現在の画面から開始できません。対象科目を選び直してください。');
           }} /></div>}
-        {/* Stay mounted while hidden so an unsaved mock-exam draft survives view changes and browser history. */}
         {catalog && <div hidden={view !== 'records'}><MockExamRecords disabled={busy || dirty} expectedLearnerId={online ? expectedLearnerId : undefined} onBusyChange={setBusy} onDirtyChange={setMockExamDirty} /></div>}
         {lesson && <>
           <button className={styles.back} disabled={busy || dirty} onClick={() => navigate('map')}>← 学習地図へ</button>

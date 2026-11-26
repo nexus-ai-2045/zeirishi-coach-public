@@ -6,7 +6,6 @@ export const jsonResponse = (body: unknown, status = 200) => new Response(JSON.s
   headers: { 'Cache-Control': 'no-store', 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
 });
 
-/** Development pseudonym, never a substitute for production authentication. */
 export function readLocalCookie(request: Request, name: string) {
   const values = (request.headers.get('cookie') ?? '').split(';').map(part => part.trim())
     .filter(part => part.startsWith(`${name}=`));

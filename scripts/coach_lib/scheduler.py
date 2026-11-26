@@ -1,4 +1,3 @@
-"""今日のメニュー: 復習期限到来 → 低習得度×高配点 → 中間帯の挑戦。論点混在で並べる。"""
 from __future__ import annotations
 
 from . import model

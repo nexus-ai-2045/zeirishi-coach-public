@@ -44,13 +44,11 @@ for (const item of BOOKKEEPING_ALL_QUESTION_DRAFTS.filter(item=>['practice','ret
 export const BOOKKEEPING_TRIAL_MAP = validateSubjectMap({ subjectId:'bookkeeping', version:BOOKKEEPING_TRIAL_VERSION, status:'draft', units:units.map(([unitId,label], order) => ({ unitId,label,order,...base })), topics, concepts:BOOKKEEPING_ALL_CONCEPTS, links });
 export const BOOKKEEPING_TRIAL_CATALOG: readonly SubjectPack[] = [{ subjectId:'bookkeeping',version:BOOKKEEPING_TRIAL_VERSION,active:true,subjectMap:BOOKKEEPING_TRIAL_MAP,
   concepts:BOOKKEEPING_ALL_CONCEPTS.map(item => ({subjectId:'bookkeeping',conceptId:item.conceptId,conceptVersion:item.conceptVersion,label:item.label,importance:3,durationMinutes:5,unseenQuestionCount:0})) },
-  // Other subjects: three AI-authored sample questions each, practice only.
   ...SUBJECT_SAMPLE_CATALOG];
 export const BOOKKEEPING_TRIAL_CHOICES = BOOKKEEPING_TRIAL_CASES.map(material => {
   const prompt = material.prompt(); const concept = BOOKKEEPING_ALL_CONCEPTS.find(item => item.conceptId === prompt.conceptId)!;
   return { subjectId:'bookkeeping' as const,conceptId:concept.conceptId,conceptVersion:concept.conceptVersion, materialId:prompt.caseId,caseVersion:material.caseVersion,label:prompt.consultationTitle };
 });
-/** Choices shown on screen: bookkeeping plus the sample questions of other subjects. */
 export const TRIAL_MATERIAL_CHOICES = [...BOOKKEEPING_TRIAL_CHOICES, ...SUBJECT_SAMPLE_CHOICES];
 export const BOOKKEEPING_TRIAL_PLAN: readonly PlanCandidate[] = BOOKKEEPING_TRIAL_CHOICES.map(choice => ({...choice,id:choice.materialId,familyId:BOOKKEEPING_TRIAL_CASES.find(item => item.caseVersion === choice.caseVersion)!.prompt().familyId,minutes:5,bucket:'new',qualification:'practice',unseen:false,differentFormat:false,sourceTrust:1,
   priority:{importance:3,observedExamScoreRatio:null,reviewStatus:'unknown',recentMisconceptions:[],lockedDirectSuccessors:0,observedMinutes:null,designedMinutes:5}}));
@@ -64,7 +62,6 @@ export function getBookkeepingTrialMaterial(input: { concept?: ConceptRef; mater
   return matches[0];
 }
 export const bookkeepingTrialEnabled = () => process.env.ZEIRISHI_FIXTURE_MODE === '1' && process.env.ZEIRISHI_BOOKKEEPING_MVP === '1' && process.env.ZEIRISHI_SUPABASE_ENABLED !== '1';
-/** Starting ordinary practice must not reveal or consume independent assessment pools. */
 export function getBookkeepingTrialPracticeMaterial(input: Parameters<typeof getBookkeepingTrialMaterial>[0] = {}) {
   const material = getBookkeepingTrialMaterial(input);
   const question = BOOKKEEPING_ALL_QUESTION_DRAFTS.find(item => item.question.id === material.prompt().caseId);
