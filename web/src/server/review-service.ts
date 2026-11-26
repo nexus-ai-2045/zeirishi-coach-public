@@ -89,7 +89,7 @@ export function createReviewServiceOnPreparedDatabase(db: TransactionDatabase, n
         const rows = (await tx.query<StoredEvent>('SELECT * FROM review_evidence_events WHERE owner_id=$1 ORDER BY sequence', [owner])).rows
           .filter(row => Date.parse(row.payload.occurredAt) <= at.getTime());
         const withdrawn = new Set(rows.filter(row => row.kind === 'withdrawal').map(row => (row.payload as ReviewCorrection).targetEventId));
-        const evidence = rows.filter(row => row.kind === 'evidence').sort((a, b) => Date.parse(a.payload.occurredAt) - Date.parse(b.payload.occurredAt));
+        const evidence = rows.filter(row => row.kind === 'evidence').sort((a, b) => Date.parse(a.payload.occurredAt) - Date.parse(b.payload.occurredAt) || Number(a.sequence) - Number(b.sequence));
         const scopes = new Map<string, ReviewScheduleEvent[]>();
         for (const row of evidence) {
           const event = row.payload as ReviewScheduleEvent;

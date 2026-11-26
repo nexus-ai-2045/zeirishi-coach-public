@@ -1464,7 +1464,7 @@ const independentSeeds: Seed[] = [
   }
 ];
 
-const draftAnswerPositions: Readonly<Record<string, number>> = {
+const FROZEN_DRAFT_ANSWER_POSITIONS: Readonly<Record<string, number>> = {
   "bk-practice-cash-is-not-profit-1": 3,
   "bk-practice-cash-is-not-profit-2": 0,
   "bk-practice-cash-is-not-profit-3": 2,
@@ -1579,7 +1579,7 @@ function draft(seed: Seed): BookkeepingDraftQuestion {
   const use = seed.purpose ?? 'practice';
   const purpose = use === 'diagnostic' ? 'diagnostic' : use === 'retention' || use === 'mini_b' || use === 'evaluation' ? 'after_evaluation' : use === 'practice' ? 'practice' : 'before_evaluation';
   const questionId = `bk-${use}-${seed.conceptId}-${seed.n}`;
-  const position = draftAnswerPositions[questionId];
+  const position = FROZEN_DRAFT_ANSWER_POSITIONS[questionId];
   if (!Number.isInteger(position) || position < 0 || position > 3) throw new StudyError('INVALID_DRAFT_ANSWER_KEY', 503);
   const answers = [...seed.wrong]; answers.splice(position, 0, seed.answer);
   return { question: { subjectId: 'bookkeeping', conceptId: seed.conceptId, conceptVersion: bookkeepingConceptVersion(seed.conceptId),

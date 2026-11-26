@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { BOOKKEEPING_ALL_QUESTION_DRAFTS as FULL_DRAFTS, BOOKKEEPING_PRACTICE_DRAFTS as FULL_PRACTICE,
   BOOKKEEPING_DIAGNOSTIC_DRAFTS as FULL_DIAGNOSTIC, BOOKKEEPING_EVALUATION_DRAFTS as FULL_EVALUATION, BOOKKEEPING_RETENTION_DRAFTS as FULL_RETENTION,
@@ -210,4 +211,11 @@ test('サーバー再起動相当の別processでも同じ版の正答IDは変�
     cwd: new URL('../', import.meta.url), encoding: 'utf8', timeout: 10000,
   });
   assert.equal(read(), read());
+});
+
+test('saved answers keep their correct option: the answer layout of every draft is frozen', () => {
+  const layout = FULL_DRAFTS.map(item => `${item.question.id}:${item.question.options.findIndex(option => option.earned === 1)}`).join('\n');
+  assert.equal(FULL_DRAFTS.length, 537);
+  assert.equal(createHash('sha256').update(layout).digest('hex'), '223692607ed48fb573ec5246f5ed67e7fbb55082012334e74f1adb66b1f39248',
+    'changing an answer position remaps answers already stored for this question version; add a new version instead');
 });

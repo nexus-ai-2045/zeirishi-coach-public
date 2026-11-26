@@ -101,3 +101,11 @@ test('functions, cycles, custom JSON coercion and non-finite data cannot be atte
   const cyclic = makeMaterialRecord(); (cyclic.document as unknown as Record<string, unknown>).cycle = cyclic;
   assert.throws(() => materialReviewSha256(cyclic));
 });
+
+test('a version stays bound to one material even after that material retires', () => {
+  const retired = makeMaterialRecord(); retired.materialId = `${retired.materialId}-predecessor`; retired.status = 'retired'; delete retired.expertReview; delete retired.activation;
+  const live = makeMaterialRecord();
+  assert.equal(createMaterialRegistry([live]).length, 1);
+  assert.equal(retired.version, live.version);
+  assert.throws(() => createMaterialRegistry([retired, live]));
+});
